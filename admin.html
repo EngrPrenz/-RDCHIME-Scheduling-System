@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JA1 Church - Admin Dashboard</title>
+    <meta name="description" content="Admin Dashboard for JA1 Church - Manage events, users, and content with elegance." />
+    <meta name="author" content="JA1 Church" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --church-50: #fef2f4;
+            --church-100: #fce2e6;
+            --church-200: #f9c7cf;
+            --church-300: #f5a4b1;
+            --church-400: #f17a8f;
+            --church-500: #e94e6d;
+            --church-600: #d5345a;
+            --church-700: #b22446;
+            --church-800: #951c3a;
+            --church-900: #7a1632;
+            --white: #ffffff;
+            --gray-50: #fafafa;
+            --gray-100: #f4f4f5;
+            --gray-200: #e4e4e7;
+            --gray-300: #d4d4d8;
+            --gray-400: #a1a1aa;
+            --gray-500: #71717a;
+            --gray-600: #52525b;
+            --gray-700: #3f3f46;
+            --gray-800: #27272a;
+            --gray-900: #18181b;
+            --gradient-primary: linear-gradient(135deg, var(--church-500), var(--church-700));
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-50);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 1rem 0;
+            transition: background 0.3s ease;
+        }
+
+        .navbar.scrolled .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .logo h1 {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--church-700);
+        }
+
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            margin-right: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            color: var(--church-700);
+        }
+
+        .desktop-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--church-500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--church-500);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-menu-btn button {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--church-500);
+                transition: transform 0.3s ease;
+            }
+
+            .mobile-menu-btn button:hover {
+                transform: rotate(90deg);
+            }
+
+            .mobile-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 320px;
+                height: 100%;
+                background: var(--white) !important;
+                box-shadow: var(--shadow-lg);
+                transition: right 0.3s ease;
+                padding: 2rem;
+                z-index: 1000;
+                display: none;
+            }
+
+            .mobile-menu.open {
+                right: 0;
+                display: block;
+            }
+
+            .mobile-menu-close {
+                text-align: right;
+                margin-bottom: 2rem;
+            }
+
+            .mobile-menu-close button {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--gray-500);
+                transition: color 0.3s ease;
+            }
+
+            .mobile-menu-close button:hover {
+                color: var(--church-500);
+            }
+
+            .mobile-nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .mobile-nav-link {
+                font-size: 1rem;
+                font-weight: 500;
+                color: var(--gray-600);
+                padding: 0.5rem 0;
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
+
+            .mobile-nav-link:hover {
+                color: var(--church-500);
+                transform: translateX(10px);
+            }
+        }
+
+        /* Buttons (used in navigation) */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--church-500);
+            color: var(--church-500);
+        }
+
+        .btn-outline:hover {
+            background: var(--church-500);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 2.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                padding: 0 3rem;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            padding: 0.75rem 1.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--church-600);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--church-500);
+            color: var(--church-500);
+        }
+
+        .btn-outline:hover {
+            background: var(--church-500);
+            color: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: var(--gray-300);
+            color: var(--gray-700);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-400);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .btn-generate {
+            background: var(--church-400);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-generate:hover {
+            background: var(--church-500);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Checkbox Styles */
+        .checkbox-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .checkbox-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--church-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .checkbox-group .options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: var(--church-500);
+        }
+
+        .checkbox-group input[type="checkbox"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(233, 78, 109, 0.1);
+        }
+
+        .checkbox-group .option {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 1rem 0;
+            transition: background 0.3s ease;
+        }
+
+        .navbar.scrolled .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .logo h1 {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--church-700);
+        }
+
+        .logo-img {
+            width: 36px;
+            height: 36px;
+            margin-right: 0.75rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.1);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            color: var(--church-700);
+        }
+
+        .desktop-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--church-500);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--church-500);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-menu-btn button {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--church-500);
+                transition: transform 0.3s ease;
+            }
+
+            .mobile-menu-btn button:hover {
+                transform: rotate(90deg);
+            }
+
+            .mobile-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                max-width: 320px;
+                height: 100%;
+                background: var(--white) !important;
+                box-shadow: var(--shadow-lg);
+                transition: right 0.3s ease;
+                padding: 2rem;
+                z-index: 1000;
+                display: none;
+            }
+
+            .mobile-menu.open {
+                right: 0;
+                display: block;
+            }
+
+            .mobile-menu-close {
+                text-align: right;
+                margin-bottom: 2rem;
+            }
+
+            .mobile-menu-close button {
+                background: none;
+                border: none;
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: var(--gray-500);
+                transition: color 0.3s ease;
+            }
+
+            .mobile-menu-close button:hover {
+                color: var(--church-500);
+            }
+
+            .mobile-nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .mobile-nav-link {
+                font-size: 1rem;
+                font-weight: 500;
+                color: var(--gray-600);
+                padding: 0.5rem 0;
+                transition: color 0.3s ease, transform 0.3s ease;
+            }
+
+            .mobile-nav-link:hover {
+                color: var(--church-500);
+                transform: translateX(10px);
+            }
+        }
+
+        .btn-approved {
+            background: #10b981; /* Green background for approved state */
+            color: #ffffff; /* White text */
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: default;
+            transition: all 0.3s ease;
+        }
+
+        /* Main Content */
+        .admin-hero {
+            background: var(--gradient-primary);
+            padding: 5rem 0;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+            opacity: 0.5;
+        }
+
+        .admin-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .admin-hero p {
+            font-size: 1.125rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            padding: 5rem 0;
+            background: var(--gray-50);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--church-700);
+        }
+
+        .section-header p {
+            color: var(--gray-500);
+            max-width: 600px;
+            margin: 0.75rem auto 0;
+            font-size: 1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: var(--shadow-md);
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .dashboard-card:hover::before {
+            opacity: 1;
+        }
+
+        .dashboard-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--church-700);
+            margin-bottom: 0.75rem;
+        }
+
+        .dashboard-card p {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .dashboard-card .btn {
+            display: inline-flex;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--church-500);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Events Section */
+        .events {
+            padding: 5rem 0;
+            background: var(--church-50);
+        }
+
+        /* Users Section */
+        .users {
+            padding: 5rem 0;
+            background: var(--gray-50);
+        }
+
+        .events-container,
+        .users-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 1024px) {
+            .events-container,
+            .users-container {
+                grid-template-columns: 1fr 2fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--church-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--gray-800);
+            background: var(--white);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--church-500);
+            box-shadow: 0 0 0 3px rgba(233, 78, 109, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .events-list,
+        .users-list {
+            margin-top: 1rem;
+        }
+
+        .events-list h3,
+        .users-list h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--church-700);
+            margin-bottom: 1.5rem;
+        }
+
+        .event-item,
+        .user-item {
+            background: var(--white);
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .event-item:hover,
+        .user-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .event-item.past-event {
+            filter: grayscale(100%);
+            opacity: 0.7;
+        }
+
+        .event-item h4,
+        .user-item h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--church-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-item p,
+        .user-item p {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-past-badge {
+            display: inline-block;
+            background: var(--gray-200);
+            color: var(--gray-600);
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .no-events,
+        .no-users {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .animate-events-list,
+        .animate-users-list {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--church-900);
+            color: var(--white);
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            opacity: 0.3;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .footer-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .footer-col h3,
+        .footer-col h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--church-100);
+            margin-bottom: 1.25rem;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-col p {
+            color: var(--church-200);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-link {
+            color: var(--church-200);
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--white);
+            transform: scale(1.2);
+        }
+
+        .footer-col ul {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-col ul li a {
+            color: var(--church-200);
+            font-size: 0.875rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .copyright {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--church-800);
+            text-align: center;
+        }
+
+        .copyright p {
+            color: var(--church-200);
+            font-size: 0.875rem;
+            font-weight: 300;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-card,
+        .footer-col {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+        .dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+        .dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+        .footer-col:nth-child(1) { animation-delay: 0.1s; }
+        .footer-col:nth-child(2) { animation-delay: 0.2s; }
+        .footer-col:nth-child(3) { animation-delay: 0.3s; }
+        .footer-col:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <nav id="navbar" class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>
+                    <img src="images/17.png" alt="JA1 Church Logo" class="logo-img" />
+                    <span class="logo-text">JA1 Antipolo</span>
+                </h1>
+            </div>
+            
+            <div class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                    <li><a href="#events" class="nav-link">Manage Events</a></li>
+                    <li><a href="#users" class="nav-link">Manage Users</a></li>
+                    <li><button class="btn btn-outline logout-link">Logout</button></li>
+                </ul>
+            </div>
+            
+            <div class="mobile-menu-btn">
+                <button id="menu-toggle">
+                    <span class="menu-icon">☰</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mobile-menu" id="mobile-menu">
+            <div class="mobile-menu-close">
+                <button id="menu-close">✕</button>
+            </div>
+            <ul class="mobile-nav-links">
+                <li><a href="#dashboard" class="mobile-nav-link">Dashboard</a></li>
+                <li><a href="#events" class="mobile-nav-link">Manage Events</a></li>
+                <li><a href="#users" class="mobile-nav-link">Manage Users</a></li>
+                <li><button class="btn btn-outline logout-link w-full">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+    <main>
+        <section id="dashboard" class="dashboard">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Admin Dashboard</h2>
+                    <p>Overview of JA1 Church community statistics and activities.</p>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3>Community Statistics</h3>
+                        <div id="stats">
+                            <p>Total Users: <span id="total-users" class="stat-number">0</span></p>
+                            <p>Upcoming Events: <span id="upcoming-events" class="stat-number">0</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pending-events" class="dashboard">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Pending Events</h2>
+                    <p>Review and approve or reject event suggestions from leaders.</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Pending Event Suggestions</h3>
+                    <div id="pending-events-list" class="events-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="events" class="events">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Manage Events</h2>
+                    <p>Create and manage upcoming events for the JA1 Church community.</p>
+                </div>
+                <div class="events-container">
+                    <div class="dashboard-card">
+                        <h3 id="event-form-title">Create New Event</h3>
+                        <div class="form-group">
+                            <label for="event-title">Title</label>
+                            <input type="text" id="event-title" placeholder="Event Title">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="event-date">Date</label>
+                                <input type="date" id="event-date">
+                            </div>
+                            <div class="form-group">
+                                <label for="event-time">Time</label>
+                                <input type="time" id="event-time">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-location">Location</label>
+                            <input type="text" id="event-location" placeholder="Event Location">
+                        </div>
+                        <div class="form-group">
+                            <label for="event-description">Description</label>
+                            <textarea id="event-description" placeholder="Event Description"></textarea>
+                            <button id="generate-description-btn" class="btn btn-generate">Generate Description</button>
+                        </div>
+                        <div class="btn-group">
+                            <button id="save-event-btn" class="btn btn-primary w-full">Save Event</button>
+                            <button id="cancel-edit-btn" class="btn btn-cancel w-full" style="display: none;">Cancel Edit</button>
+                        </div>
+                    </div>
+                    <div class="events-list">
+                        <h3>Upcoming Events</h3>
+                        <div id="events-list"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="users" class="users">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Manage Users</h2>
+                    <p>Add, edit, or remove user accounts for the JA1 Church community.</p>
+                </div>
+                <div class="users-container">
+                    <div class="dashboard-card">
+                        <h3 id="user-form-title">Add New User</h3>
+                        <div class="form-group">
+                            <label for="user-name">First Name</label>
+                            <input type="text" id="user-name" placeholder="First Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="user-lastname">Last Name</label>
+                            <input type="text" id="user-lastname" placeholder="Last Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email</label>
+                            <input type="email" id="user-email" placeholder="Email Address">
+                        </div>
+                        <div class="form-group">
+                            <label for="user-phone">Phone Number</label>
+                            <input type="text" id="user-phone" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" id="address" placeholder="Address">
+                        </div>
+                        <div class="checkbox-group">
+                            <label>SUYNL Topics Completed</label>
+                            <div class="options">
+                                <div class="option">
+                                    <input type="checkbox" id="topic-1" value="1">
+                                    <label for="topic-1">Topic 1</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-2" value="2">
+                                    <label for="topic-2">Topic 2</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-3" value="3">
+                                    <label for="topic-3">Topic 3</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-4" value="4">
+                                    <label for="topic-4">Topic 4</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-5" value="5">
+                                    <label for="topic-5">Topic 5</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-6" value="6">
+                                    <label for="topic-6">Topic 6</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-7" value="7">
+                                    <label for="topic-7">Topic 7</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-8" value="8">
+                                    <label for="topic-8">Topic 8</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-9" value="9">
+                                    <label for="topic-9">Topic 9</label>
+                                </div>
+                                <div class="option">
+                                    <input type="checkbox" id="topic-10" value="10">
+                                    <label for="topic-10">Topic 10</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="checkbox-group">
+                            <label>ID 101 Status</label>
+                            <div class="option">
+                                <input type="checkbox" id="id101-status" value="done">
+                                <label for="id101-status">ID 101 Done</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="user-role">Role</label>
+                                <select id="user-role">
+                                    <option value="Member">Member</option>
+                                    <option value="Leader">Leader</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="user-status">Status</label>
+                                <select id="user-status">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-leader">Anointed Group Leader</label>
+                            <select id="user-leader">
+                                <option value="">None</option>
+                            </select>
+                        </div>
+                        <div class="btn-group">
+                            <button id="save-user-btn" class="btn btn-primary w-full">Save User</button>
+                            <button id="cancel-user-edit-btn" class="btn btn-cancel w-full" style="display: none;">Cancel Edit</button>
+                        </div>
+                    </div>
+                    <div class="users-list">
+                        <h3>Registered Users</h3>
+                        <div id="users-list"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>JA1 Church</h3>
+                    <p>A sanctuary of worship, community, and spiritual growth.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.245v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#events">Manage Events</a></li>
+                        <li><a href="#users">Manage Users</a></li>
+                        <li><a href="#content">Manage Content</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Service Times</h4>
+                    <ul>
+                        <li>Sunday: 10:00 AM</li>
+                        <li>Wednesday: 7:00 PM</li>
+                        <li>Youth (Friday): 6:00 PM</li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><a href="https://maps.google.com/?q=123+Faith+Street+Cityville+State+12345">123 Faith Street, Cityville, State 12345</a></li>
+                        <li><a href="tel:1234567890">(123) 456-7890</a></li>
+                        <li><a href="/cdn-cgi/l/email-protection#b5dcdbd3daf5dfd484d6ddc0c7d6dd9bdac7d2"><span class="__cf_email__" data-cfemail="10393e363f103a31613338252233387e3f2237">[email protected]</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2025 JA1 Church. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc,
+            getDocs,
+            updateDoc,
+            deleteDoc,
+            doc,
+            getDoc,
+            setDoc,
+            onSnapshot,
+            query,
+            where,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA---_h9ddOjlbiCnEsy4z3p-A4jKwsc-I",
+            authDomain: "ja1-church-database.firebaseapp.com",
+            projectId: "ja1-church-database",
+            storageBucket: "ja1-church-database.firebasestorage.app",
+            messagingSenderId: "650630302188",
+            appId: "1:650630302188:web:5d0768490af1d051ccd8c9"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // DOM Elements for Pending Events
+        const pendingEventsList = document.getElementById('pending-events-list');
+
+        // Success Popup
+        function showSuccessPopup(title, message, isError = false) {
+            const popup = document.createElement('div');
+            popup.style.position = 'fixed';
+            popup.style.top = '20px';
+            popup.style.right = '20px';
+            popup.style.padding = '1rem 2rem';
+            popup.style.background = isError ? '#dc2626' : '#10b981';
+            popup.style.color = '#ffffff';
+            popup.style.borderRadius = '0.5rem';
+            popup.style.boxShadow = 'var(--shadow-md)';
+            popup.style.zIndex = '10000';
+            popup.style.maxWidth = '300px';
+            popup.innerHTML = `
+                <h4 style="font-size: 0.875rem; font-weight: 600; margin-bottom: 0.25rem;">${title}</h4>
+                <p style="font-size: 0.75rem;">${message}</p>
+            `;
+            document.body.appendChild(popup);
+            setTimeout(() => {
+                popup.style.transition = 'opacity 0.5s ease';
+                popup.style.opacity = '0';
+                setTimeout(() => popup.remove(), 500);
+            }, 3000);
+        }
+
+        // Load Pending Events
+        let unsubscribePendingEvents = null;
+
+        async function loadPendingEvents() {
+            try {
+                // Detach previous listener if it exists
+                if (unsubscribePendingEvents) {
+                    console.log('Detaching previous pendingEvents listener');
+                    unsubscribePendingEvents();
+                }
+
+                const pendingEventsQuery = query(
+                    collection(db, 'pendingEvents'),
+                    where('status', '==', 'pending')
+                );
+
+                console.log('Setting up onSnapshot listener for pendingEvents');
+                unsubscribePendingEvents = onSnapshot(pendingEventsQuery, async (snapshot) => {
+                    pendingEventsList.innerHTML = '';
+                    const pendingEvents = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    if (pendingEvents.length === 0) {
+                        pendingEventsList.innerHTML = '<p class="no-events">No pending events.</p>';
+                        return;
+                    }
+
+                    for (const event of pendingEvents) {
+                        let suggesterName = 'Unknown';
+                        try {
+                            const leaderDoc = await getDoc(doc(db, 'users', event.suggestedBy));
+                            if (leaderDoc.exists()) {
+                                const leaderData = leaderDoc.data();
+                                suggesterName = `${leaderData.firstName} ${leaderData.lastName}`;
+                            }
+                        } catch (error) {
+                            console.error('Error fetching suggester name:', error);
+                        }
+
+                        const eventItem = document.createElement('div');
+                        eventItem.className = 'event-item animate-events-list';
+                        eventItem.style.animationDelay = `${pendingEvents.indexOf(event) * 0.1}s`;
+                        eventItem.innerHTML = `
+                            <div>
+                                <h4>${event.title}</h4>
+                                <p>Date: ${event.date}</p>
+                                <p>Time: ${event.time}</p>
+                                <p>Location: ${event.location}</p>
+                                <p>Description: ${event.description || 'No description'}</p>
+                                <p>Suggested by: ${suggesterName}</p>
+                                <p>Suggested At: ${new Date(event.suggestedAt).toLocaleString()}</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary approve-event-btn" data-event-id="${event.id}" disabled>Approving...</button>
+                                <button class="btn btn-danger reject-event-btn" data-event-id="${event.id}" disabled>Rejecting...</button>
+                            </div>
+                        `;
+                        pendingEventsList.appendChild(eventItem);
+
+                        // Enable buttons after rendering
+                        setTimeout(() => {
+                            eventItem.querySelector('.approve-event-btn').disabled = false;
+                            eventItem.querySelector('.approve-event-btn').textContent = 'Approve';
+                            eventItem.querySelector('.reject-event-btn').disabled = false;
+                            eventItem.querySelector('.reject-event-btn').textContent = 'Reject';
+                        }, 500);
+                    }
+
+                    // Add event listeners for approve/reject buttons
+                   document.querySelectorAll('.approve-event-btn').forEach(button => {
+                        button.addEventListener('click', async () => {
+                            const eventId = button.dataset.eventId;
+                            button.disabled = true;
+                            button.textContent = 'Approving...';
+                            await approveEvent(eventId, button);
+                        });
+                    });
+                  document.querySelectorAll('.reject-event-btn').forEach(button => {
+                        button.addEventListener('click', async () => {
+                            const eventId = button.dataset.eventId;
+                            button.disabled = true;
+                            button.textContent = 'Rejecting...';
+                            await rejectEvent(eventId, button);
+                        });
+                    });
+                }, (error) => {
+                    console.error('Error loading pending events:', error);
+                    showSuccessPopup("ERROR", 'Failed to load pending events.', true);
+                });
+            } catch (error) {
+                console.error('Error setting up pending events listener:', error);
+                showSuccessPopup("ERROR", 'Failed to load pending events.', true);
+            }
+        }
+        // Approve Event
+      // Approve Event
+        async function approveEvent(eventId, button) {
+            if (!confirm('Are you sure you want to approve this event?')) {
+                button.disabled = false;
+                button.textContent = 'Approved';
+                return;
+            }
+            try {
+                console.log('Starting approval process for event:', eventId);
+                button.disabled = true;
+                button.textContent = 'Approved';
+
+                // Fetch event from pendingEvents
+                console.log('Fetching event from pendingEvents:', eventId);
+                const eventRef = doc(db, 'pendingEvents', eventId);
+                const eventSnap = await getDoc(eventRef);
+                if (!eventSnap.exists()) {
+                    console.error('Event not found in pendingEvents');
+                    showSuccessPopup("ERROR", 'Event not found.', true);
+                    button.disabled = false;
+                    button.textContent = 'Approved';
+                    return;
+                }
+
+                const eventData = eventSnap.data();
+                console.log('Event data retrieved:', eventData);
+
+                // Add to events collection
+                const approvedEvent = {
+                    title: eventData.title,
+                    date: eventData.date,
+                    time: eventData.time,
+                    location: eventData.location,
+                    description: eventData.description || '',
+                    approvedAt: serverTimestamp(),
+                    approvedBy: auth.currentUser.uid
+                };
+                console.log('Adding event to events collection');
+                await addDoc(collection(db, 'events'), approvedEvent);
+                console.log('Event added to events collection');
+
+                // Log approval action
+                console.log('Logging approval action to eventLogs');
+                await addDoc(collection(db, 'eventLogs'), {
+                    eventId,
+                    action: 'approved',
+                    title: eventData.title,
+                    performedBy: auth.currentUser.uid,
+                    performedAt: serverTimestamp()
+                });
+                console.log('Approval action logged');
+
+                // Update button to "Approved" state
+                console.log('Updating button to Approved state');
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-approved');
+                button.textContent = 'Approved';
+                button.disabled = true;
+                console.log('Button classes after update:', button.className);
+
+                // Wait briefly to ensure the badge is visible
+                console.log('Waiting for badge visibility');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Delete from pendingEvents
+                console.log('Deleting event from pendingEvents');
+                await deleteDoc(eventRef);
+                console.log('Event deleted from pendingEvents');
+
+                showSuccessPopup("EVENT APPROVED", 'The event has been approved and added to the events list.');
+                await loadDashboardStats();
+            } catch (error) {
+                console.error('Error approving event:', error);
+                showSuccessPopup("ERROR", `Failed to approve event: ${error.message}`, true);
+                button.disabled = false;
+                button.textContent = 'Approved';
+            }
+        }
+
+
+        
+       async function rejectEvent(eventId, button) {
+            if (!confirm('Are you sure you want to reject this event?')) {
+                button.disabled = false;
+                button.textContent = 'Reject';
+                return;
+            }
+            try {
+                console.log('Starting rejection process for event:', eventId);
+                button.disabled = true;
+                button.textContent = 'Rejecting...';
+
+                // Fetch event from pendingEvents
+                console.log('Fetching event from pendingEvents:', eventId);
+                const eventRef = doc(db, 'pendingEvents', eventId);
+                const eventSnap = await getDoc(eventRef);
+                if (!eventSnap.exists()) {
+                    console.error('Event not found in pendingEvents');
+                    showSuccessPopup("ERROR", 'Event not found.', true);
+                    button.disabled = false;
+                    button.textContent = 'Reject';
+                    return;
+                }
+
+                const eventData = eventSnap.data();
+                console.log('Event data retrieved:', eventData);
+
+                // Log rejection action
+                console.log('Logging rejection action to eventLogs');
+                await addDoc(collection(db, 'eventLogs'), {
+                    eventId,
+                    action: 'rejected',
+                    title: eventData.title,
+                    performedBy: auth.currentUser.uid,
+                    performedAt: serverTimestamp()
+                });
+                console.log('Rejection action logged');
+
+                // Update button to "Rejected" state
+                console.log('Updating button to Rejected state');
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-rejected');
+                button.textContent = 'Rejected';
+                button.disabled = true;
+                console.log('Button classes after update:', button.className);
+
+                // Wait briefly to ensure the badge is visible
+                console.log('Waiting for badge visibility');
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Delete from pendingEvents
+                console.log('Deleting event from pendingEvents');
+                await deleteDoc(eventRef);
+                console.log('Event deleted from pendingEvents');
+
+                showSuccessPopup("EVENT REJECTED", 'The event has been rejected and removed.');
+            } catch (error) {
+                console.error('Error rejecting event:', error);
+                showSuccessPopup("ERROR", `Failed to reject event: ${error.message}`, true);
+                button.disabled = false;
+                button.textContent = 'Reject';
+            }
+        }
+                // Update onAuthStateChanged to include loadPendingEvents
+        onAuthStateChanged(auth, async user => {
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists() && userSnap.data().Role === 'Admin') {
+                    console.log('Admin is logged in:', user.uid);
+                    loadUsers();
+                    loadEvents();
+                    loadPendingEvents();
+                    loadDashboardStats();
+                    setupEventListeners();
+                    await populateLeaderDropdown();
+                } else {
+                    console.log('User is not an admin, redirecting to index.html');
+                    showSuccessPopup("ACCESS DENIED", "You do not have permission to access this page.", true);
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                }
+            } else {
+                console.log('No user is logged in, redirecting to index.html');
+                showSuccessPopup("ACCESS DENIED", "Please log in to access this page.", true);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        });
+
+        // DOM Elements
+        const mobileMenuToggle = document.getElementById('menu-toggle');
+        const mobileMenuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (mobileMenuToggle && mobileMenuClose && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.add('open');
+            });
+
+            mobileMenuClose.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('open');
+                });
+            });
+        }
+
+        // Logout Function
+        async function logout() {
+            try {
+                await signOut(auth);
+                showSuccessPopup("LOGOUT SUCCESS", "You have been logged out successfully!");
+            } catch (error) {
+                showSuccessPopup("LOGOUT ERROR", `Failed to log out: ${error.message}`, true);
+                console.error("Error logging out: ", error);
+            }
+        }
+
+        // Dashboard Stats
+        async function loadDashboardStats() {
+            try {
+                const usersRef = collection(db, 'users');
+                const userSnapshot = await getDocs(usersRef);
+                const totalUsers = userSnapshot.size;
+                document.getElementById('total-users').textContent = totalUsers;
+
+                const eventsRef = collection(db, 'events');
+                const eventSnapshot = await getDocs(eventsRef);
+                const now = new Date();
+                const upcomingEvents = eventSnapshot.docs.filter(doc => {
+                    const event = doc.data();
+                    const eventDateTime = new Date(`${event.date}T${event.time}`);
+                    return eventDateTime >= now;
+                }).length;
+                document.getElementById('upcoming-events').textContent = upcomingEvents;
+            } catch (error) {
+                showSuccessPopup("ERROR", `Failed to load dashboard stats: ${error.message}`, true);
+                console.error("Error loading dashboard stats: ", error);
+            }
+        }
+
+        // Event Management
+        let editingEventId = null;
+
+        async function saveEvent() {
+            const title = document.getElementById('event-title')?.value.trim();
+            const date = document.getElementById('event-date')?.value;
+            const time = document.getElementById('event-time')?.value;
+            const location = document.getElementById('event-location')?.value.trim();
+            const description = document.getElementById('event-description')?.value.trim();
+
+            if (!title || !date || !time || !location) {
+                showSuccessPopup("MISSING FIELDS", "Please fill in all required fields (Title, Date, Time, Location).", true);
+                return;
+            }
+
+            const eventDateTime = new Date(`${date}T${time}`);
+            const now = new Date();
+            if (eventDateTime < now) {
+                showSuccessPopup("INVALID DATE", "Cannot create or update events in the past. Please select a future date.", true);
+                return;
+            }
+
+            try {
+                const eventsRef = collection(db, 'events');
+                const querySnapshot = await getDocs(eventsRef);
+                const isDuplicate = querySnapshot.docs.some(doc => {
+                    const event = doc.data();
+                    return event.date === date && event.time === time && (!editingEventId || doc.id !== editingEventId);
+                });
+
+                if (isDuplicate) {
+                    showSuccessPopup("DUPLICATE EVENT", "An event already exists at this date and time.", true);
+                    return;
+                }
+
+                const eventData = { title, date, time, location, description };
+
+                if (editingEventId) {
+                    const eventRef = doc(db, 'events', editingEventId);
+                    await updateDoc(eventRef, eventData);
+                    showSuccessPopup("EVENT UPDATED", "The event has been successfully updated!");
+                    cancelEdit();
+                } else {
+                    await addDoc(eventsRef, eventData);
+                    showSuccessPopup("EVENT CREATED", "The event has been successfully added!");
+                    clearEventForm();
+                }
+                await loadDashboardStats();
+            } catch (error) {
+                showSuccessPopup("ERROR", `Failed to save event: ${error.message}`, true);
+                console.error("Error saving event: ", error);
+            }
+        }
+
+        async function editEvent(eventId) {
+            try {
+                const eventRef = doc(db, 'events', eventId);
+                const eventSnap = await getDoc(eventRef);
+                if (!eventSnap.exists()) {
+                    showSuccessPopup("ERROR", "Event not found.", true);
+                    return;
+                }
+
+                const event = eventSnap.data();
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-date').value = event.date;
+                document.getElementById('event-time').value = event.time;
+                document.getElementById('event-location').value = event.location;
+                document.getElementById('event-description').value = event.description;
+
+                editingEventId = eventId;
+                document.getElementById('event-form-title').textContent = 'Edit Event';
+                document.getElementById('save-event-btn').textContent = 'Update Event';
+                document.getElementById('cancel-edit-btn').style.display = 'inline-flex';
+                document.getElementById('generate-description-btn').style.display = 'none';
+            } catch (error) {
+                showSuccessPopup("ERROR", `Failed to load event: ${error.message}`, true);
+                console.error("Error editing event: ", error);
+            }
+        }
+
+        async function deleteEvent(eventId) {
+            try {
+                const eventRef = doc(db, 'events', eventId);
+                const eventSnap = await getDoc(eventRef);
+                if (!eventSnap.exists()) {
+                    showSuccessPopup("ERROR", "Event not found.", true);
+                    return;
+                }
+
+                await deleteDoc(eventRef);
+                showSuccessPopup("EVENT DELETED", "The event has been successfully removed!");
+                await loadDashboardStats();
+            } catch (error) {
+                showSuccessPopup("ERROR", `Failed to delete event: ${error.message}`, true);
+                console.error("Error deleting event: ", error);
+            }
+        }
+
+        function cancelEdit() {
+            clearEventForm();
+            editingEventId = null;
+            document.getElementById('event-form-title').textContent = 'Create New Event';
+            document.getElementById('save-event-btn').textContent = 'Save Event';
+            document.getElementById('cancel-edit-btn').style.display = 'none';
+            document.getElementById('generate-description-btn').style.display = 'inline-flex';
+        }
+
+        function clearEventForm() {
+            const fields = ['event-title', 'event-date', 'event-time', 'event-location', 'event-description'];
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.value = '';
+            });
+        }
+
+        function generateDescription() {
+            const title = document.getElementById('event-title')?.value.trim();
+            const descriptionField = document.getElementById('event-description');
+            if (!title || !descriptionField) {
+                showSuccessPopup("MISSING TITLE", "Please enter an event title to generate a description.", true);
+                return;
+            }
+
+            let generatedDescription = '';
+            const titleLower = title.toLowerCase();
+
+            if (titleLower.includes('worship') || titleLower.includes('service')) {
+                generatedDescription = 'Join us for a heartfelt worship service filled with uplifting music, inspiring messages, and a warm community atmosphere. All are welcome to experience God’s presence and grow in faith.';
+            } else if (titleLower.includes('bible') || titleLower.includes('study')) {
+                generatedDescription = 'Dive deeper into Scripture with our engaging Bible study session. Enjoy meaningful discussions, fellowship, and insights that strengthen your spiritual journey.';
+            } else if (titleLower.includes('youth') || titleLower.includes('teen')) {
+                generatedDescription = 'An exciting evening tailored for our youth! Expect fun games, dynamic worship, and a relevant message designed to inspire and connect young hearts to faith.';
+            } else if (titleLower.includes('prayer')) {
+                generatedDescription = 'Come together for a powerful time of prayer and reflection. Share in fellowship and lift up your heart in communion with our church family.';
+            } else if (titleLower.includes('outreach') || titleLower.includes('community')) {
+                generatedDescription = 'Make a difference in our community! Join us for a meaningful outreach event where we serve, connect, and share God’s love through acts of kindness.';
+            } else {
+                generatedDescription = `Join us for "${title}", a special event where our community comes together to celebrate, connect, and grow in faith. Expect an inspiring and welcoming experience for all attendees.`;
+            }
+
+            descriptionField.value = generatedDescription;
+            showSuccessPopup("DESCRIPTION GENERATED", "A description has been generated based on the event title!");
+        }
+
+        function formatTime(time24) {
+            if (!time24) return '';
+            const [hour, minute] = time24.split(":");
+            const h = parseInt(hour, 10);
+            const suffix = h >= 12 ? "PM" : "AM";
+            const hour12 = h % 12 || 12;
+            return `${hour12}:${minute} ${suffix}`;
+        }
+
+        function loadEvents() {
+            const eventsList = document.getElementById('events-list');
+            if (!eventsList) {
+                console.error("Events list element not found.");
+                return;
+            }
+
+            const tenDaysAgo = new Date();
+            tenDaysAgo.setDate(tenDaysAgo.getDate() - 10);
+
+            const eventsRef = collection(db, 'events');
+            onSnapshot(eventsRef, (snapshot) => {
+                const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(event => {
+                        const eventDateTime = new Date(`${event.date}T${event.time}`);
+                        return eventDateTime >= tenDaysAgo;
+                    })
+                    .sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+
+                eventsList.innerHTML = '';
+
+                if (events.length === 0) {
+                    eventsList.innerHTML = '<div class="no-events">No upcoming events.</div>';
+                    return;
+                }
+
+                events.forEach((event, index) => {
+                    const eventDateTime = new Date(`${event.date}T${event.time}`);
+                    const isPast = eventDateTime < new Date();
+                    const eventItem = `
+                        <div class="event-item ${isPast ? 'past-event' : ''}" style="animation-delay: ${index * 0.1}s;">
+                            <div class="event-item-details">
+                                <h4>${event.title}</h4>
+                                <p>${event.date} at ${formatTime(event.time)}</p>
+                                <p>Location: ${event.location}</p>
+                                <p>${event.description}</p>
+                                ${isPast ? '<span class="event-past-badge">Past Event (Removed after 10 Days)</span>' : ''}
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary edit-event-btn" data-event-id="${event.id}">Edit</button>
+                                <button class="btn btn-danger delete-event-btn" data-event-id="${event.id}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    eventsList.innerHTML += eventItem;
+                });
+
+                document.querySelectorAll('.event-item').forEach(item => {
+                    item.classList.add('animate-events-list');
+                });
+
+                loadDashboardStats();
+            }, (error) => {
+                showSuccessPopup("ERROR", `Failed to load events: ${error.message}`, true);
+                console.error("Error loading events: ", error);
+            });
+        }
+
+        // User Management
+        let editingUserId = null;
+
+        async function saveUsers_AutoID() {
+            const firstName = document.getElementById('user-name')?.value.trim();
+            const lastName = document.getElementById('user-lastname')?.value.trim();
+            const email = document.getElementById('user-email')?.value.trim();
+            const phoneNumber = document.getElementById('user-phone')?.value.trim();
+            const address = document.getElementById('address')?.value.trim();
+            const suynlTopicsCompleted = Array.from(document.querySelectorAll('.checkbox-group input[id^="topic-"]:checked')).map(input => parseInt(input.value));
+            const id101Status = document.getElementById('id101-status')?.checked;
+            const role = document.getElementById('user-role')?.value;
+            const status = document.getElementById('user-status')?.value;
+            const anointedGroupLeaderId = document.getElementById('user-leader')?.value;
+
+            // Validate required fields
+            if (!firstName || !lastName || !email) {
+                showSuccessPopup("MISSING FIELDS", "Please fill in all required fields (First Name, Last Name, Email).", true);
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showSuccessPopup("INVALID EMAIL", "Please enter a valid email address.", true);
+                return;
+            }
+
+            try {
+                const usersRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersRef);
+
+                // Check for duplicate email
+                const isDuplicate = querySnapshot.docs.some(doc => {
+                    const userEmail = doc.data().email;
+                    return userEmail && typeof userEmail === 'string' &&
+                        userEmail.toLowerCase() === email.toLowerCase() &&
+                        (!editingUserId || doc.id !== editingUserId);
+                });
+
+                if (isDuplicate) {
+                    showSuccessPopup("DUPLICATE EMAIL", "A user with this email already exists.", true);
+                    return;
+                }
+
+                const userData = {
+                    firstName,
+                    lastName,
+                    email,
+                    phoneNumber: phoneNumber || '',
+                    address: address || '',
+                    specialRequests: '',
+                    suynlTopicsCompleted: suynlTopicsCompleted || [],
+                    id101Status: id101Status || false,
+                    Role: role || 'Member',
+                    Status: status || 'Active',
+                    AnointedGroupLeader: anointedGroupLeaderId || ''
+                };
+
+                if (editingUserId) {
+                    const userRef = doc(db, 'users', editingUserId);
+                    await updateDoc(userRef, userData);
+                    showSuccessPopup("USER UPDATED", "The user has been successfully updated!");
+                    cancelUserEdit();
+                } else {
+                    const docRef = await addDoc(usersRef, userData);
+                    showSuccessPopup("USER CREATED", "The user has been successfully added!");
+                    console.log("Document ID is: " + docRef.id);
+                    clearUserForm();
+                }
+            } catch (error) {
+                showSuccessPopup("ERROR", `Unsuccessful operation, error: ${error.message}`, true);
+                console.error("Error saving user: ", error);
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userRef);
+                if (!userSnap.exists()) {
+                    showSuccessPopup("ERROR", "User not found.", true);
+                    return;
+                }
+
+                const user = userSnap.data();
+                document.getElementById('user-name').value = user.firstName || '';
+                document.getElementById('user-lastname').value = user.lastName || '';
+                document.getElementById('user-email').value = user.email || '';
+                document.getElementById('user-phone').value = user.phoneNumber || '';
+                document.getElementById('address').value = user.address || '';
+                document.getElementById('user-role').value = user.Role || 'Member';
+                document.getElementById('user-status').value = user.Status || 'Active';
+                document.getElementById('id101-status').checked = user.id101Status || false;
+
+                document.querySelectorAll('.checkbox-group input[id^="topic-"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                if (user.suynlTopicsCompleted && Array.isArray(user.suynlTopicsCompleted)) {
+                    user.suynlTopicsCompleted.forEach(topic => {
+                        const checkbox = document.getElementById(`topic-${topic}`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                }
+
+                await populateLeaderDropdown(user.AnointedGroupLeader);
+
+                editingUserId = userId;
+                document.getElementById('user-form-title').textContent = 'Edit User';
+                document.getElementById('save-user-btn').textContent = 'Update User';
+                document.getElementById('cancel-user-edit-btn').style.display = 'inline-flex';
+            } catch (error) {
+                showSuccessPopup("ERROR", `Failed to load user data: ${error.message}`, true);
+                console.error("Error editing user: ", error);
+            }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userRef);
+                if (!userSnap.exists()) {
+                    showSuccessPopup("ERROR", "User not found.", true);
+                    return;
+                }
+
+                const userData = userSnap.data();
+                if (userId === auth.currentUser?.uid) {
+                    showSuccessPopup("ERROR", "You cannot delete your own admin account.", true);
+                    return;
+                }
+
+                await deleteDoc(userRef);
+                showSuccessPopup("USER DELETED", `User ${userData.firstName} ${userData.lastName} has been successfully removed!`);
+            } catch (error) {
+                if (error.code === 'permission-denied') {
+                    showSuccessPopup("PERMISSION DENIED", "You do not have permission to delete users. Ensure your account has Admin privileges.", true);
+                } else {
+                    showSuccessPopup("ERROR", `Failed to delete user: ${error.message}`, true);
+                }
+                console.error("Error deleting user: ", error);
+            }
+        }
+
+        function cancelUserEdit() {
+            clearUserForm();
+            editingUserId = null;
+            document.getElementById('user-form-title').textContent = 'Add New User';
+            document.getElementById('save-user-btn').textContent = 'Save User';
+            document.getElementById('cancel-user-edit-btn').style.display = 'none';
+            populateLeaderDropdown();
+        }
+
+        function clearUserForm() {
+            const fields = ['user-name', 'user-lastname', 'user-email', 'user-phone', 'address'];
+            fields.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.value = '';
+            });
+            document.querySelectorAll('.checkbox-group input[id^="topic-"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            const id101Status = document.getElementById('id101-status');
+            if (id101Status) id101Status.checked = false;
+            const userRole = document.getElementById('user-role');
+            if (userRole) userRole.value = 'Member';
+            const userStatus = document.getElementById('user-status');
+            if (userStatus) userStatus.value = 'Active';
+            const userLeader = document.getElementById('user-leader');
+            if (userLeader) userLeader.value = '';
+        }
+
+        async function populateLeaderDropdown(selectedLeaderId = '') {
+            const leaderSelect = document.getElementById('user-leader');
+            if (!leaderSelect) {
+                console.error("Leader select element not found.");
+                return;
+            }
+            try {
+                const usersRef = collection(db, 'users');
+                const querySnapshot = await getDocs(usersRef);
+                const leaders = querySnapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(user => user.Role === 'Leader' || user.Role === 'Admin');
+
+                leaderSelect.innerHTML = '<option value="">None</option>';
+                leaders.forEach(leader => {
+                    const option = document.createElement('option');
+                    option.value = leader.id;
+                    option.textContent = `${leader.firstName} ${leader.lastName}`;
+                    if (leader.id === selectedLeaderId) {
+                        option.selected = true;
+                    }
+                    leaderSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error populating leader dropdown: ", error);
+                showSuccessPopup("ERROR", "Failed to load leaders.", true);
+            }
+        }
+
+        async function getLeaderName(leaderId) {
+            if (!leaderId) return 'None';
+            try {
+                const leaderRef = doc(db, 'users', leaderId);
+                const leaderSnap = await getDoc(leaderRef);
+                if (leaderSnap.exists()) {
+                    const leader = leaderSnap.data();
+                    return `${leader.firstName} ${leader.lastName}`;
+                }
+                return 'None';
+            } catch (error) {
+                console.error("Error fetching leader name: ", error);
+                return 'None';
+            }
+        }
+
+        function loadUsers() {
+            const usersList = document.getElementById('users-list');
+            if (!usersList) {
+                console.error("Users list element not found.");
+                return;
+            }
+
+            const usersRef = collection(db, 'users');
+            onSnapshot(usersRef, (snapshot) => {
+                const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                usersList.innerHTML = '';
+
+                if (users.length === 0) {
+                    usersList.innerHTML = '<div class="no-users">No registered users.</div>';
+                    return;
+                }
+
+                users.sort((a, b) => (a.firstName + a.lastName).localeCompare(b.firstName + b.lastName));
+
+                users.forEach(async (user, index) => {
+                    const topicsDisplay = user.suynlTopicsCompleted && user.suynlTopicsCompleted.length > 0 
+                        ? user.suynlTopicsCompleted.sort((a, b) => a - b).join(', ') 
+                        : 'None';
+                    const id101Display = user.id101Status ? 'Done' : 'Not Done';
+                    const leaderName = await getLeaderName(user.AnointedGroupLeader);
+
+                    const userItem = `
+                        <div class="user-item" style="animation-delay: ${index * 0.1}s;">
+                            <div class="user-item-details">
+                                <h4>${user.firstName} ${user.lastName}</h4>
+                                <p>Email: ${user.email}</p>
+                                <p>Phone: ${user.phoneNumber || 'Not provided'}</p>
+                                <p>Address: ${user.address || 'Not provided'}</p>
+                                <p>SUYNL Topics Completed: ${topicsDisplay}</p>
+                                <p>ID 101 Status: ${id101Display}</p>
+                                <p>Role: ${user.Role}</p>
+                                <p>Status: ${user.Status}</p>
+                                <p>Anointed Group Leader: ${leaderName}</p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-primary edit-user-btn" data-user-id="${user.id}">Edit</button>
+                                <button class="btn btn-danger delete-user-btn" data-user-id="${user.id}">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    usersList.innerHTML += userItem;
+
+                    document.querySelectorAll('.user-item').forEach(item => {
+                        item.classList.add('animate-users-list');
+                    });
+                });
+
+                loadDashboardStats();
+            }, (error) => {
+                showSuccessPopup("ERROR", `Failed to load users: ${error.message}`, true);
+                console.error("Error loading users: ", error);
+            });
+        }
+
+        // Event Delegation for Buttons
+        function setupEventListeners() {
+            document.getElementById('events-list')?.addEventListener('click', (e) => {
+                const target = e.target;
+                const eventId = target.dataset.eventId;
+                if (target.classList.contains('edit-event-btn') && eventId) {
+                    editEvent(eventId);
+                } else if (target.classList.contains('delete-event-btn') && eventId) {
+                    deleteEvent(eventId);
+                }
+            });
+
+            document.getElementById('users-list')?.addEventListener('click', (e) => {
+                const target = e.target;
+                const userId = target.dataset.userId;
+                if (target.classList.contains('edit-user-btn') && userId) {
+                    editUser(userId);
+                } else if (target.classList.contains('delete-user-btn') && userId) {
+                    deleteUser(userId);
+                }
+            });
+
+            document.getElementById('save-event-btn')?.addEventListener('click', saveEvent);
+            document.getElementById('cancel-edit-btn')?.addEventListener('click', cancelEdit);
+            document.getElementById('generate-description-btn')?.addEventListener('click', generateDescription);
+            document.getElementById('save-user-btn')?.addEventListener('click', saveUsers_AutoID);
+            document.getElementById('cancel-user-edit-btn')?.addEventListener('click', cancelUserEdit);
+
+            // Add event listeners for logout buttons
+            document.querySelectorAll('.logout-link').forEach(button => {
+                button.addEventListener('click', logout);
+            });
+        }
+
+        // Initialize with Authentication Check
+        document.addEventListener('DOMContentLoaded', () => {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        const userRef = doc(db, 'users', user.uid);
+                        const userDoc = await getDoc(userRef);
+                        if (!userDoc.exists()) {
+                            showSuccessPopup("ACCESS DENIED", "No user document found. Contact support.", true);
+                            setTimeout(() => {
+                                window.location.href = "index.html";
+                            }, 2000);
+                            return;
+                        }
+
+                        if (userDoc.exists() && userDoc.data().Role === "Admin") {
+                            await loadDashboardStats();
+                            loadEvents();
+                            loadUsers();
+                            loadPendingEvents();
+                            await populateLeaderDropdown();
+                            setupEventListeners();
+                        } else {
+                            showSuccessPopup("ACCESS DENIED", "This page is for Admins only. Your role is not Admin.", true);
+                            setTimeout(() => {
+                                window.location.href = "index.html";
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        showSuccessPopup("ERROR", `Failed to verify admin status: ${error.message}`, true);
+                        console.error("Error verifying admin: ", error);
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 2000);
+                    }
+                } else {
+                    showSuccessPopup("NOT LOGGED IN", "Please log in as an Admin to access this page.", true);
+                    setTimeout(() => {
+                        window.location.href = "index.html";
+                    }, 2000);
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

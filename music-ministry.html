@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Ministry - JA1 Church</title>
+    <meta name="description" content="Music Ministry at JA1 Church - Elevating worship through music and creating a spiritual atmosphere for the congregation." />
+    <meta name="author" content="JA1 Church" />
+
+    <meta property="og:title" content="Music Ministry - JA1 Church" />
+    <meta property="og:description" content="Music Ministry at JA1 Church - Elevating worship through music and creating a spiritual atmosphere for the congregation." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ja1church" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+      /* Additional styles specific to ministry pages */
+      .ministry-hero {
+        position: relative;
+        height: 60vh;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                          url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-align: center;
+      }
+      
+      .ministry-hero-content {
+        max-width: 800px;
+        padding: 0 2rem;
+      }
+      
+      .ministry-hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      
+      .ministry-hero p {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+      }
+      
+      .ministry-content {
+        padding: 5rem 0;
+      }
+      
+      .ministry-section {
+        margin-bottom: 4rem;
+      }
+      
+      .ministry-section h2 {
+        font-size: 2.25rem;
+        color: var(--church-700);
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.75rem;
+      }
+      
+      .ministry-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(90deg, var(--church-500), var(--church-300));
+        border-radius: 2px;
+      }
+      
+      .ministry-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      @media (min-width: 768px) {
+        .ministry-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      
+      .ministry-feature {
+        background-color: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .ministry-feature:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+      }
+      
+      .ministry-feature-img {
+        height: 240px;
+        overflow: hidden;
+      }
+      
+      .ministry-feature-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+      
+      .ministry-feature:hover .ministry-feature-img img {
+        transform: scale(1.05);
+      }
+      
+      .ministry-feature-content {
+        padding: 1.5rem;
+      }
+      
+      .ministry-feature h3 {
+        font-size: 1.5rem;
+        color: var(--church-700);
+        margin-bottom: 0.75rem;
+      }
+      
+      .ministry-feature p {
+        color: var(--gray-600);
+        margin-bottom: 1.25rem;
+      }
+      
+      .team-section {
+        background-color: var(--gray-100);
+        padding: 5rem 0;
+        margin: 3rem 0;
+      }
+      
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+      
+      .team-member {
+        background-color: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+      
+      .team-member:hover {
+        transform: translateY(-5px);
+      }
+      
+      .team-member-img {
+        height: 280px;
+        overflow: hidden;
+      }
+      
+      .team-member-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .team-member-info {
+        padding: 1.5rem;
+      }
+      
+      .team-member h3 {
+        font-size: 1.25rem;
+        color: var(--church-700);
+        margin-bottom: 0.25rem;
+      }
+      
+      .team-member p {
+        color: var(--gray-600);
+        font-size: 0.95rem;
+      }
+      
+      .team-member .role {
+        color: var(--church-500);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+      
+      .cta-section {
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+        border-radius: 0.75rem;
+        margin: 3rem 0;
+      }
+      
+      .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .cta-section p {
+        font-size: 1.25rem;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        opacity: 0.9;
+      }
+      
+      .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+      
+      .btn-white {
+        background-color: white;
+        color: #10b981;
+      }
+      
+      .btn-white:hover {
+        background-color: var(--gray-100);
+      }
+      
+      .testimonial-section {
+        padding: 4rem 0;
+      }
+      
+      .testimonial {
+        background-color: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        position: relative;
+      }
+      
+    
+      .testimonial-content {
+        position: relative;
+        z-index: 1;
+      }
+      
+      .testimonial p {
+        font-size: 1.1rem;
+        color: var(--gray-700);
+        margin-bottom: 1.5rem;
+        font-style: italic;
+      }
+      
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+      }
+      
+      .testimonial-author-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 1rem;
+      }
+      
+      .testimonial-author-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      .testimonial-author-info h4 {
+        font-size: 1.1rem;
+        color: var(--church-700);
+        margin-bottom: 0.25rem;
+      }
+      
+      .testimonial-author-info p {
+        font-size: 0.9rem;
+        color: var(--gray-500);
+        margin-bottom: 0;
+        font-style: normal;
+      }
+      
+      .instrument-section {
+        margin: 4rem 0;
+      }
+      
+      .instrument-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+      
+      .instrument-card {
+        background-color: white;
+        border-radius: 0.75rem;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+      
+      .instrument-card:hover {
+        transform: translateY(-5px);
+      }
+      
+      .instrument-card-img {
+        height: 160px;
+        overflow: hidden;
+        background-color: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .instrument-card-img img {
+        max-width: 80%;
+        max-height: 80%;
+        object-fit: contain;
+      }
+      
+      .instrument-card-content {
+        padding: 1.5rem;
+      }
+      
+      .instrument-card h3 {
+        font-size: 1.25rem;
+        color: var(--church-700);
+        margin-bottom: 0.5rem;
+      }
+      
+      .instrument-card p {
+        color: var(--gray-600);
+        font-size: 0.9rem;
+      }
+      
+      .back-to-ministries {
+        display: inline-flex;
+        align-items: center;
+        color: var(--church-500);
+        font-weight: 600;
+        margin-bottom: 2rem;
+        transition: color 0.2s ease;
+      }
+      
+      .back-to-ministries:hover {
+        color: var(--church-700);
+      }
+      
+      .back-to-ministries::before {
+        content: "←";
+        margin-right: 0.5rem;
+      }
+      
+      .rehearsal-schedule {
+        margin: 4rem 0;
+      }
+      
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 0.75rem;
+        overflow: hidden;
+      }
+      
+      .schedule-table th,
+      .schedule-table td {
+        padding: 1.25rem;
+        text-align: left;
+        border-bottom: 1px solid var(--gray-200);
+      }
+      
+      .schedule-table th {
+        background-color: var(--church-500);
+        color: white;
+        font-weight: 600;
+      }
+      
+      .schedule-table tr:last-child td {
+        border-bottom: none;
+      }
+      
+      .schedule-table tr:nth-child(even) {
+        background-color: var(--gray-50);
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav id="navbar" class="navbar">
+      <div class="container">
+        <div class="logo">
+          <h1>
+            <img src="images/17.png" alt="JA1 Church Logo" class="logo-img" />
+            <span class="logo-text">JA1 Antipolo</span>
+          </h1>
+        </div>
+        
+        <div class="desktop-nav">
+          <ul class="nav-links">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="index.html#ministries" class="nav-link">Ministries</a></li>
+            <li><a href="index.html#events" class="nav-link">Events</a></li>
+            <li><a href="index.html#about" class="nav-link">About</a></li>
+          </ul>
+          <button class="btn btn-outline" id="login-btn">Login</button>
+        </div>
+        
+        <div class="mobile-menu-btn">
+          <button id="menu-toggle">
+            <span class="menu-icon">☰</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-close">
+          <button id="menu-close">✕</button>
+        </div>
+        <ul class="mobile-nav-links">
+          <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+          <li><a href="index.html#ministries" class="mobile-nav-link">Ministries</a></li>
+          <li><a href="index.html#events" class="mobile-nav-link">Events</a></li>
+          <li><a href="index.html#about" class="mobile-nav-link">About</a></li>
+        </ul>
+        <button class="btn btn-outline w-full" id="mobile-login-btn">Login</button>
+      </div>
+    </nav>
+
+    <main>
+      <section class="ministry-hero">
+        <div class="ministry-hero-content">
+          <h1>Music Ministry</h1>
+          <p>Elevating worship through music and creating a spiritual atmosphere for the congregation.</p>
+          <button class="btn btn-primary">Join Our Worship Team</button>
+        </div>
+      </section>
+      
+      <section class="ministry-content">
+        <div class="container">
+          <a href="index.html#ministries" class="back-to-ministries">Back to All Ministries</a>
+          
+          <div class="ministry-section">
+            <h2>About Our Music Ministry</h2>
+            <p>The Music Ministry at JA1 Church is dedicated to leading the congregation in worship through music that glorifies God and creates an atmosphere where people can encounter His presence. We believe that music is a powerful tool for expressing our love and devotion to God, and for preparing hearts to receive His Word.</p>
+            <p>Our team consists of vocalists, instrumentalists, sound engineers, and visual technicians who work together to create a seamless worship experience. We are committed to excellence in our musical offerings, while maintaining hearts of humility and service.</p>
+          </div>
+          
+          <div class="ministry-section">
+            <h2>Worship Teams & Ensembles</h2>
+            <div class="ministry-grid">
+              <div class="ministry-feature">
+                <div class="ministry-feature-img">
+                  <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Main Worship Team">
+                </div>
+                <div class="ministry-feature-content">
+                  <h3>Main Worship Team</h3>
+                  <p>Our primary worship team leads the congregation during Sunday services with contemporary worship music that inspires and uplifts.</p>
+                </div>
+              </div>
+              
+              <div class="ministry-feature">
+                <div class="ministry-feature-img">
+                  <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Choir">
+                </div>
+                <div class="ministry-feature-content">
+                  <h3>Church Choir</h3>
+                  <p>Our choir performs special musical selections for holidays, special events, and occasionally during Sunday services.</p>
+                </div>
+              </div>
+              
+              <div class="ministry-feature">
+                <div class="ministry-feature-img">
+                  <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Youth Worship">
+                </div>
+                <div class="ministry-feature-content">
+                  <h3>Youth Worship Team</h3>
+                  <p>Our youth-led worship team ministers to the youth group and occasionally leads worship for the main congregation.</p>
+                </div>
+              </div>
+              
+              <div class="ministry-feature">
+                <div class="ministry-feature-img">
+                  <img src="https://images.unsplash.com/photo-1525201548942-d8732f6617a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Technical Team">
+                </div>
+                <div class="ministry-feature-content">
+                  <h3>Technical Team</h3>
+                  <p>Our sound, lighting, and visual technicians work behind the scenes to ensure a seamless worship experience.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+   
+      
+      <section class="ministry-content">
+        <div class="container">
+          <div class="instrument-section">
+            <h2>Our Instruments</h2>
+            <p>We use a variety of instruments to create a rich and dynamic worship experience.</p>
+            
+            <div class="instrument-grid">
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Piano">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Piano/Keyboard</h3>
+                  <p>The foundation of our worship sound.</p>
+                </div>
+              </div>
+              
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1525201548942-d8732f6617a0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Acoustic Guitar">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Acoustic Guitar</h3>
+                  <p>Adds warmth and texture to our worship.</p>
+                </div>
+              </div>
+              
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1550291652-6ea9114a47b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Electric Guitar">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Electric Guitar</h3>
+                  <p>Provides lead lines and atmospheric elements.</p>
+                </div>
+              </div>
+              
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1445985543470-41fba5c3144a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Drums">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Drums</h3>
+                  <p>Drives the rhythm and energy of our worship.</p>
+                </div>
+              </div>
+              
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1621784166258-c3c98ca22fa9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Bass Guitar">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Bass Guitar</h3>
+                  <p>Provides the foundational low end for our music.</p>
+                </div>
+              </div>
+              
+              <div class="instrument-card">
+                <div class="instrument-card-img">
+                  <img src="https://images.unsplash.com/photo-1629042257269-5c4c2b9a5b92?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Violin">
+                </div>
+                <div class="instrument-card-content">
+                  <h3>Violin</h3>
+                  <p>Adds beautiful melodic elements to special pieces.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="rehearsal-schedule">
+            <h2>Rehearsal Schedule</h2>
+            <p>Our worship teams rehearse regularly to prepare for services and events.</p>
+            
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Time</th>
+                  <th>Team</th>
+                  <th>Location</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tuesday</td>
+                  <td>7:00 PM - 9:00 PM</td>
+                  <td>Main Worship Team</td>
+                  <td>Sanctuary</td>
+                </tr>
+                <tr>
+                  <td>Wednesday</td>
+                  <td>6:30 PM - 8:00 PM</td>
+                  <td>Choir</td>
+                  <td>Choir Room</td>
+                </tr>
+                <tr>
+                  <td>Thursday</td>
+                  <td>6:00 PM - 7:30 PM</td>
+                  <td>Youth Worship Team</td>
+                  <td>Youth Room</td>
+                </tr>
+                <tr>
+                  <td>Saturday</td>
+                  <td>10:00 AM - 12:00 PM</td>
+                  <td>Sunday Service Run-through</td>
+                  <td>Sanctuary</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <section class="cta-section">
+            <div class="container">
+              <h2>Join Our Music Ministry</h2>
+              <p>If you have musical gifts and a heart for worship, we invite you to consider serving with our music ministry. No matter your skill level, there's a place for you to grow and serve.</p>
+              <div class="cta-buttons">
+                <button class="btn btn-white">Apply to Join</button>
+                <button class="btn btn-outline">Schedule an Audition</button>
+              </div>
+            </div>
+          </section>
+          
+         
+    
+    
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h3>JA1 Church</h3>
+            <p>A place of worship, community, and spiritual growth.</p>
+            <div class="social-links">
+              <a href="#" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                </svg>
+              </a>
+              <a href="#" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
+                </svg>
+              </a>
+              <a href="#" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="index.html#ministries">Ministries</a></li>
+              <li><a href="index.html#events">Events</a></li>
+              <li><a href="index.html#about">About</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-col">
+            <h4>Service Times</h4>
+            <ul>
+              <li>Sunday: 10:00 AM</li>
+              <li>Wednesday: 7:00 PM</li>
+              <li>Youth (Friday): 6:00 PM</li>
+            </ul>
+          </div>
+          
+          <div class="footer-col">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="https://maps.google.com/?q=123+Faith+Street+Cityville+State+12345">123 Faith Street, Cityville, State 12345</a></li>
+              <li><a href="tel:1234567890">(123) 456-7890</a></li>
+              <li><a href="mailto:info@ja1church.org">info@ja1church.org</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="copyright">
+          <p>&copy; 2025 JA1 Church. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <div class="modal" id="login-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Welcome Back</h2>
+        <p>Login to access the administrative features</p>
+        
+        <div class="tabs">
+          <div class="tab-list">
+            <button class="tab-btn active" data-tab="admin">Admin</button>
+            <button class="tab-btn" data-tab="leader">Leader</button>
+          </div>
+          
+          <div class="tab-content active" id="admin-tab">
+            <form class="login-form">
+              <div class="form-group">
+                <label for="admin-email">Email</label>
+                <input type="email" id="admin-email" placeholder="admin@ja1church.org" required>
+              </div>
+              <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Login as Administrator</button>
+              <div class="text-center">
+                <a href="#" class="forgot-password">Forgot password?</a>
+              </div>
+            </form>
+          </div>
+          
+          <div class="tab-content" id="leader-tab">
+            <form class="login-form">
+              <div class="form-group">
+                <label for="leader-email">Email</label>
+                <input type="email" id="leader-email" placeholder="leader@ja1church.org" required>
+              </div>
+              <div class="form-group">
+                <label for="leader-password">Password</label>
+                <input type="password" id="leader-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Login as Leader</button>
+              <div class="text-center">
+                <a href="#" class="forgot-password">Forgot password?</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
