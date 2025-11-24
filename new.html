@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDCHIME Scheduling System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e8e8e8;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .material-item:hover {
+            background: #f0f0f0;
+        }
+
+        .material-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .activity-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .activity-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .activity-card.pending {
+            border-left: 5px solid #f59e0b;
+        }
+
+        .activity-card.approved {
+            border-left: 5px solid #10b981;
+        }
+
+        .activity-card.rejected {
+            border-left: 5px solid #ef4444;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .activity-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.approved {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .activity-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+        }
+
+        .detail-item strong {
+            color: #333;
+        }
+
+        .materials-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .material-tag {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 RDCHIME Scheduling System</h1>
+            <p>Regional Design and Creativity Hub for Innovation of MSME's in Education</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('schedule')">Schedule Activity</button>
+            <button class="tab" onclick="switchTab('pending')">Pending Verification</button>
+            <button class="tab" onclick="switchTab('approved')">Approved Activities</button>
+        </div>
+
+        <div class="content">
+            <!-- Schedule Activity Tab -->
+            <div id="schedule" class="tab-content active">
+                <h2 style="margin-bottom: 20px;">Schedule New Activity</h2>
+                <form id="activityForm">
+                    <div class="form-group">
+                        <label>Activity Name *</label>
+                        <input type="text" id="activityName" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date *</label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Participants *</label>
+                            <input type="number" id="participants" min="1" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Time *</label>
+                            <input type="time" id="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Time *</label>
+                            <input type="time" id="endTime" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number of Hours</label>
+                        <input type="number" id="hours" step="0.5" readonly style="background: #f5f5f5;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Organizer Name *</label>
+                        <input type="text" id="organizer" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Materials Needed</label>
+                        <div class="materials-grid" id="materialsGrid"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Submit for Verification</button>
+                </form>
+            </div>
+
+            <!-- Pending Verification Tab -->
+            <div id="pending" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Activities Pending Verification</h2>
+                <div id="pendingList"></div>
+            </div>
+
+            <!-- Approved Activities Tab -->
+            <div id="approved" class="tab-content">
+                <h2 style="margin-bottom: 20px;">Approved Activities</h2>
+                <div id="approvedList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+
+        // Firebase configuration - REPLACE WITH YOUR OWN
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+            authDomain: "rdchime-scheduling-system.firebaseapp.com",
+            projectId: "rdchime-scheduling-system",
+            storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+            messagingSenderId: "692945279316",
+            appId: "1:692945279316:web:f33864ef5ea7d1078b10c1",
+            measurementId: "G-YFZZ71C4Q8"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const MATERIALS = [
+            'DLP Projector',
+            'HDMI Cable',
+            'Speaker',
+            'Microphone',
+            'Light Box',
+            'Animation Tablet',
+            'Laptop',
+            'Whiteboard',
+            'Markers',
+            'Chairs',
+            'Tables'
+        ];
+
+        // Initialize materials grid
+        const materialsGrid = document.getElementById('materialsGrid');
+        MATERIALS.forEach(material => {
+            const div = document.createElement('div');
+            div.className = 'material-item';
+            div.innerHTML = `
+                <input type="checkbox" id="mat_${material.replace(/\s/g, '_')}" value="${material}">
+                <label for="mat_${material.replace(/\s/g, '_')}">${material}</label>
+            `;
+            materialsGrid.appendChild(div);
+        });
+
+        // Calculate hours automatically
+        document.getElementById('startTime').addEventListener('change', calculateHours);
+        document.getElementById('endTime').addEventListener('change', calculateHours);
+
+        function calculateHours() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+                const hours = (end - start) / (1000 * 60 * 60);
+                document.getElementById('hours').value = hours > 0 ? hours.toFixed(1) : 0;
+            }
+        }
+
+        // Form submission
+        document.getElementById('activityForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
+                .map(cb => cb.value);
+
+            const activityData = {
+                activityName: document.getElementById('activityName').value,
+                date: document.getElementById('date').value,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                hours: parseFloat(document.getElementById('hours').value),
+                participants: parseInt(document.getElementById('participants').value),
+                organizer: document.getElementById('organizer').value,
+                materials: selectedMaterials,
+                description: document.getElementById('description').value,
+                status: 'pending',
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, 'activities'), activityData);
+                alert('Activity submitted for verification!');
+                document.getElementById('activityForm').reset();
+                loadActivities();
+            } catch (error) {
+                alert('Error submitting activity: ' + error.message);
+            }
+        });
+
+        // Load activities
+        async function loadActivities() {
+            await loadPendingActivities();
+            await loadApprovedActivities();
+        }
+
+        async function loadPendingActivities() {
+            const pendingList = document.getElementById('pendingList');
+            pendingList.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const q = query(collection(db, 'activities'), where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    pendingList.innerHTML = '<div class="empty-state">No pending activities</div>';
+                    return;
+                }
+
+                pendingList.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const activity = docSnap.data();
+                    const card = createActivityCard(activity, docSnap.id, true);
+                    pendingList.appendChild(card);
+                });
+            } catch (error) {
+                pendingList.innerHTML = '<div class="empty-state">Error loading activities</div>';
+            }
+        }
+
+        async function loadApprovedActivities() {
+            const approvedList = document.getElementById('approvedList');
+            approvedList.innerHTML = '<div class="loading">Loading...</div>';
+
+            try {
+                const q = query(collection(db, 'activities'), where('status', '==', 'approved'), orderBy('date', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    approvedList.innerHTML = '<div class="empty-state">No approved activities yet</div>';
+                    return;
+                }
+
+                approvedList.innerHTML = '';
+                snapshot.forEach(docSnap => {
+                    const activity = docSnap.data();
+                    const card = createActivityCard(activity, docSnap.id, false);
+                    approvedList.appendChild(card);
+                });
+            } catch (error) {
+                approvedList.innerHTML = '<div class="empty-state">Error loading activities</div>';
+            }
+        }
+
+        function createActivityCard(activity, id, showActions) {
+            const card = document.createElement('div');
+            card.className = `activity-card ${activity.status}`;
+            
+            const materialsHTML = activity.materials && activity.materials.length > 0
+                ? activity.materials.map(m => `<span class="material-tag">${m}</span>`).join('')
+                : '<span style="color: #999;">No materials needed</span>';
+
+            const actionsHTML = showActions ? `
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="updateStatus('${id}', 'approved')">✓ Approve</button>
+                    <button class="btn btn-danger" onclick="updateStatus('${id}', 'rejected')">✗ Reject</button>
+                </div>
+            ` : '';
+
+            card.innerHTML = `
+                <div class="activity-header">
+                    <div class="activity-title">${activity.activityName}</div>
+                    <span class="status-badge ${activity.status}">${activity.status}</span>
+                </div>
+                <div class="activity-details">
+                    <div class="detail-item">📅 <strong>Date:</strong> ${activity.date}</div>
+                    <div class="detail-item">⏰ <strong>Time:</strong> ${activity.startTime} - ${activity.endTime}</div>
+                    <div class="detail-item">🕐 <strong>Duration:</strong> ${activity.hours} hours</div>
+                    <div class="detail-item">👥 <strong>Participants:</strong> ${activity.participants}</div>
+                    <div class="detail-item">👤 <strong>Organizer:</strong> ${activity.organizer}</div>
+                </div>
+                ${activity.description ? `<p style="margin: 15px 0; color: #666;"><strong>Description:</strong> ${activity.description}</p>` : ''}
+                <div>
+                    <strong style="display: block; margin-bottom: 10px;">Materials:</strong>
+                    <div class="materials-list">${materialsHTML}</div>
+                </div>
+                ${actionsHTML}
+            `;
+            
+            return card;
+        }
+
+        window.updateStatus = async function(id, status) {
+            try {
+                await updateDoc(doc(db, 'activities', id), { status });
+                alert(`Activity ${status}!`);
+                loadActivities();
+            } catch (error) {
+                alert('Error updating status: ' + error.message);
+            }
+        };
+
+        // Load activities on page load
+        loadActivities();
+
+        // Expose loadActivities globally for tab switching
+        window.loadActivities = loadActivities;
+    </script>
+
+    <script>
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+
+            // Reload activities when switching to pending or approved tabs
+            if (tabName === 'pending' || tabName === 'approved') {
+                window.loadActivities();
+            }
+        }
+    </script>
+</body>
+</html>
