@@ -398,8 +398,19 @@
 
     <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, query, where, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            updateDoc, 
+            doc, 
+            query, 
+            where, 
+            orderBy, 
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         // Firebase configuration - REPLACE WITH YOUR OWN
         const firebaseConfig = {
@@ -408,8 +419,8 @@
             projectId: "rdchime-scheduling-system",
             storageBucket: "rdchime-scheduling-system.firebasestorage.app",
             messagingSenderId: "692945279316",
-            appId: "1:692945279316:web:f33864ef5ea7d1078b10c1",
-            measurementId: "G-YFZZ71C4Q8"
+            appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+            measurementId: "G-LP39RX0R47"
         };
 
         // Initialize Firebase
@@ -431,20 +442,45 @@
         ];
 
         // Initialize materials grid
-        const materialsGrid = document.getElementById('materialsGrid');
-        MATERIALS.forEach(material => {
-            const div = document.createElement('div');
-            div.className = 'material-item';
-            div.innerHTML = `
-                <input type="checkbox" id="mat_${material.replace(/\s/g, '_')}" value="${material}">
-                <label for="mat_${material.replace(/\s/g, '_')}">${material}</label>
-            `;
-            materialsGrid.appendChild(div);
-        });
+        function initMaterials() {
+            const materialsGrid = document.getElementById('materialsGrid');
+            if (!materialsGrid) return;
+            
+            materialsGrid.innerHTML = '';
+            MATERIALS.forEach(material => {
+                const div = document.createElement('div');
+                div.className = 'material-item';
+                const id = `mat_${material.replace(/\s/g, '_')}`;
+                div.innerHTML = `
+                    <input type="checkbox" id="${id}" value="${material}">
+                    <label for="${id}" style="cursor: pointer;">${material}</label>
+                `;
+                materialsGrid.appendChild(div);
+            });
+        }
+        
+        // Initialize materials when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initMaterials);
+        } else {
+            initMaterials();
+        }
 
         // Calculate hours automatically
-        document.getElementById('startTime').addEventListener('change', calculateHours);
-        document.getElementById('endTime').addEventListener('change', calculateHours);
+        function setupTimeCalculation() {
+            const startTime = document.getElementById('startTime');
+            const endTime = document.getElementById('endTime');
+            if (startTime && endTime) {
+                startTime.addEventListener('change', calculateHours);
+                endTime.addEventListener('change', calculateHours);
+            }
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupTimeCalculation);
+        } else {
+            setupTimeCalculation();
+        }
 
         function calculateHours() {
             const startTime = document.getElementById('startTime').value;
@@ -459,35 +495,46 @@
         }
 
         // Form submission
-        document.getElementById('activityForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        function setupFormSubmission() {
+            const form = document.getElementById('activityForm');
+            if (!form) return;
             
-            const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
-                .map(cb => cb.value);
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
+                    .map(cb => cb.value);
 
-            const activityData = {
-                activityName: document.getElementById('activityName').value,
-                date: document.getElementById('date').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                hours: parseFloat(document.getElementById('hours').value),
-                participants: parseInt(document.getElementById('participants').value),
-                organizer: document.getElementById('organizer').value,
-                materials: selectedMaterials,
-                description: document.getElementById('description').value,
-                status: 'pending',
-                createdAt: serverTimestamp()
-            };
+                const activityData = {
+                    activityName: document.getElementById('activityName').value,
+                    date: document.getElementById('date').value,
+                    startTime: document.getElementById('startTime').value,
+                    endTime: document.getElementById('endTime').value,
+                    hours: parseFloat(document.getElementById('hours').value),
+                    participants: parseInt(document.getElementById('participants').value),
+                    organizer: document.getElementById('organizer').value,
+                    materials: selectedMaterials,
+                    description: document.getElementById('description').value,
+                    status: 'pending',
+                    createdAt: serverTimestamp()
+                };
 
-            try {
-                await addDoc(collection(db, 'activities'), activityData);
-                alert('Activity submitted for verification!');
-                document.getElementById('activityForm').reset();
-                loadActivities();
-            } catch (error) {
-                alert('Error submitting activity: ' + error.message);
-            }
-        });
+                try {
+                    await addDoc(collection(db, 'activities'), activityData);
+                    alert('Activity submitted for verification!');
+                    form.reset();
+                    loadActivities();
+                } catch (error) {
+                    alert('Error submitting activity: ' + error.message);
+                }
+            });
+        }
+        
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupFormSubmission);
+        } else {
+            setupFormSubmission();
+        }
 
         // Load activities
         async function loadActivities() {
@@ -500,7 +547,7 @@
             pendingList.innerHTML = '<div class="loading">Loading...</div>';
 
             try {
-                const q = query(collection(db, 'activities'), where('status', '==', 'pending'), orderBy('createdAt', 'desc'));
+                const q = query(collection(db, 'activities'), where('status', '==', 'pending'));
                 const snapshot = await getDocs(q);
                 
                 if (snapshot.empty) {
@@ -509,13 +556,28 @@
                 }
 
                 pendingList.innerHTML = '';
+                const activities = [];
                 snapshot.forEach(docSnap => {
-                    const activity = docSnap.data();
-                    const card = createActivityCard(activity, docSnap.id, true);
+                    activities.push({
+                        id: docSnap.id,
+                        data: docSnap.data()
+                    });
+                });
+                
+                // Sort by date manually
+                activities.sort((a, b) => {
+                    const dateA = a.data.date || '';
+                    const dateB = b.data.date || '';
+                    return dateB.localeCompare(dateA);
+                });
+                
+                activities.forEach(item => {
+                    const card = createActivityCard(item.data, item.id, true);
                     pendingList.appendChild(card);
                 });
             } catch (error) {
-                pendingList.innerHTML = '<div class="empty-state">Error loading activities</div>';
+                console.error('Error loading pending activities:', error);
+                pendingList.innerHTML = '<div class="empty-state">Error loading activities: ' + error.message + '</div>';
             }
         }
 
@@ -524,7 +586,7 @@
             approvedList.innerHTML = '<div class="loading">Loading...</div>';
 
             try {
-                const q = query(collection(db, 'activities'), where('status', '==', 'approved'), orderBy('date', 'desc'));
+                const q = query(collection(db, 'activities'), where('status', '==', 'approved'));
                 const snapshot = await getDocs(q);
                 
                 if (snapshot.empty) {
@@ -533,13 +595,28 @@
                 }
 
                 approvedList.innerHTML = '';
+                const activities = [];
                 snapshot.forEach(docSnap => {
-                    const activity = docSnap.data();
-                    const card = createActivityCard(activity, docSnap.id, false);
+                    activities.push({
+                        id: docSnap.id,
+                        data: docSnap.data()
+                    });
+                });
+                
+                // Sort by date manually
+                activities.sort((a, b) => {
+                    const dateA = a.data.date || '';
+                    const dateB = b.data.date || '';
+                    return dateB.localeCompare(dateA);
+                });
+                
+                activities.forEach(item => {
+                    const card = createActivityCard(item.data, item.id, false);
                     approvedList.appendChild(card);
                 });
             } catch (error) {
-                approvedList.innerHTML = '<div class="empty-state">Error loading activities</div>';
+                console.error('Error loading approved activities:', error);
+                approvedList.innerHTML = '<div class="empty-state">Error loading activities: ' + error.message + '</div>';
             }
         }
 
