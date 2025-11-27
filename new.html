@@ -97,6 +97,10 @@
             padding: 20px 0;
             display: flex;
             flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
         }
 
         .sidebar-header {
@@ -236,39 +240,13 @@
             100% { transform: scale(1); }
         }
 
-        .sidebar-footer {
-            padding: 0 20px 20px;
-            margin-top: auto;
-        }
-
-        .sidebar-footer a {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            color: #fef3b8;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
-            font-weight: 500;
-        }
-
-        .sidebar-footer a:hover {
-            background: #c29d2d;
-            color: #4d350d;
-        }
-
-        .sidebar-footer svg {
-            width: 16px;
-            height: 16px;
-            margin-right: 10px;
-            fill: currentColor;
-        }
-
         /* Main Content Styles */
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
+            margin-left: 280px;
+            width: calc(100% - 280px);
         }
 
         .header {
@@ -276,6 +254,9 @@
             padding: 20px 30px;
             border-bottom: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 99;
         }
 
         .header h1 {
@@ -419,8 +400,9 @@
 
         /* Calendar Section */
         .calendar-section {
-            display: flex;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
             align-items: flex-start;
             margin-bottom: 40px;
         }
@@ -430,7 +412,12 @@
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            max-width: 400px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .calendar-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .calendar-header {
@@ -579,8 +566,13 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            max-width: 300px;
             height: fit-content;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .quick-schedule:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .quick-schedule-icon {
@@ -641,6 +633,94 @@
             fill: currentColor;
         }
 
+        /* Next Activity Card */
+        .next-activity {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            height: fit-content;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .next-activity:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .next-activity-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .next-activity-icon {
+            width: 50px;
+            height: 50px;
+            background: #fef3b8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .next-activity-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #c29d2d;
+        }
+
+        .next-activity-header h3 {
+            color: #4d350d;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .next-activity-content {
+            padding: 15px;
+            background: #fef3b8;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .next-activity-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4d350d;
+            margin-bottom: 10px;
+        }
+
+        .next-activity-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .next-activity-detail {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .next-activity-detail strong {
+            color: #4d350d;
+        }
+
+        .no-upcoming {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+        }
+
+        .no-upcoming .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
         /* Form Styles */
         .form-group {
             margin-bottom: 24px;
@@ -694,6 +774,7 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 1px solid #c29d2d;
+            position: relative;
         }
 
         .material-item:hover {
@@ -701,10 +782,55 @@
             border-color: #4d350d;
         }
 
+        .material-item.selected {
+            background: #c29d2d;
+            border-color: #4d350d;
+        }
+
+        .material-item.selected .material-label {
+            color: white;
+            font-weight: 600;
+        }
+
         .material-item input[type="checkbox"] {
-            width: auto;
-            margin-right: 10px;
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
             cursor: pointer;
+            z-index: 2;
+        }
+
+        .material-label {
+            margin-left: 8px;
+            cursor: pointer;
+            flex: 1;
+            color: #4d350d;
+            font-weight: 500;
+        }
+
+        .material-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #c29d2d;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .material-item input[type="checkbox"]:checked + .material-checkbox {
+            background: #4d350d;
+            border-color: #4d350d;
+        }
+
+        .material-item input[type="checkbox"]:checked + .material-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .btn {
@@ -775,7 +901,7 @@
         }
 
         .activity-item.approved {
-            border-left: 4px solid #10b981;
+            border-left: 4px solid #f59e0b;
         }
 
         .activity-header {
@@ -885,7 +1011,7 @@
 
         @media (max-width: 1024px) {
             .calendar-section {
-                flex-direction: column;
+                grid-template-columns: 1fr;
                 gap: 20px;
             }
             
@@ -904,6 +1030,13 @@
             }
 
             .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
                 width: 100%;
             }
 
@@ -959,8 +1092,8 @@
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
         </svg>
         <div class="success-content">
-            <h4>Activity Submitted Successfully!</h4>
-            <p>Your activity has been submitted for verification and is now pending approval.</p>
+            <h4 id="successTitle">Activity Submitted Successfully!</h4>
+            <p id="successDescription">Your activity has been submitted for verification and is now pending approval.</p>
         </div>
         <button class="close-success" onclick="hideSuccessMessage()">
             <svg viewBox="0 0 24 24">
@@ -1126,6 +1259,24 @@
                                 Create Schedule
                             </button>
                         </div>
+
+                        <!-- Next Activity Card -->
+                        <div class="next-activity">
+                            <div class="next-activity-header">
+                                <div class="next-activity-icon">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/>
+                                    </svg>
+                                </div>
+                                <h3>Next Activity</h3>
+                            </div>
+                            <div id="nextActivityContent">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                    <p>Loading next activity...</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1249,8 +1400,13 @@
         let activitiesWithDates = [];
 
         // Success message functions
-        function showSuccessMessage() {
+        function showSuccessMessage(title, description) {
             const successMessage = document.getElementById('successMessage');
+            const successTitle = document.getElementById('successTitle');
+            const successDescription = document.getElementById('successDescription');
+            
+            successTitle.textContent = title;
+            successDescription.textContent = description;
             successMessage.classList.add('show');
             
             // Auto hide after 5 seconds
@@ -1362,8 +1518,30 @@
                 const id = `mat_${material.replace(/\s/g, '_')}`;
                 div.innerHTML = `
                     <input type="checkbox" id="${id}" value="${material}">
-                    <label for="${id}" style="cursor: pointer;">${material}</label>
+                    <div class="material-checkbox"></div>
+                    <span class="material-label">${material}</span>
                 `;
+                
+                // Add click handler for the entire material item
+                const checkbox = div.querySelector('input[type="checkbox"]');
+                div.addEventListener('click', (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        // Trigger change event to update visual state
+                        const event = new Event('change', { bubbles: true });
+                        checkbox.dispatchEvent(event);
+                    }
+                });
+                
+                // Update visual state when checkbox changes
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        div.classList.add('selected');
+                    } else {
+                        div.classList.remove('selected');
+                    }
+                });
+                
                 materialsGrid.appendChild(div);
             });
         }
@@ -1419,7 +1597,7 @@
                     await addDoc(collection(db, 'activities'), activityData);
                     
                     // Show success message
-                    showSuccessMessage();
+                    showSuccessMessage('Activity Submitted Successfully!', 'Your activity has been submitted for verification and is now pending approval.');
                     
                     // Reset form
                     form.reset();
@@ -1481,11 +1659,102 @@
             }
         }
 
+        // Load next activity - FIXED VERSION
+        async function loadNextActivity() {
+            const nextActivityContent = document.getElementById('nextActivityContent');
+            if (!nextActivityContent) return;
+            
+            try {
+                // Get all approved activities first
+                const q = query(collection(db, 'activities'), where('status', '==', 'approved'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    nextActivityContent.innerHTML = `
+                        <div class="no-upcoming">
+                            <div class="icon">📅</div>
+                            <p>No upcoming activities</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const activities = [];
+                snapshot.forEach(docSnap => {
+                    const activityData = docSnap.data();
+                    activities.push({
+                        id: docSnap.id,
+                        data: activityData
+                    });
+                });
+                
+                // Filter for upcoming activities and sort by date
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                
+                const upcomingActivities = activities.filter(activity => {
+                    return activity.data.date >= today;
+                });
+                
+                if (upcomingActivities.length === 0) {
+                    nextActivityContent.innerHTML = `
+                        <div class="no-upcoming">
+                            <div class="icon">📅</div>
+                            <p>No upcoming activities</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort by date to find the closest one
+                upcomingActivities.sort((a, b) => {
+                    const dateA = a.data.date || '9999-12-31';
+                    const dateB = b.data.date || '9999-12-31';
+                    return dateA.localeCompare(dateB);
+                });
+                
+                const nextActivity = upcomingActivities[0];
+                
+                // Format the date for display
+                const activityDate = new Date(nextActivity.data.date);
+                const formattedDate = activityDate.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                nextActivityContent.innerHTML = `
+                    <div class="next-activity-content">
+                        <div class="next-activity-title">${nextActivity.data.activityName}</div>
+                        <div class="next-activity-details">
+                            <div class="next-activity-detail">📅 <strong>Date:</strong> ${formattedDate}</div>
+                            <div class="next-activity-detail">⏰ <strong>Time:</strong> ${nextActivity.data.startTime} - ${nextActivity.data.endTime}</div>
+                            <div class="next-activity-detail">👥 <strong>Participants:</strong> ${nextActivity.data.participants}</div>
+                            <div class="next-activity-detail">👤 <strong>Organizer:</strong> ${nextActivity.data.organizer}</div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading next activity:', error);
+                nextActivityContent.innerHTML = `
+                    <div class="no-upcoming">
+                        <div class="icon">⚠️</div>
+                        <p>Error loading next activity: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
         // Load activities
         async function loadActivities() {
             await loadPendingActivities();
             await loadApprovedActivities();
             await loadDashboardStats();
+            await loadNextActivity();
+            
+            // Update calendar after loading activities
+            updateCalendar();
         }
 
         async function loadPendingActivities() {
@@ -1611,7 +1880,15 @@
         window.updateStatus = async function(id, status) {
             try {
                 await updateDoc(doc(db, 'activities', id), { status });
-                alert(`Activity ${status}!`);
+                
+                // Show appropriate success message
+                if (status === 'approved') {
+                    showSuccessMessage('Activity Approved!', 'The activity has been successfully approved and is now visible in the approved activities list.');
+                } else {
+                    showSuccessMessage('Activity Rejected!', 'The activity has been rejected and removed from the pending list.');
+                }
+                
+                // Refresh data
                 loadActivities();
             } catch (error) {
                 alert('Error updating status: ' + error.message);
@@ -1624,8 +1901,7 @@
             setupTimeCalculation();
             setupFormSubmission();
             setupCalendarNavigation();
-            updateCalendar();
-            loadActivities();
+            loadActivities(); // This will now update the calendar after loading activities
         });
 
         // Expose loadActivities globally for section switching
