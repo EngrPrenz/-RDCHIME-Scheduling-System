@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password - Wireframe</title>
+    <style>
+        /* WIREFrame / OUTLINE THEME */
+        
+        :root {
+            --border-thick: 2px solid black;
+            --border-thin: 1px solid black;
+            --spacing: 1.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        /* Main Container Box */
+        .wireframe-container {
+            width: 100%;
+            max-width: 400px;
+            border: var(--border-thick);
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* Title Area */
+        h1 {
+            margin: 0 0 1rem 0;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            text-align: center;
+            border-bottom: var(--border-thick);
+            padding-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* Description Text */
+        .description {
+            margin-bottom: 2rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            text-align: center;
+            padding: 1rem;
+            border: 1px dashed black;
+            background-color: #f9f9f9;
+        }
+
+        /* Form Layout */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Input Fields */
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: var(--border-thin);
+            background: transparent;
+            font-family: inherit;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        /* Focus State for Inputs */
+        input:focus {
+            outline: 2px dashed black;
+            background-color: #f9f9f9;
+        }
+
+        /* Button Styling */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: var(--border-thick);
+            color: black;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: black;
+            color: white;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #eee;
+        }
+
+        /* Back Button */
+        .btn-back {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: transparent;
+            border: 1px dashed black;
+            color: black;
+            font-family: inherit;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .btn-back:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Status Message Box */
+        #status-message {
+            display: none;
+            padding: 10px;
+            margin-bottom: 1.5rem;
+            border: 1px dashed black;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        
+        .success {
+            background-color: #e0ffe0;
+            border-color: black;
+        }
+        
+        .error {
+            background-color: #ffe0e0;
+            border-color: black;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="wireframe-container">
+        <h1>Forgot Password</h1>
+
+        <!-- Description -->
+        <div class="description">
+            Enter your email address and we'll send you a link to reset your password.
+        </div>
+
+        <!-- Status Message Area -->
+        <div id="status-message"></div>
+
+        <form id="forgot-password-form">
+            <!-- Email Address -->
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="name@example.com" required>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit" id="submit-btn">Send Reset Link</button>
+
+            <!-- Back to Login -->
+            <a href="index.html" class="btn-back">Back to Login</a>
+        </form>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        // Firebase SDK imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+            authDomain: "rdchime-scheduling-system.firebaseapp.com",
+            projectId: "rdchime-scheduling-system",
+            storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+            messagingSenderId: "692945279316",
+            appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+            measurementId: "G-LP39RX0R47"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // UI Elements
+        const forgotPasswordForm = document.getElementById('forgot-password-form');
+        const emailInput = document.getElementById('email');
+        const submitBtn = document.getElementById('submit-btn');
+        const statusMessage = document.getElementById('status-message');
+
+        // Helper to show messages
+        function showMessage(text, type) {
+            statusMessage.textContent = text;
+            statusMessage.style.display = 'block';
+            statusMessage.className = type;
+        }
+
+        function clearMessage() {
+            statusMessage.style.display = 'none';
+            statusMessage.textContent = '';
+            statusMessage.className = '';
+        }
+
+        // Handle Forgot Password Form
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage();
+
+            const email = emailInput.value;
+
+            // Disable button while processing
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Sending...";
+
+            try {
+                // Configure action code settings for password reset
+                const actionCodeSettings = {
+                    url: 'http://127.0.0.1:5500/index.html', // URL to redirect after reset
+                    handleCodeInApp: false
+                };
+
+                // Send password reset email
+                await sendPasswordResetEmail(auth, email, actionCodeSettings);
+
+                showMessage(
+                    `Password reset email sent! Please check your inbox at ${email}.`,
+                    "success"
+                );
+
+                // Clear the input
+                emailInput.value = '';
+
+                // Redirect to login after 5 seconds
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 5000);
+
+            } catch (error) {
+                let errorMessage = "Error sending reset email.";
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = "No account found with this email address.";
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = "Invalid email address.";
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = "Too many requests. Please try again later.";
+                } else {
+                    errorMessage = error.message;
+                }
+                
+                showMessage(errorMessage, "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Send Reset Link";
+            }
+        });
+    </script>
+
+</body>
+</html>
