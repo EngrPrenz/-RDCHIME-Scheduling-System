@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RDCHIME Scheduling System</title>
+    <meta name="description" content=""/>
+    <meta name="author" content="RDCHIME Scheduling System" />
+
+    <meta property="og:title" content="RDCHIME Scheduling System" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+
+  <body>
+    <nav id="navbar" class="navbar">
+      <div class="container">
+        <div class="logo">
+          <h1>
+            <img src="images/RDCHIME Logo.png" alt="RDCHIME Scheduling System Logo" class="logo-img" />
+            <span class="logo-text">RDCHIME Scheduling System</span>
+          </h1>
+        </div>
+        
+        <div class="desktop-nav">
+          <ul class="nav-links">
+            <li><a href="#home" class="nav-link">Home</a></li>
+            <li><a href="#about" class="nav-link">About</a></li>
+          </ul>
+          <button class="btn btn-outline" id="login-btn">Login</button>
+        </div>
+        
+        <div class="mobile-menu-btn">
+          <button id="menu-toggle">
+            <span class="menu-icon">☰</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-close">
+          <button id="menu-close">✕</button>
+        </div>
+        <ul class="mobile-nav-links">
+          <li><a href="#home" class="mobile-nav-link">Home</a></li>
+          <li><a href="#about" class="mobile-nav-link">About</a></li>
+        </ul>
+        <button class="btn btn-outline w-full" id="mobile-login-btn">Login</button>
+      </div>
+    </nav>
+
+    <main>
+      <section id="home" class="hero">
+        <div class="video-background">
+          <video autoplay muted loop id="church-video">
+            <source src="pexels-2022395.mp4" type="video/mp4">
+          </video>
+          <div class="overlay"></div>
+        </div>
+        <div class="container video-content">
+          <h1 class="hero-title">Welcome to <span class="highlight"><br>RDCHIME Scheduling System</span></h1>
+          <p class="hero-subtitle" style="text-align: justify;">RDChime Scheduling System is a platform designed to help organize and manage activities within the Regional Design and Creativity Hub for Innovation of MSMEs in Education. It supports smooth scheduling of workshops, trainings, meetings, and creative sessions. The system aims to promote collaboration, enhance productivity, and provide an efficient way for users to stay informed and connected within the innovation hub.</p>
+          
+          
+          <div class="service-highlights">
+            <h2>RDCHIME Highlights</h2>
+            <div class="highlights-grid">
+              <div class="highlight-card">
+                <span class="highlight-date">Animation Trainings</span>
+                <h3>Enhance Your Skills</h3>
+                <p>Learn modern animation techniques and improve your creativity.</p>
+              </div>
+
+              <div class="highlight-card">
+                <span class="highlight-date">Workshops</span>
+                <h3>Hands-On Learning</h3>
+                <p>Join interactive workshops designed to develop practical skills.</p>
+              </div>
+
+              <div class="highlight-card">
+                <span class="highlight-date">Creative Sessions</span>
+                <h3>Innovate and Collaborate</h3>
+                <p>Engage in activities that spark new ideas and boost creativity.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section id="gallery" class="gallery-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="gallery-title-colored">
+               <span style="color:#f5d034;">RDCHIME <span style="color:#f43f5e;">G</span><span style="color:#f59e0b;">a</span><span style="color:#10b981;">l</span><span style="color:#3b82f6;">l</span><span style="color:#6366f1;">e</span><span style="color:#ec4899;">r</span><span style="color:#8b5cf6;">y</span>
+            </h2>
+            <p style="font-size: medium;">A glimpse of Regional Design and Creativity Hub for Innovation of MSMEs in Education. For Animation and Innovation-related Workshops, Trainings, and Research projects.</p>
+          </div>
+          
+          <div class="gallery-grid">
+            <div class="gallery-card item-1" data-images='[
+              "images/3.jpg",
+              "images/22.jpg",
+              "images/2.jpg",
+              "images/33.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/3.jpg" alt="Our Beautiful Church" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Creative Animation Training Session</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-2" data-images='[
+              "images/5.png",
+              "images/6.jpg",
+              "images/7.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/5.png" alt="Sunday School" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Regional Science, Technology, and Innovation Week</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-3" data-images='[
+              "images/8.jpg",
+              "images/1.jpg",
+              "images/2.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/8.jpg" alt="Baptism Service" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Team Workshop on Creative Techniques</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-4" data-images='[
+              "images/10.jpg",
+              "images/11.jpg",
+              "images/12.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/10.jpg" alt="Prayer Meeting" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Innovation Hub (IHUB)</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-5" data-images='[
+              "images/13.jpg",
+              "images/14.jpg",
+              "images/15.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/13.jpg" alt="Fellowship Dinner" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Interactive Animation Learning Activity</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+        <!-- <div class="wave-separators gray-wave">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div> -->
+
+      <!-- Add the wave separator here -->
+      <div class="wave-separator pink-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+
+    <!-- Enhanced About Section (Preserving Original Alignment) -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="section-header">
+          <h2>About RDCHIME</h2>
+          <p>Learn about Regional Design and Creativity Hub on Innovation MSMEs and Education.</p>
+        </div>
+        
+        <div class="about-grid">
+          <div class="about-card">
+            <div class="about-image">
+              <img src="images/about.png" alt="Our Mission">
+              <div class="card-badge">RDCHIME</div>
+            </div>
+            <div class="about-content">
+              <h3>RDCHIME</h3>
+              <p style="text-align: justify;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Regional Design and Creativity Hub for Innovation, MSMEs and Education (RDCHIME) is a collaborative project between the University of Rizal System and DOST-CALABARZON which aims to</p>
+              <p>(1) enhance the capability of industries; <br> (2) train faculty, students, and industry partners in the development of innovative design and creative skills in CALABARZON; <br> (3) provide educational benefits for the students.</p>
+              <h4> <span class="highlight" style="font-size: 20px;">Head of the RDCHIME</span></h4>
+              <br><img src="images/Head-RDCHIME.png" alt="Fellowship Dinner" class="active" style="padding-left: 60px; height: 400px;" />
+            </div>
+          </div>
+          
+          <div class="about-card">
+            <div class="about-content">
+              <h3>About RDCHIME</h3>
+              <ul class="values-list">
+                <li>
+                  <div class="value-number">1</div>
+                  <div>
+                    <h4>Our Goal:</h4>
+                    <p style="text-align: justify;">Train Faculties, Students, and Industry Partners in the Development of Innovative and Animation Skills in CALABARZON.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">2</div>
+                  <div>
+                    <h4>Objective:</h4>
+                    <p style="text-align: justify;">Enhance the capability if industries in the province of Rizal and at the same time provide education benefits for the students.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">3</div>
+                  <div>
+                    <h4>Our Services:</h4>
+                    <p style="text-align: justify;">RDCHIME is offering workshops for the following:</p>
+                    <p><br><span class="highlight">Animation Tutorials</span><br> •Traditional <br> •Digital</p>
+                    <p><span class="highlight">Innovation-related Training</span> <br> •Computer-Aided Design (Solidworks) <br> •3D Printer</p>
+                    <p><span class="highlight">Others:</span><br> •Research Project Outputs (Module)</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">4</div>
+                  <div>
+                    <h4>Who can avail our services?</h4>
+                    <p>The services offered by the RDCHIME are planned to be open to</p>
+                    <p><br> •Faculty Researchers <br> •Student Researchers <br> •LGUs <br> •MSMEs in the CALABARZON Region</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h3>Operating Hours</h3>
+            <p><span class="highlight">Monday to Thursday</span></p>
+            <p>7:00 AM TO 5:00 PM</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <h3>Location</h3>
+            <p><span class="highlight">RDCHIME Laboratory</span></p>
+            <p style="font-size: 12px;">1st Floor, DOST Rizal PSTC Bulding, University of Rizal System Antipolo Campus, Marigman Rd. Brgy. San Roque, Antipolo City</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </div>
+            <h3>Contact Us</h3>
+            <p style="font-size: 16px;"><span class="highlight">Telephone:</span> (02) 8539-9950 loc.111</p>
+            <p> <span class="highlight">Email: </span>rdchime@urs.edu.ph</p>
+          </div>
+        </div>
+      </div>
+    </section>
+      
+    </main>
+
+    <footer class="footer" >
+      <div class="container" style="align-items: center;">
+        <div class="footer-grid" >
+          <div class="footer-col" >
+            <h3>RDCHIME</h3>
+            <div class="social-links">
+              <a href="https://www.facebook.com/RDCHIME" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                </svg>
+              </a>
+              <a href="http://www.urs.edu.ph/research/regional-design-and-creativity-hub-for-innovation-in-msmes-and-education-or-rdchime/#" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.75 8c0-1.1.23-2.15.64-3.1h2.24c-.14.98-.22 2.04-.23 3.1H1.75zm.9 4.1A6.96 6.96 0 0 1 1.75 8h2.65c.01 1.06.09 2.12.23 3.1H2.65zm3.59 3.02c-.47-.86-.8-2.06-.96-3.02h2.65v3.02H6.24zM6.04 8c.01-1.06.1-2.12.25-3.1h2.46c.15.98.24 2.04.25 3.1H6.04zm.2-4.1c.16-.96.49-2.16.96-3.02h1.76c.47.86.8 2.06.96 3.02H6.24zm4.01 7.1c-.15.96-.49 2.16-.96 3.02H7.53V10h2.72zm.3-3c-.01-1.06-.1-2.12-.25-3.1h2.46c.41.95.64 2 .64 3.1h-2.85zm-.25 1h2.85a6.96 6.96 0 0 1-1.51 4.1h-2.24c.14-.98.22-2.04.23-3.1z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#about">About</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Operating Hours</h4>
+            <ul>
+              <li><span class="highlight">Monday to Thursday</span></li>
+              <li><span class="highlight">7:00 AM TO 5:00 PM</span></li>
+            </ul>
+          </div>
+          
+
+          <div class="footer-col">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="tel:(02) 8539-9950">✆: (02) 8539-9950 loc.111</a></li>
+              <li><a href="mailto:rdchime@urs.edu.ph">✉: rdchime@urs.edu.ph</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RDCHIME Scheduling System. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <div class="modal" id="login-modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2>Welcome Back!</h2>
+        <p>Login to access the administrative features</p>
+        
+        <div class="tabs">
+          <div class="tab-list">
+            <button class="tab-btn active" data-tab="admin">Admin</button>
+            <button class="tab-btn" data-tab="user">User</button>
+          </div>
+          
+          <div class="tab-content active" id="admin-tab">
+            <form class="login-form" id="admin-login-form">
+              <div class="form-group">
+                <label for="admin-email">Email</label>
+                <input type="email" id="admin-email" placeholder="admin@rdchime.com" required>
+              </div>
+              <div class="form-group">
+                <label for="admin-password">Password</label>
+                <input type="password" id="admin-password" required>
+              </div>
+              <div id="admin-error" class="error-message" style="color: red; text-align: center; margin-bottom: 1rem; display: none;"></div>
+              <button type="submit" class="btn btn-primary">Login as Administrator</button>
+              <div class="text-center">
+                <p style="font-size: 15px; margin: 0;">
+                  Don't have an account?
+                  <a href="#" class="forgot-password"> Sign Up Here!</a>
+                </p>
+                <a href="#" class="forgot-password" style="margin: 0; display: inline-block;">Forgot password?</a>
+              </div>
+            </form>
+          </div>
+          
+          <div class="tab-content" id="user-tab">
+            <form class="login-form">
+              <div class="form-group">
+                <label for="user-email">Email</label>
+                <input type="email" id="user-email" placeholder="user@rdchime.com" required>
+              </div>
+              <div class="form-group">
+                <label for="user-password">Password</label>
+                <input type="password" id="user-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Login as User</button>
+              <div class="text-center">
+                <p style="font-size: 15px; margin: 0;">
+                  Don't have an account?
+                  <a href="#" class="forgot-password"> Sign Up Here!</a>
+                </p>
+                <a href="#" class="forgot-password" style="margin: 0; display: inline-block;">Forgot password?</a>
+              </div>
+            </form>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="script.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9354931afc0c44ff',t:'MTc0NTQ4Njk0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+    <script src="script.js" type="module"></script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            updateDoc, 
+            doc, 
+            query, 
+            where, 
+            orderBy, 
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // Firebase configuration - REPLACE WITH YOUR OWN
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+            authDomain: "rdchime-scheduling-system.firebaseapp.com",
+            projectId: "rdchime-scheduling-system",
+            storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+            messagingSenderId: "692945279316",
+            appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+            measurementId: "G-LP39RX0R47"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+    </script>
+  </body>
+</html>
