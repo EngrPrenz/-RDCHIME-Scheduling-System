@@ -1,3 +1,6 @@
+
+
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { 
     getFirestore, 
@@ -11,6 +14,17 @@ import {
     orderBy, 
     serverTimestamp 
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// Add these lines right after your existing imports
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    signOut, 
+    onAuthStateChanged 
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+// Also add getDoc if not already imported (your code uses it but it's missing in the provided snippet)
+import { getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 // Firebase configuration - REPLACE WITH YOUR OWN
 const firebaseConfig = {
@@ -26,6 +40,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Add this line right after const db = getFirestore(app);
+const auth = getAuth(app);
 
 
 /* Video Background Handler */
@@ -135,7 +152,7 @@ if (adminForm && adminError) {
         onAuthStateChanged(auth, (authUser) => {
           if (authUser && authUser.uid === user.uid) {
             setTimeout(() => {
-              window.location.href = "admin.html";
+              window.location.href = "new.html";
             }, 500);
           }
         }, { once: true });
