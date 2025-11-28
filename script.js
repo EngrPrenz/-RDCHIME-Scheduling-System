@@ -592,7 +592,7 @@ function setupUsernameModal(user) {
       
       setTimeout(() => {
         console.log("Redirecting to Scheduling System homepage...");
-        window.location.href = 'new.html';
+        window.location.href = 'index.html';
       }, 1000);
     } catch (error) {
       console.error("Error setting username:", error);

@@ -7,7 +7,420 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="signupstyles.css">
+    <style>
+        :root {
+            --church-50: #fff9db;
+            --church-100: #fff3b8;
+            --church-200: #ffe887;
+            --church-300: #f5d034;
+            --church-400: #d9b12b;
+            --church-500: #bf9823;
+            --church-600: #a77f1b;
+            --church-700: #896417;
+            --church-800: #6b4c12;
+            --church-900: #4d350c;
+
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--church-100);
+            background-image: radial-gradient(var(--church-200) 1px, transparent 1px);
+            background-size: 20px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 480px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .signup-header {
+            background: linear-gradient(135deg, var(--church-500) 0%, var(--church-700) 100%);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .signup-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .signup-header p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .signup-body {
+            padding: 2.5rem 2rem;
+        }
+
+        /* Status Modal Styles */
+        #status-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        #status-modal.show {
+            display: flex;
+        }
+
+        .status-modal-content {
+            background: var(--white);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--church-200);
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .status-icon {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .status-icon.success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-icon.error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-modal-content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--church-700);
+            margin-bottom: 1rem;
+        }
+
+        .status-modal-content p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .status-modal-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--church-500) 0%, var(--church-700) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(191, 152, 35, 0.3);
+        }
+
+        .status-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(191, 152, 35, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-900);
+            font-size: 0.95rem;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--church-500);
+            box-shadow: 0 0 0 3px rgba(191, 152, 35, 0.1);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: 'Poppins', sans-serif;
+            padding: 0.25rem 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: var(--church-500);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--church-500) 0%, var(--church-700) 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(191, 152, 35, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(191, 152, 35, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .separator {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .separator::before,
+        .separator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: var(--gray-300);
+        }
+
+        .separator::before {
+            left: 0;
+        }
+
+        .separator::after {
+            right: 0;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 1rem;
+            background: var(--white);
+            color: var(--gray-900);
+            border: 2px solid var(--gray-200);
+            border-radius: 0.5rem;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-google:hover {
+            border-color: var(--church-500);
+            background: var(--gray-50);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .auth-footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--gray-600);
+        }
+
+        .auth-footer a {
+            color: var(--church-600);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .auth-footer a:hover {
+            color: var(--church-700);
+            text-decoration: underline;
+        }
+
+        /* Username Modal */
+        #username-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--church-200);
+        }
+
+        .modal-content h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--church-700);
+            text-align: center;
+        }
+
+        .modal-content > p {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        #username-error {
+            display: none;
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .signup-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .signup-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .modal-content, .status-modal-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -18,9 +431,6 @@
         </div>
 
         <div class="signup-body">
-            <!-- Status Message Area -->
-            <div id="status-message"></div>
-
             <form id="signup-form">
                 <!-- Email Address -->
                 <div class="form-group">
@@ -68,6 +478,18 @@
                 Already have an account? 
                 <a href="index.html">Log In Here</a>
             </div>
+        </div>
+    </div>
+
+    <!-- Status Modal -->
+    <div id="status-modal">
+        <div class="status-modal-content">
+            <div class="status-icon" id="status-icon">
+                ✓
+            </div>
+            <h2 id="status-title">Success!</h2>
+            <p id="status-message"></p>
+            <button class="status-modal-btn" id="status-ok-btn">OK</button>
         </div>
     </div>
 
@@ -128,7 +550,13 @@
         const confirmPasswordInput = document.getElementById('confirm_password');
         const submitBtn = document.getElementById('submit-btn');
         const googleBtn = document.getElementById('google-btn');
+        
+        // Status Modal Elements
+        const statusModal = document.getElementById('status-modal');
+        const statusIcon = document.getElementById('status-icon');
+        const statusTitle = document.getElementById('status-title');
         const statusMessage = document.getElementById('status-message');
+        const statusOkBtn = document.getElementById('status-ok-btn');
 
         // Username Modal Elements
         const usernameModal = document.getElementById('username-modal');
@@ -153,18 +581,25 @@
             toggleConfirmPassword.textContent = type === 'password' ? 'Show' : 'Hide';
         });
 
-        // Helper to show messages
-        function showMessage(text, type) {
-            statusMessage.textContent = text;
-            statusMessage.style.display = 'block';
-            statusMessage.className = type;
+        // Helper to show status modal
+        function showStatusModal(title, message, type) {
+            statusTitle.textContent = title;
+            statusMessage.textContent = message;
+            statusIcon.className = `status-icon ${type}`;
+            statusIcon.textContent = type === 'success' ? '✓' : '✕';
+            statusModal.classList.add('show');
         }
 
-        function clearMessage() {
-            statusMessage.style.display = 'none';
-            statusMessage.textContent = '';
-            statusMessage.className = '';
+        // Helper to hide status modal
+        function hideStatusModal() {
+            statusModal.classList.remove('show');
         }
+
+        // OK Button Handler
+        statusOkBtn.addEventListener('click', () => {
+            hideStatusModal();
+            window.location.href = 'index.html';
+        });
 
         // Show Username Modal
         function showUsernameModal() {
@@ -204,19 +639,18 @@
         // Handle Email/Password Sign Up
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            clearMessage();
 
             const email = emailInput.value;
             const password = passwordInput.value;
             const confirmPassword = confirmPasswordInput.value;
 
             if (password !== confirmPassword) {
-                showMessage("Passwords do not match.", "error");
+                showStatusModal('Error', 'Passwords do not match.', 'error');
                 return;
             }
 
             if (password.length < 6) {
-                showMessage("Password must be at least 6 characters.", "error");
+                showStatusModal('Error', 'Password must be at least 6 characters.', 'error');
                 return;
             }
 
@@ -239,7 +673,11 @@
                     usernameSet: false
                 });
                 
-                showMessage(`Account created! Please check your email (${user.email}) to verify your account. After verification, return to the login page and log in to set your username.`, "success");
+                showStatusModal(
+                    'Account Created!', 
+                    `Please check your email (${user.email}) to verify your account. After verification, return to the login page and log in to set your username.`,
+                    'success'
+                );
 
                 await signOut(auth);
 
@@ -254,7 +692,7 @@
                 } else {
                     errorMessage = error.message;
                 }
-                showMessage(errorMessage, "error");
+                showStatusModal('Error', errorMessage, 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Create Account";
@@ -295,12 +733,14 @@
                 });
                 
                 hideUsernameModal();
-                showMessage("Username set successfully! Redirecting to login...", "success");
                 
                 await signOut(auth);
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 2000);
+                
+                showStatusModal(
+                    'Success!',
+                    'Username set successfully! Click OK to go to the login page.',
+                    'success'
+                );
             } catch (error) {
                 console.error("Error setting username:", error);
                 usernameError.textContent = "Error setting username. Please try again.";
@@ -313,7 +753,6 @@
 
         // Handle Google Sign Up
         googleBtn.addEventListener('click', async () => {
-            clearMessage();
             const provider = new GoogleAuthProvider();
 
             try {
@@ -325,10 +764,7 @@
                 
                 if (userDoc.exists()) {
                     await auth.signOut();
-                    showMessage("An account with this email already exists. Please log in instead.", "error");
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 2000);
+                    showStatusModal('Error', 'An account with this email already exists. Please log in instead.', 'error');
                     return;
                 }
 
@@ -338,65 +774,61 @@
                     displayName: user.displayName || 'New User'
                 });
                 
-                showMessage("Account created successfully!", "success");
+                showUsernameModal();
                 
-                setTimeout(() => {
-                    clearMessage();
-                    showUsernameModal();
+                const handleUsernameSubmit = async () => {
+                    const username = usernameInput.value.trim();
                     
-                    const handleUsernameSubmit = async () => {
-                        const username = usernameInput.value.trim();
+                    if (!username) {
+                        usernameError.textContent = "Username cannot be empty.";
+                        usernameError.style.display = 'block';
+                        return;
+                    }
+
+                    if (username.length < 3) {
+                        usernameError.textContent = "Username must be at least 3 characters.";
+                        usernameError.style.display = 'block';
+                        return;
+                    }
+
+                    usernameSubmitBtn.disabled = true;
+                    usernameSubmitBtn.textContent = "Saving...";
+
+                    try {
+                        await updateDoc(doc(db, 'users', user.uid), {
+                            displayName: username,
+                            usernameSet: true,
+                            emailVerified: true,
+                            Role: 'User'
+                        });
                         
-                        if (!username) {
-                            usernameError.textContent = "Username cannot be empty.";
-                            usernameError.style.display = 'block';
-                            return;
-                        }
-
-                        if (username.length < 3) {
-                            usernameError.textContent = "Username must be at least 3 characters.";
-                            usernameError.style.display = 'block';
-                            return;
-                        }
-
-                        usernameSubmitBtn.disabled = true;
-                        usernameSubmitBtn.textContent = "Saving...";
-
-                        try {
-                            await updateDoc(doc(db, 'users', user.uid), {
-                                displayName: username,
-                                usernameSet: true,
-                                emailVerified: true,
-                                Role: 'User'
-                            });
-                            
-                            await updateProfile(user, {
-                                displayName: username
-                            });
-                            
-                            hideUsernameModal();
-                            showMessage("Username set successfully! Redirecting to login...", "success");
-                            
-                            await signOut(auth);
-                            setTimeout(() => {
-                                window.location.href = 'index.html';
-                            }, 2000);
-                        } catch (error) {
-                            console.error("Error setting username:", error);
-                            usernameError.textContent = "Error setting username. Please try again.";
-                            usernameError.style.display = 'block';
-                        } finally {
-                            usernameSubmitBtn.disabled = false;
-                            usernameSubmitBtn.textContent = "Set Username";
-                        }
-                    };
-                    
-                    const oldBtn = usernameSubmitBtn;
-                    const newBtn = oldBtn.cloneNode(true);
-                    oldBtn.parentNode.replaceChild(newBtn, oldBtn);
-                    document.getElementById('username-submit-btn').addEventListener('click', handleUsernameSubmit);
-                    
-                }, 500);
+                        await updateProfile(user, {
+                            displayName: username
+                        });
+                        
+                        hideUsernameModal();
+                        
+                        await signOut(auth);
+                        
+                        showStatusModal(
+                            'Success!',
+                            'Username set successfully! Click OK to go to the login page.',
+                            'success'
+                        );
+                    } catch (error) {
+                        console.error("Error setting username:", error);
+                        usernameError.textContent = "Error setting username. Please try again.";
+                        usernameError.style.display = 'block';
+                    } finally {
+                        usernameSubmitBtn.disabled = false;
+                        usernameSubmitBtn.textContent = "Set Username";
+                    }
+                };
+                
+                const oldBtn = usernameSubmitBtn;
+                const newBtn = oldBtn.cloneNode(true);
+                oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+                document.getElementById('username-submit-btn').addEventListener('click', handleUsernameSubmit);
 
             } catch (error) {
                 console.error("Google sign-up error:", error);
@@ -412,7 +844,7 @@
                     errorMessage = error.message;
                 }
                 
-                showMessage(errorMessage, "error");
+                showStatusModal('Error', errorMessage, 'error');
             }
         });
     </script>
