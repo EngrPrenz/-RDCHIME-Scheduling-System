@@ -176,6 +176,12 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* <CHANGE> Style for material quantities */
+        .material-tag strong {
+            margin-left: 4px;
+            opacity: 0.9;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -284,8 +290,17 @@
             const card = document.createElement('div');
             card.className = 'activity-card';
             
+            // <CHANGE> Display materials with quantities
             const materialsHTML = activity.materials && activity.materials.length > 0
-                ? activity.materials.map(m => `<span class="material-tag">${m}</span>`).join('')
+                ? activity.materials.map(m => {
+                    // Handle both old format (string) and new format (object with material and quantity)
+                    if (typeof m === 'string') {
+                        return `<span class="material-tag">${m} <strong>x1</strong></span>`;
+                    } else if (typeof m === 'object' && m.material) {
+                        return `<span class="material-tag">${m.material} <strong>x${m.quantity}</strong></span>`;
+                    }
+                    return `<span class="material-tag">${m}</span>`;
+                }).join('')
                 : '<span style="color: #999;">No materials needed</span>';
 
             const descriptionHTML = activity.description 

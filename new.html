@@ -821,6 +821,66 @@
             flex-shrink: 0;
         }
 
+        .material-tag strong {
+            margin-left: 4px;
+            opacity: 0.8;
+            font-weight: 600;
+        }
+
+        .material-quantity-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+}
+
+.material-quantity-label {
+    font-size: 12px;
+    color: #666;
+    min-width: 35px;
+}
+
+.material-quantity-input {
+    width: 50px;
+    padding: 4px 6px;
+    border: 1px solid #c29d2d;
+    border-radius: 4px;
+    font-size: 13px;
+    text-align: center;
+    margin-left: 8px;
+}
+
+.material-quantity-input:focus {
+    outline: none;
+    border-color: #4d350d;
+    background-color: #fffbf0;
+}
+
+.material-item.selected .material-quantity-container {
+    color: white;
+}
+
+.material-item.selected .material-quantity-label {
+    color: white;
+}
+
+.material-item.selected .material-quantity-input {
+    border-color: white;
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+/* <CHANGE> Remove spinner arrows from number input */
+.material-quantity-input::-webkit-outer-spin-button,
+.material-quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.material-quantity-input[type=number] {
+    -moz-appearance: textfield;
+}
+
         .material-item input[type="checkbox"]:checked + .material-checkbox {
             background: #4d350d;
             border-color: #4d350d;
@@ -1506,45 +1566,64 @@
             });
         }
 
-        // Initialize materials grid
-        function initMaterials() {
-            const materialsGrid = document.getElementById('materialsGrid');
-            if (!materialsGrid) return;
-            
-            materialsGrid.innerHTML = '';
-            MATERIALS.forEach(material => {
-                const div = document.createElement('div');
-                div.className = 'material-item';
-                const id = `mat_${material.replace(/\s/g, '_')}`;
-                div.innerHTML = `
-                    <input type="checkbox" id="${id}" value="${material}">
-                    <div class="material-checkbox"></div>
-                    <span class="material-label">${material}</span>
-                `;
-                
-                // Add click handler for the entire material item
-                const checkbox = div.querySelector('input[type="checkbox"]');
-                div.addEventListener('click', (e) => {
-                    if (e.target !== checkbox) {
-                        checkbox.checked = !checkbox.checked;
-                        // Trigger change event to update visual state
-                        const event = new Event('change', { bubbles: true });
-                        checkbox.dispatchEvent(event);
-                    }
-                });
-                
-                // Update visual state when checkbox changes
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        div.classList.add('selected');
-                    } else {
-                        div.classList.remove('selected');
-                    }
-                });
-                
-                materialsGrid.appendChild(div);
-            });
-        }
+function initMaterials() {
+    const materialsGrid = document.getElementById('materialsGrid');
+    if (!materialsGrid) return;
+    
+    materialsGrid.innerHTML = '';
+    MATERIALS.forEach(material => {
+        const div = document.createElement('div');
+        div.className = 'material-item';
+        div.style.display = 'flex';
+        div.style.alignItems = 'center';
+        
+        const id = `mat_${material.replace(/\s/g, '_')}`;
+        const qtyId = `qty_${material.replace(/\s/g, '_')}`;
+        
+        // <CHANGE> Simplified - quantity input appears inline, hidden by default
+        div.innerHTML = `
+            <input type="checkbox" id="${id}" value="${material}">
+            <div class="material-checkbox"></div>
+            <span class="material-label">${material}</span>
+            <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="100" style="display: none;">
+        `;
+        
+        const checkbox = div.querySelector('input[type="checkbox"]');
+        const qtyInput = div.querySelector('input[type="number"]');
+        
+        div.addEventListener('click', (e) => {
+            if (e.target !== checkbox && e.target !== qtyInput) {
+                checkbox.checked = !checkbox.checked;
+                const event = new Event('change', { bubbles: true });
+                checkbox.dispatchEvent(event);
+            }
+        });
+        
+        // <CHANGE> Show quantity input when checked, hide when unchecked
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                div.classList.add('selected');
+                qtyInput.style.display = 'block';
+                qtyInput.value = 1;
+                qtyInput.focus();
+            } else {
+                div.classList.remove('selected');
+                qtyInput.style.display = 'none';
+            }
+        });
+        
+        // <CHANGE> Keep quantity between 1 and 100
+        qtyInput.addEventListener('change', function() {
+            this.value = Math.max(1, Math.min(100, parseInt(this.value) || 1));
+        });
+        
+        qtyInput.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+        
+        materialsGrid.appendChild(div);
+    });
+}
         
         // Calculate hours automatically
         function setupTimeCalculation() {
@@ -1576,8 +1655,18 @@
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 
-                const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
-                    .map(cb => cb.value);
+// <CHANGE> Collect materials with quantities
+const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
+    .map(cb => {
+        const material = cb.value;
+        const qtyId = `qty_${material.replace(/\s/g, '_')}`;
+        const qtyInput = document.getElementById(qtyId);
+        const quantity = qtyInput ? parseInt(qtyInput.value) || 1 : 1;
+        return {
+            material: material,
+            quantity: quantity
+        };
+    });
 
                 const activityData = {
                     activityName: document.getElementById('activityName').value,
@@ -1843,9 +1932,18 @@
             const card = document.createElement('div');
             card.className = `activity-item ${activity.status}`;
             
+            // <CHANGE> Display materials with quantities
             const materialsHTML = activity.materials && activity.materials.length > 0
-                ? activity.materials.map(m => `<span class="material-tag">${m}</span>`).join('')
-                : '<span style="color: #94a3b8;">No materials needed</span>';
+                ? activity.materials.map(m => {
+                    // Handle both old format (string) and new format (object with material and quantity)
+                    if (typeof m === 'string') {
+                        return `<span class="material-tag">${m} <strong>x1</strong></span>`;
+                    } else if (typeof m === 'object' && m.material) {
+                        return `<span class="material-tag">${m.material} <strong>x${m.quantity}</strong></span>`;
+                    }
+                    return `<span class="material-tag">${m}</span>`;
+                }).join('')
+                : '<span style="color: #999;">No materials needed</span>';
 
             const actionsHTML = showActions ? `
                 <div class="action-buttons">
