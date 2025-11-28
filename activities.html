@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule - RDCHIME</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="homestyles.css">
+    <style>
+        .schedule-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--church-100) 0%, var(--gray-100) 100%);
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
+        
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .schedule-header h1 {
+            font-size: 2.5rem;
+            color: var(--church-700);
+            margin-bottom: 0.5rem;
+        }
+        
+        .schedule-header p {
+            color: var(--gray-600);
+            font-size: 1.125rem;
+        }
+        
+        .welcome-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .welcome-card h2 {
+            color: var(--church-700);
+            margin-bottom: 1rem;
+        }
+        
+        .user-info {
+            background: var(--church-50);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar" class="navbar scrolled">
+        <div class="container">
+            <div class="logo">
+                <h1>
+                    <img src="images/RDCHIME Logo.png" alt="RDCHIME Logo" class="logo-img" />
+                    <span class="logo-text">RDCHIME Scheduling System</span>
+                </h1>
+            </div>
+            
+            <div class="desktop-nav">
+                <ul class="nav-links">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="schedule.html" class="nav-link">Schedule</a></li>
+                    <li><a href="activities.html" class="nav-link">Activities</a></li>
+                    <li><a href="index.html#about" class="nav-link">About</a></li>
+                </ul>
+                <button class="btn btn-outline" id="account-btn">Account</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Schedule Container -->
+    <div class="schedule-container">
+        <div class="container">
+            <div class="schedule-header">
+                <h1>Ongoing Activities</h1>
+                <p>View the Ongoing activities here</p>
+            </div>
+            
+            <div class="welcome-card">
+                <h2>Welcome!</h2>
+                
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="copyright">
+                <p>&copy; 2025 RDCHIME Scheduling System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase and Scripts -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+            authDomain: "rdchime-scheduling-system.firebaseapp.com",
+            projectId: "rdchime-scheduling-system",
+            storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+            messagingSenderId: "692945279316",
+            appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+            measurementId: "G-LP39RX0R47"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check auth state
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                // Not logged in - redirect to home with message
+                alert('Please log in to access the schedule page.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                // Display user info
+                document.getElementById('user-email').textContent = user.email;
+                
+                // Get user data from Firestore
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    document.getElementById('user-name').textContent = userData.displayName || 'N/A';
+                } else {
+                    document.getElementById('user-name').textContent = 'N/A';
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        });
+
+        // Account button handler
+        document.getElementById('account-btn').addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+
+        // Logout handler
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Logout error:', error);
+                alert('Failed to logout. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
