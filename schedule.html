@@ -9,6 +9,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homestyles.css">
     <style>
+        :root {
+            --church-50: #fef3b8;
+            --church-100: #f8e8a0;
+            --church-700: #4d350d;
+            --gold: #c29d2d;
+            --gold-dark: #a8851f;
+            --gray-100: #f8fafc;
+            --gray-600: #64748b;
+        }
+
         .schedule-container {
             min-height: 100vh;
             background: linear-gradient(135deg, var(--church-100) 0%, var(--gray-100) 100%);
@@ -31,31 +41,309 @@
             color: var(--gray-600);
             font-size: 1.125rem;
         }
+
+        /* Success Message Styles */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+        }
+
+        .success-message.show {
+            transform: translateX(0);
+        }
+
+        .success-message svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            flex-shrink: 0;
+        }
+
+        .success-content {
+            flex: 1;
+        }
+
+        .success-message h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .success-message p {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .close-success {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-success:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .close-success svg {
+            width: 16px;
+            height: 16px;
+        }
         
-        .welcome-card {
+        .schedule-form-card {
             background: white;
-            padding: 2rem;
+            padding: 2.5rem;
             border-radius: 1rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
         }
-        
-        .welcome-card h2 {
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
             color: var(--church-700);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(194, 157, 45, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--church-50);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid var(--gold);
+            position: relative;
+        }
+
+        .material-item:hover {
+            background: #f8e8a0;
+            border-color: var(--church-700);
+        }
+
+        .material-item.selected {
+            background: var(--gold);
+            border-color: var(--church-700);
+        }
+
+        .material-item.selected .material-label {
+            color: white;
+            font-weight: 600;
+        }
+
+        .material-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .material-label {
+            margin-left: 0.5rem;
+            cursor: pointer;
+            flex: 1;
+            color: var(--church-700);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .material-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--gold);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .material-item input[type="checkbox"]:checked + .material-checkbox {
+            background: var(--church-700);
+            border-color: var(--church-700);
+        }
+
+        .material-item input[type="checkbox"]:checked + .material-checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            background: var(--gold);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(194, 157, 45, 0.3);
+        }
+
+        .btn-submit:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
             margin-bottom: 1rem;
         }
-        
-        .user-info {
-            background: var(--church-50);
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin: 1rem 0;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .schedule-container {
+                padding-top: 80px;
+            }
+
+            .schedule-header h1 {
+                font-size: 2rem;
+            }
+
+            .schedule-form-card {
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .success-message {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="color: var(--church-700); font-weight: 600;">Checking authentication...</p>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <div class="success-content">
+            <h4 id="successTitle">Activity Submitted Successfully!</h4>
+            <p id="successDescription">Your activity has been submitted for verification and is now pending approval.</p>
+        </div>
+        <button class="close-success" onclick="hideSuccessMessage()">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
+    </div>
+
     <!-- Navigation -->
     <nav id="navbar" class="navbar scrolled">
         <div class="container">
@@ -79,20 +367,64 @@
     </nav>
 
     <!-- Schedule Container -->
-    <div class="schedule-container">
+    <div class="schedule-container" id="scheduleContent" style="display: none;">
         <div class="container">
             <div class="schedule-header">
-                <h1>Activity Schedule</h1>
-                <p>View and manage your scheduled activities</p>
+                <h1>Schedule Activity</h1>
+                <p>Create and submit a new activity for RDCHIME laboratory</p>
             </div>
             
-            <div class="welcome-card">
-                <h2>Welcome!</h2>
-                <p style="color: var(--gray-600); margin-top: 1rem;">
-                    Your schedule content will appear here. This is a protected page that requires authentication.
-                </p>
-                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                </div>
+            <div class="schedule-form-card">
+                <form id="activityForm">
+                    <div class="form-group">
+                        <label>Activity Name <span class="required">*</span></label>
+                        <input type="text" id="activityName" required placeholder="Enter activity name">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date <span class="required">*</span></label>
+                            <input type="date" id="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Participants <span class="required">*</span></label>
+                            <input type="number" id="participants" min="1" required placeholder="e.g., 25">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Time <span class="required">*</span></label>
+                            <input type="time" id="startTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Time <span class="required">*</span></label>
+                            <input type="time" id="endTime" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Number of Hours</label>
+                        <input type="number" id="hours" step="0.5" readonly style="background: #f8fafc;" placeholder="Auto-calculated">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Organizer Name <span class="required">*</span></label>
+                        <input type="text" id="organizer" required placeholder="Enter organizer name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Materials Needed</label>
+                        <div class="materials-grid" id="materialsGrid"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Submit for Verification</button>
+                </form>
             </div>
         </div>
     </div>
@@ -109,8 +441,13 @@
     <!-- Firebase and Scripts -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            serverTimestamp
+        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
@@ -126,45 +463,199 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        const MATERIALS = [
+            'DLP Projector',
+            'HDMI Cable',
+            'Speaker',
+            'Microphone',
+            'Light Box',
+            'Animation Tablet',
+            'Laptop',
+            'Whiteboard',
+            'Markers',
+            'Chairs',
+            'Tables'
+        ];
+
+        let currentUser = null;
+
+        // Success message functions
+        function showSuccessMessage(title, description) {
+            const successMessage = document.getElementById('successMessage');
+            const successTitle = document.getElementById('successTitle');
+            const successDescription = document.getElementById('successDescription');
+            
+            successTitle.textContent = title;
+            successDescription.textContent = description;
+            successMessage.classList.add('show');
+            
+            setTimeout(() => {
+                hideSuccessMessage();
+            }, 5000);
+        }
+
+        window.hideSuccessMessage = function() {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.remove('show');
+        };
+
+        // Initialize materials grid
+        function initMaterials() {
+            const materialsGrid = document.getElementById('materialsGrid');
+            if (!materialsGrid) return;
+            
+            materialsGrid.innerHTML = '';
+            MATERIALS.forEach(material => {
+                const div = document.createElement('div');
+                div.className = 'material-item';
+                const id = `mat_${material.replace(/\s/g, '_')}`;
+                div.innerHTML = `
+                    <input type="checkbox" id="${id}" value="${material}">
+                    <div class="material-checkbox"></div>
+                    <span class="material-label">${material}</span>
+                `;
+                
+                const checkbox = div.querySelector('input[type="checkbox"]');
+                div.addEventListener('click', (e) => {
+                    if (e.target !== checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        const event = new Event('change', { bubbles: true });
+                        checkbox.dispatchEvent(event);
+                    }
+                });
+                
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        div.classList.add('selected');
+                    } else {
+                        div.classList.remove('selected');
+                    }
+                });
+                
+                materialsGrid.appendChild(div);
+            });
+        }
+        
+        // Calculate hours automatically
+        function setupTimeCalculation() {
+            const startTime = document.getElementById('startTime');
+            const endTime = document.getElementById('endTime');
+            if (startTime && endTime) {
+                startTime.addEventListener('change', calculateHours);
+                endTime.addEventListener('change', calculateHours);
+            }
+        }
+
+        function calculateHours() {
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+            
+            if (startTime && endTime) {
+                const start = new Date(`2000-01-01T${startTime}`);
+                const end = new Date(`2000-01-01T${endTime}`);
+                const hours = (end - start) / (1000 * 60 * 60);
+                document.getElementById('hours').value = hours > 0 ? hours.toFixed(1) : 0;
+            }
+        }
+
+        // Form submission
+        function setupFormSubmission() {
+            const form = document.getElementById('activityForm');
+            if (!form) return;
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!currentUser) {
+                    alert('You must be logged in to submit an activity.');
+                    return;
+                }
+
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                
+                const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
+                    .map(cb => cb.value);
+
+                const activityData = {
+                    activityName: document.getElementById('activityName').value,
+                    date: document.getElementById('date').value,
+                    startTime: document.getElementById('startTime').value,
+                    endTime: document.getElementById('endTime').value,
+                    hours: parseFloat(document.getElementById('hours').value),
+                    participants: parseInt(document.getElementById('participants').value),
+                    organizer: document.getElementById('organizer').value,
+                    materials: selectedMaterials,
+                    description: document.getElementById('description').value,
+                    status: 'pending',
+                    createdBy: currentUser.uid,
+                    createdByEmail: currentUser.email,
+                    createdAt: serverTimestamp()
+                };
+
+                try {
+                    await addDoc(collection(db, 'activities'), activityData);
+                    
+                    showSuccessMessage('Activity Submitted Successfully!', 'Your activity has been submitted for verification and is now pending approval.');
+                    
+                    form.reset();
+                    
+                    // Clear selected materials
+                    document.querySelectorAll('.material-item').forEach(item => {
+                        item.classList.remove('selected');
+                    });
+                } catch (error) {
+                    alert('Error submitting activity: ' + error.message);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit for Verification';
+                }
+            });
+        }
+
+        // Set minimum date to today
+        function setMinDate() {
+            const dateInput = document.getElementById('date');
+            if (dateInput) {
+                const today = new Date().toISOString().split('T')[0];
+                dateInput.min = today;
+            }
+        }
+
         // Check auth state
         onAuthStateChanged(auth, async (user) => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const scheduleContent = document.getElementById('scheduleContent');
+            
             if (!user) {
-                // Not logged in - redirect to home with message
+                // Not logged in - show alert and redirect
+                loadingOverlay.style.display = 'none';
                 alert('Please log in to access the schedule page.');
                 window.location.href = 'index.html';
                 return;
             }
 
-            try {
-                // Display user info
-                document.getElementById('user-email').textContent = user.email;
-                
-                // Get user data from Firestore
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    document.getElementById('user-name').textContent = userData.displayName || 'N/A';
-                } else {
-                    document.getElementById('user-name').textContent = 'N/A';
-                }
-            } catch (error) {
-                console.error('Error loading user data:', error);
-            }
+            // User is logged in
+            currentUser = user;
+            loadingOverlay.style.display = 'none';
+            scheduleContent.style.display = 'block';
+            
+            // Initialize form
+            initMaterials();
+            setupTimeCalculation();
+            setupFormSubmission();
+            setMinDate();
         });
 
         // Account button handler
         document.getElementById('account-btn').addEventListener('click', () => {
-            window.location.href = 'account.html';
-        });
-
-        // Logout handler
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
+            if (currentUser) {
+                window.location.href = 'account.html';
+            } else {
+                alert('Please log in first.');
                 window.location.href = 'index.html';
-            }).catch((error) => {
-                console.error('Logout error:', error);
-                alert('Failed to logout. Please try again.');
-            });
+            }
         });
     </script>
 </body>

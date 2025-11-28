@@ -1794,4 +1794,147 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+async function loadApprovedActivities() {
+    const carouselTrack = document.getElementById('carouselTrack');
+    
+    if (!carouselTrack) {
+        console.error('Carousel track not found');
+        return;
+    }
 
+    try {
+        // Show loading state
+        carouselTrack.innerHTML = `
+            <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; padding: 40px;">
+                    <div style="width: 50px; height: 50px; border: 4px solid #f5d034; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                    <p style="color: #666;">Loading approved activities...</p>
+                </div>
+            </div>
+        `;
+
+        // Query Firestore for approved activities (without orderBy to avoid index requirement)
+        const activitiesRef = collection(db, "activities");
+        const q = query(
+            activitiesRef,
+            where("status", "==", "approved")
+        );
+
+        const querySnapshot = await getDocs(q);
+        
+        // Clear loading state
+        carouselTrack.innerHTML = '';
+
+        if (querySnapshot.empty) {
+            carouselTrack.innerHTML = `
+                <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="color: #666; font-size: 1.1rem;">No approved activities found.</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Convert to array and sort by date manually
+        const activities = [];
+        querySnapshot.forEach((doc) => {
+            activities.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Sort by date (ascending order)
+        activities.sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            return dateA - dateB;
+        });
+
+        // Build cards from sorted data
+        activities.forEach((activity) => {
+            const card = createActivityCard(activity);
+            carouselTrack.appendChild(card);
+        });
+
+        console.log(`Loaded ${activities.length} approved activities`);
+
+    } catch (error) {
+        console.error("Error loading approved activities:", error);
+        carouselTrack.innerHTML = `
+            <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; padding: 40px;">
+                    <p style="color: #e74c3c; font-size: 1.1rem;">Error loading activities</p>
+                    <p style="color: #666; font-size: 0.9rem;">${error.message}</p>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Function to create an activity card element
+function createActivityCard(activity) {
+    const card = document.createElement('div');
+    card.className = 'aa-activity-card';
+    
+    // Use activityName field
+    const title = activity.activityName || 'Untitled Activity';
+    
+    // Format date (YYYY-MM-DD format from Firestore)
+    const activityDate = activity.date || 'TBA';
+    
+    // Format time using startTime and endTime
+    const startTime = activity.startTime || '';
+    const endTime = activity.endTime || '';
+    const timeDisplay = (startTime && endTime) ? `${startTime} - ${endTime}` : (startTime || 'TBA');
+    
+    // Get participants count
+    const participants = activity.participants || 0;
+    
+    // Get image URL (use placeholder if not available)
+    const imageUrl = activity.imageUrl || activity.image || 'https://via.placeholder.com/1000x400?text=Event+Photo';
+    
+    // Get materials array
+    let materialsHTML = '';
+    if (activity.materials && Array.isArray(activity.materials) && activity.materials.length > 0) {
+        materialsHTML = activity.materials.map(material => 
+            `<span class="aa-material-tag">${material}</span>`
+        ).join('');
+    } else {
+        materialsHTML = '<span class="aa-material-tag">No materials specified</span>';
+    }
+    
+    // Get description
+    const description = activity.description || 'No description available.';
+    
+    // Build the card HTML
+    card.innerHTML = `
+        <div class="aa-image-container">
+            <img src="${imageUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/1000x400?text=Event+Photo'">
+        </div>
+        <div class="aa-title">${title}</div>
+        <div class="aa-meta-grid">
+            <div class="aa-meta-item">
+                <i class="far fa-calendar-alt"></i>
+                <span><strong>Date:</strong> ${activityDate}</span>
+            </div>
+            <div class="aa-meta-item">
+                <i class="far fa-clock"></i>
+                <span><strong>Time:</strong> ${timeDisplay}</span>
+            </div>
+            <div class="aa-meta-item">
+                <i class="fas fa-users"></i>
+                <span><strong>Participants:</strong> ${participants}</span>
+            </div>
+        </div>
+        <div class="aa-description-box">
+            ${description}
+        </div>
+    `;
+    
+    return card;
+}
+
+// Call this function when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Load approved activities
+    loadApprovedActivities();
+});
