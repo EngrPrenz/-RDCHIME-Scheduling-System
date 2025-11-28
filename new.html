@@ -834,6 +834,124 @@
             font-weight: bold;
         }
 
+        /* Added material quantity input styles */
+        .material-quantity-input {
+            width: 60px;
+            padding: 4px 6px;
+            border: 1px solid #c29d2d;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            margin-left: 8px;
+            display: none;
+            z-index: 1;
+            position: relative;
+        }
+
+        .material-item.selected .material-quantity-input {
+            display: block !important;
+            background: white;
+            color: #333;
+        }
+
+        .material-quantity-input:focus {
+            outline: none;
+            border-color: #4d350d;
+        }
+
+        .material-quantity-input::-webkit-outer-spin-button,
+        .material-quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .material-quantity-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Added image drop zone styles */
+        #drop-zone {
+            width: 100%;
+            min-height: 200px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            user-select: none;
+            background: #f9fafb;
+        }
+
+        #drop-zone:hover,
+        #drop-zone.drag-over {
+            border-color: #c29d2d;
+            background-color: #fffbf0;
+        }
+
+        #drop-zone p {
+            margin: 5px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .error {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        #preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .delete-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
         .btn {
             padding: 12px 30px;
             border: none;
@@ -1109,7 +1227,7 @@
             <div class="sidebar-header">
                 <div class="logo">
                     <svg viewBox="0 0 24 24">
-                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 5.5V7H9V5.5L3 7V9L5 9.5V15.5L3 16V18L9 16.5V15.5L15 16.5V18L21 16V14L19 15.5V9.5L21 9ZM15 13.5V9.5H9V13.5H15Z"/>
+                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 5.5V7H9V5.5L3 7V9L5 9.5V15.5L3 16V18L9 16.5V18L21 16V14L19 15.5V9.5L21 9ZM15 13.5V9.5H9V13.5H15Z"/>
                     </svg>
                 </div>
                 <div>
@@ -1327,6 +1445,18 @@
                             <div class="materials-grid" id="materialsGrid"></div>
                         </div>
 
+                        <!-- Added section for image upload -->
+                        <div class="form-group">
+                            <label>Activity Images (Optional, max 5)</label>
+                            <div id="drop-zone">
+                                <p>Drag and drop images here</p>
+                                <p>or click to select files</p>
+                            </div>
+                            <input type="file" id="file-input" accept="image/*" multiple>
+                            <div id="preview-container"></div>
+                            <div id="error-message" class="error"></div>
+                        </div>
+
                         <div class="form-group">
                             <label>Description</label>
                             <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
@@ -1354,6 +1484,7 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { 
             getFirestore, 
             collection, 
@@ -1366,6 +1497,9 @@
             orderBy, 
             serverTimestamp
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        
+        // Placeholder for Firebase Storage import if needed later
+        // import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -1380,7 +1514,9 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app); // Initialize Auth
         const db = getFirestore(app);
+        // const storage = getStorage(app); // Initialize Storage if needed
 
         const MATERIALS = [
             'DLP Projector',
@@ -1401,6 +1537,11 @@
         let activitiesWithDates = [];
 
         // Success message functions
+        window.hideSuccessMessage = function() { // Make globally accessible
+            const successMessage = document.getElementById('successMessage');
+            if (successMessage) successMessage.classList.remove('show');
+        };
+
         function showSuccessMessage(title, description) {
             const successMessage = document.getElementById('successMessage');
             const successTitle = document.getElementById('successTitle');
@@ -1412,13 +1553,8 @@
             
             // Auto hide after 5 seconds
             setTimeout(() => {
-                hideSuccessMessage();
+                window.hideSuccessMessage();
             }, 5000);
-        }
-
-        function hideSuccessMessage() {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.remove('show');
         }
 
         // Calendar functions
@@ -1508,6 +1644,7 @@
         }
 
         // Initialize materials grid
+        // Updated to include quantity input
         function initMaterials() {
             const materialsGrid = document.getElementById('materialsGrid');
             if (!materialsGrid) return;
@@ -1516,31 +1653,48 @@
             MATERIALS.forEach(material => {
                 const div = document.createElement('div');
                 div.className = 'material-item';
+                div.style.display = 'flex';
+                div.style.alignItems = 'center';
+                
                 const id = `mat_${material.replace(/\s/g, '_')}`;
+                const qtyId = `qty_${material.replace(/\s/g, '_')}`;
+                
                 div.innerHTML = `
                     <input type="checkbox" id="${id}" value="${material}">
                     <div class="material-checkbox"></div>
                     <span class="material-label">${material}</span>
+                    <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="1000" style="display: none;">
                 `;
                 
-                // Add click handler for the entire material item
                 const checkbox = div.querySelector('input[type="checkbox"]');
+                const qtyInput = div.querySelector('input[type="number"]');
+                
                 div.addEventListener('click', (e) => {
-                    if (e.target !== checkbox) {
+                    if (e.target !== checkbox && e.target !== qtyInput) {
                         checkbox.checked = !checkbox.checked;
-                        // Trigger change event to update visual state
                         const event = new Event('change', { bubbles: true });
                         checkbox.dispatchEvent(event);
                     }
                 });
                 
-                // Update visual state when checkbox changes
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
                         div.classList.add('selected');
+                        qtyInput.style.display = 'block';
+                        qtyInput.value = 1;
+                        qtyInput.focus();
                     } else {
                         div.classList.remove('selected');
+                        qtyInput.style.display = 'none';
                     }
+                });
+                
+                qtyInput.addEventListener('change', function() {
+                    this.value = Math.max(1, Math.min(1000, parseInt(this.value) || 1));
+                });
+                
+                qtyInput.addEventListener('click', (e) => {
+                    e.stopPropagation();
                 });
                 
                 materialsGrid.appendChild(div);
@@ -1578,8 +1732,13 @@
                 e.preventDefault();
                 
                 const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
-                    .map(cb => cb.value);
+                    .map(cb => {
+                        const materialName = cb.value;
+                        const quantity = document.getElementById(`qty_${materialName.replace(/\s/g, '_')}`).value;
+                        return { name: materialName, quantity: parseInt(quantity) };
+                    });
 
+                // Handle image uploads
                 const activityData = {
                     activityName: document.getElementById('activityName').value,
                     date: document.getElementById('date').value,
@@ -1595,18 +1754,31 @@
                 };
 
                 try {
-                    await addDoc(collection(db, 'activities'), activityData);
+                    const docRef = await addDoc(collection(db, 'activities'), activityData);
+                    const newActivityId = docRef.id;
+
+                    // Upload images if any
+                    if (uploadedFiles.length > 0) {
+                        // await uploadActivityImages(newActivityId, uploadedFiles); // Implement this function later if needed
+                        console.log('Images uploaded or queued for upload.');
+                    }
                     
                     // Show success message
                     showSuccessMessage('Activity Submitted Successfully!', 'Your activity has been submitted for verification and is now pending approval.');
                     
-                    // Reset form
+                    // Reset form and uploaded files
                     form.reset();
+                    uploadedFiles = [];
+                    document.getElementById('preview-container').innerHTML = '';
+                    document.getElementById('error-message').textContent = '';
+                    // Re-initialize materials to reset quantities
+                    initMaterials(); 
                     
                     // Refresh data
                     loadActivities();
                     loadDashboardStats();
                 } catch (error) {
+                    console.error('Error submitting activity:', error);
                     alert('Error submitting activity: ' + error.message);
                 }
             });
@@ -1844,8 +2016,9 @@
             const card = document.createElement('div');
             card.className = `activity-item ${activity.status}`;
             
+            // Modified materials display to include quantities
             const materialsHTML = activity.materials && activity.materials.length > 0
-                ? activity.materials.map(m => `<span class="material-tag">${m}</span>`).join('')
+                ? activity.materials.map(m => `<span class="material-tag">${m.quantity}x ${m.name}</span>`).join('')
                 : '<span style="color: #94a3b8;">No materials needed</span>';
 
             const actionsHTML = showActions ? `
@@ -1896,6 +2069,103 @@
             }
         };
 
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const errorMessage = document.getElementById('error-message');
+        const previewContainer = document.getElementById('preview-container');
+
+        const MAX_FILE_COUNT = 5;
+        let uploadedFiles = [];
+
+        if (dropZone && fileInput) {
+            dropZone.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+            dropZone.addEventListener('drop', handleDrop, false);
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        function highlight() { dropZone.classList.add('drag-over'); }
+        function unhighlight() { dropZone.classList.remove('drag-over'); }
+
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            handleFiles(dt.files);
+        }
+
+        function handleFiles(files) {
+            errorMessage.textContent = '';
+            
+            const incomingFiles = [...files];
+            const totalFilesAfterAddition = uploadedFiles.length + incomingFiles.length;
+
+            if (totalFilesAfterAddition > MAX_FILE_COUNT) {
+                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded.`;
+                fileInput.value = '';
+                return;
+            }
+
+            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
+            
+            if (validImageFiles.length !== incomingFiles.length) {
+                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
+                fileInput.value = '';
+                return;
+            }
+            
+            validImageFiles.forEach(file => {
+                uploadedFiles.push(file);
+                previewFile(file);
+            });
+            
+            fileInput.value = '';
+        }
+
+        function previewFile(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onloadend = () => {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('preview-item');
+                previewItem.dataset.filename = file.name;
+
+                const img = document.createElement('img');
+                img.src = reader.result;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.textContent = 'x';
+                
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    deleteFile(file.name, previewItem);
+                });
+
+                previewItem.appendChild(img);
+                previewItem.appendChild(deleteBtn);
+                previewContainer.appendChild(previewItem);
+            }
+        }
+
+        function deleteFile(fileName, previewElement) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            previewElement.remove();
+            errorMessage.textContent = '';
+        }
+
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initMaterials();
@@ -1903,6 +2173,14 @@
             setupFormSubmission();
             setupCalendarNavigation();
             loadActivities(); // This will now update the calendar after loading activities
+            
+            // Basic auth check - redirect if not logged in (example)
+            onAuthStateChanged(auth, (user) => {
+                if (!user) {
+                    // User is not logged in, redirect to login page
+                    window.location.href = 'index.html'; // Assuming index.html is your login page
+                }
+            });
         });
 
         // Expose loadActivities globally for section switching
@@ -1928,9 +2206,6 @@
                 window.loadActivities();
             }
         }
-
-        // Expose hideSuccessMessage globally
-        window.hideSuccessMessage = hideSuccessMessage;
     </script>
 </body>
 </html>

@@ -232,6 +232,125 @@
             font-weight: bold;
         }
 
+        /* Added material quantity input styles */
+        .material-quantity-input {
+            width: 60px;
+            padding: 4px 6px;
+            border: 1px solid var(--gold);
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+            margin-left: 8px;
+            display: none;
+            z-index: 1;
+            position: relative;
+        }
+
+        .material-item.selected .material-quantity-input {
+            display: block !important;
+            background: white;
+            color: var(--church-700);
+        }
+
+        .material-quantity-input:focus {
+            outline: none;
+            border-color: var(--church-700);
+            background-color: #fffbf0;
+        }
+
+        .material-quantity-input::-webkit-outer-spin-button,
+        .material-quantity-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .material-quantity-input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Added image drop zone styles */
+        #drop-zone {
+            width: 100%;
+            min-height: 200px;
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            user-select: none;
+            background: #f9fafb;
+        }
+
+        #drop-zone:hover,
+        #drop-zone.drag-over {
+            border-color: var(--gold);
+            background-color: #fffbf0;
+        }
+
+        #drop-zone p {
+            margin: 5px 0;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .error {
+            color: #ef4444;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        #preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .delete-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
         .btn-submit {
             background: var(--gold);
             color: white;
@@ -256,35 +375,6 @@
             background: #d1d5db;
             cursor: not-allowed;
             transform: none;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid #e2e8f0;
-            border-top: 4px solid var(--gold);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .required {
@@ -322,12 +412,6 @@
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-        <p style="color: var(--church-700); font-weight: 600;">Checking authentication...</p>
-    </div>
-
     <!-- Success Message -->
     <div class="success-message" id="successMessage">
         <svg viewBox="0 0 24 24">
@@ -414,13 +498,29 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Materials Needed</label>
+                        <label>Materials Needed (Select and set quantity 1-1000)</label>
                         <div class="materials-grid" id="materialsGrid"></div>
                     </div>
 
                     <div class="form-group">
                         <label>Description</label>
                         <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
+                    </div>
+
+                    <!-- Added image upload section -->
+                    <div class="form-group">
+                        <label>Upload Images (Up to 5 images)</label>
+
+                        <div id="drop-zone">
+                            <p>Drag files to upload</p>
+                            <p>or click to select files</p>
+                            <p>(Only images accepted)</p>
+                            <input type="file" id="file-input" accept="image/*" multiple>
+                        </div>
+
+                        <div id="error-message" class="error"></div>
+
+                        <div id="preview-container"></div>
                     </div>
 
                     <button type="submit" class="btn-submit" id="submitBtn">Submit for Verification</button>
@@ -499,7 +599,6 @@
             successMessage.classList.remove('show');
         };
 
-        // Initialize materials grid
         function initMaterials() {
             const materialsGrid = document.getElementById('materialsGrid');
             if (!materialsGrid) return;
@@ -509,15 +608,19 @@
                 const div = document.createElement('div');
                 div.className = 'material-item';
                 const id = `mat_${material.replace(/\s/g, '_')}`;
+                const qtyId = `qty_${material.replace(/\s/g, '_')}`;
                 div.innerHTML = `
                     <input type="checkbox" id="${id}" value="${material}">
                     <div class="material-checkbox"></div>
                     <span class="material-label">${material}</span>
+                    <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="1000">
                 `;
                 
                 const checkbox = div.querySelector('input[type="checkbox"]');
+                const qtyInput = div.querySelector('.material-quantity-input');
+                
                 div.addEventListener('click', (e) => {
-                    if (e.target !== checkbox) {
+                    if (e.target !== checkbox && e.target !== qtyInput) {
                         checkbox.checked = !checkbox.checked;
                         const event = new Event('change', { bubbles: true });
                         checkbox.dispatchEvent(event);
@@ -527,9 +630,40 @@
                 checkbox.addEventListener('change', function() {
                     if (this.checked) {
                         div.classList.add('selected');
+                        qtyInput.style.display = 'block';
+                        qtyInput.focus();
                     } else {
                         div.classList.remove('selected');
+                        qtyInput.style.display = 'none';
                     }
+                });
+                
+                qtyInput.addEventListener('input', function() {
+                    let value = this.value;
+                    
+                    if (value === '') return;
+                    
+                    value = parseInt(value);
+                    
+                    if (isNaN(value)) {
+                        this.value = 1;
+                        return;
+                    }
+                    
+                    if (value < 1) value = 1;
+                    if (value > 1000) value = 1000;
+                    
+                    this.value = value;
+                });
+
+                qtyInput.addEventListener('blur', function() {
+                    if (this.value === '' || parseInt(this.value) < 1) {
+                        this.value = 1;
+                    }
+                });
+
+                qtyInput.addEventListener('click', (e) => {
+                    e.stopPropagation();
                 });
                 
                 materialsGrid.appendChild(div);
@@ -576,7 +710,16 @@
                 submitBtn.textContent = 'Submitting...';
                 
                 const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
-                    .map(cb => cb.value);
+                    .map(cb => {
+                        const material = cb.value;
+                        const qtyId = `qty_${material.replace(/\s/g, '_')}`;
+                        const qtyInput = document.getElementById(qtyId);
+                        const quantity = parseInt(qtyInput.value) || 1;
+                        return {
+                            material: material,
+                            quantity: quantity
+                        };
+                    });
 
                 const activityData = {
                     activityName: document.getElementById('activityName').value,
@@ -597,58 +740,141 @@
                 try {
                     await addDoc(collection(db, 'activities'), activityData);
                     
-                    showSuccessMessage('Activity Submitted Successfully!', 'Your activity has been submitted for verification and is now pending approval.');
+                    showSuccessMessage('Success!', 'Your activity has been submitted for approval.');
                     
                     form.reset();
-                    
-                    // Clear selected materials
                     document.querySelectorAll('.material-item').forEach(item => {
                         item.classList.remove('selected');
+                        const qtyInput = item.querySelector('.material-quantity-input');
+                        if (qtyInput) qtyInput.style.display = 'none';
                     });
+                    uploadedFiles = [];
+                    previewContainer.innerHTML = '';
+                    
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit for Verification';
                 } catch (error) {
-                    alert('Error submitting activity: ' + error.message);
-                } finally {
+                    console.error('Error submitting activity:', error);
+                    alert('Error submitting activity. Please try again.');
                     submitBtn.disabled = false;
                     submitBtn.textContent = 'Submit for Verification';
                 }
             });
         }
 
-        // Set minimum date to today
-        function setMinDate() {
-            const dateInput = document.getElementById('date');
-            if (dateInput) {
-                const today = new Date().toISOString().split('T')[0];
-                dateInput.min = today;
-            }
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const errorMessage = document.getElementById('error-message');
+        const previewContainer = document.getElementById('preview-container');
+
+        const MAX_FILE_COUNT = 5;
+        let uploadedFiles = [];
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        function highlight() { dropZone.classList.add('drag-over'); }
+        function unhighlight() { dropZone.classList.remove('drag-over'); }
+
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            handleFiles(dt.files);
         }
 
-        // Check auth state
-        onAuthStateChanged(auth, async (user) => {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            const scheduleContent = document.getElementById('scheduleContent');
+        function handleFiles(files) {
+            errorMessage.textContent = '';
             
-            if (!user) {
-                // Not logged in - show alert and redirect
-                loadingOverlay.style.display = 'none';
-                alert('Please log in to access the schedule page.');
-                window.location.href = 'index.html';
+            const incomingFiles = [...files];
+            const totalFilesAfterAddition = uploadedFiles.length + incomingFiles.length;
+
+            if (totalFilesAfterAddition > MAX_FILE_COUNT) {
+                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded.`;
+                fileInput.value = '';
                 return;
             }
 
-            // User is logged in
-            currentUser = user;
-            loadingOverlay.style.display = 'none';
-            scheduleContent.style.display = 'block';
+            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
             
-            // Initialize form
-            initMaterials();
-            setupTimeCalculation();
-            setupFormSubmission();
-            setMinDate();
+            if (validImageFiles.length !== incomingFiles.length) {
+                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
+                fileInput.value = '';
+                return;
+            }
+            
+            validImageFiles.forEach(file => {
+                uploadedFiles.push(file);
+                previewFile(file);
+            });
+            
+            fileInput.value = '';
+        }
+
+        function previewFile(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onloadend = () => {
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('preview-item');
+                previewItem.dataset.filename = file.name;
+
+                const img = document.createElement('img');
+                img.src = reader.result;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.textContent = 'x';
+                
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    deleteFile(file.name, previewItem);
+                });
+
+                previewItem.appendChild(img);
+                previewItem.appendChild(deleteBtn);
+                previewContainer.appendChild(previewItem);
+            }
+        }
+
+        function deleteFile(fileName, previewElement) {
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            previewElement.remove();
+            errorMessage.textContent = '';
+        }
+
+        // Authentication check
+        onAuthStateChanged(auth, (user) => {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+            
+            const scheduleContent = document.getElementById('scheduleContent');
+            
+            if (user) {
+                currentUser = user;
+                scheduleContent.style.display = 'block';
+                initMaterials();
+                setupTimeCalculation();
+                setupFormSubmission();
+            } else {
+                scheduleContent.innerHTML = '<div style="text-align: center; padding: 100px; color: #999;"><p>Please log in to schedule activities.</p></div>';
+            }
         });
 
-        // Account button handler
         document.getElementById('account-btn').addEventListener('click', () => {
             if (currentUser) {
                 window.location.href = 'account.html';
