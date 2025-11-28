@@ -17,6 +17,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homestyles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   </head>
 
   <body>
@@ -101,64 +102,126 @@
       <!-- ApprovedActs Section-->
       <section class="aa">
       <div class="aa-main-section-wrapper">
-        <div class="aa-section-header">
-            <h2 style="color: maroon">Upcoming Activities</h2>
-            <p>View all upcoming and scheduled activities</p>
+        
+        <div class="aa-content-box">
+
+            <div class="aa-section-header">
+                <h2>Approved Activities</h2>
+                <p>List of upcoming activities</p>
+            </div>
+
+            <div class="aa-carousel-container">
+                
+                <button class="aa-carousel-nav aa-nav-left" onclick="scrollCarousel(-1)"><i class="fas fa-chevron-left"></i></button>
+                
+                <div class="aa-carousel-track" id="carouselTrack">
+                    
+                    <div class="aa-activity-card">
+                        <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+1" alt="Event Photo Placeholder"></div>
+                        <div class="aa-title">Basic Animation Workshop (Card 1)</div>
+                        <div class="aa-meta-grid">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span><strong>Date:</strong> 2025-11-25</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span><strong>Time:</strong> 16:13 - 19:13</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span><strong>Participants:</strong> 32</span></div>
+                        </div>
+                        <div class="aa-description-box">This workshop aims to teach the fundamentals of traditional and digital animation to students.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">DLP Projector</span>
+                                <span class="aa-material-tag">Speaker</span>
+                                <span class="aa-material-tag">Laptop</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aa-activity-card">
+                        <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+2" alt="Event Photo Placeholder"></div>
+                        <div class="aa-title">Digital Marketing Seminar (Card 2)</div>
+                        <div class="aa-meta-grid">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span><strong>Date:</strong> 2025-12-01</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span><strong>Time:</strong> 09:00 - 12:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span><strong>Participants:</strong> 50</span></div>
+                        </div>
+                        <div class="aa-description-box">Focusing on SEO, social media strategy, and content creation for modern platforms.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Whiteboard</span>
+                                <span class="aa-material-tag">Markers</span>
+                                <span class="aa-material-tag">Coffee</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="aa-activity-card">
+                        <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+3" alt="Event Photo Placeholder"></div>
+                        <div class="aa-title">Basic Photography Workshop (Card 3)</div>
+                        <div class="aa-meta-grid">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span><strong>Date:</strong> 2026-01-15</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span><strong>Time:</strong> 14:00 - 17:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span><strong>Participants:</strong> 25</span></div>
+                        </div>
+                        <div class="aa-description-box">Learn the fundamentals of aperture, shutter speed, and ISO for stunning photos.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">DSLR Camera</span>
+                                <span class="aa-material-tag">Tripod</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="aa-activity-card">
+                        <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+4" alt="Event Photo Placeholder"></div>
+                        <div class="aa-title">Data Science Fundamentals (Card 4)</div>
+                        <div class="aa-meta-grid">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span><strong>Date:</strong> 2026-02-01</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span><strong>Time:</strong> 10:00 - 13:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span><strong>Participants:</strong> 40</span></div>
+                        </div>
+                        <div class="aa-description-box">A dive into Python, R, and statistical modeling for beginners.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Laptop</span>
+                                <span class="aa-material-tag">Internet</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aa-activity-card">
+                        <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+4" alt="Event Photo Placeholder"></div>
+                        <div class="aa-title">Data Science Fundamentals (Card 4)</div>
+                        <div class="aa-meta-grid">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span><strong>Date:</strong> 2026-02-01</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span><strong>Time:</strong> 10:00 - 13:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span><strong>Participants:</strong> 40</span></div>
+                        </div>
+                        <div class="aa-description-box">A dive into Python, R, and statistical modeling for beginners.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Laptop</span>
+                                <span class="aa-material-tag">Internet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <button class="aa-carousel-nav aa-nav-right" onclick="scrollCarousel(1)"><i class="fas fa-chevron-right"></i></button>
+
+            </div> 
+              <div class="aa-see-more-container">
+                  <a href="ApproveActivities.html" class="aa-see-more-btn" target="_blank">See more..</a>
+              </div>
+        
         </div>
-
-        <div class="aa-activity-card">
-            <div class="aa-image-container">
-                <img src="https://via.placeholder.com/1000x400?text=Event+Photo+Upload+Area+(1000+x+400)" alt="Event Photo Placeholder">
-            </div>
-
-            <div class="aa-title">Basic Animation Workshop</div>
-
-            <div class="aa-meta-grid">
-                <div class="aa-meta-item">
-                    <i class="far fa-calendar-alt"></i>
-                    <span><strong>Date:</strong> 2025-11-25</span>
-                </div>
-                <div class="aa-meta-item">
-                    <i class="far fa-clock"></i>
-                    <span><strong>Time:</strong> 16:13 - 19:13</span>
-                </div>
-                <div class="aa-meta-item">
-                    <i class="fas fa-stopwatch"></i>
-                    <span><strong>Duration:</strong> 3 hours</span>
-                </div>
-                <div class="aa-meta-item">
-                    <i class="fas fa-users"></i>
-                    <span><strong>Participants:</strong> 32</span>
-                </div>
-                <div class="aa-meta-item">
-                    <i class="fas fa-user-tie"></i>
-                    <span><strong>Organizer:</strong> John Doe</span>
-                </div>
-            </div>
-
-            <div class="aa-description-box">
-                This workshop aims to teach the fundamentals of traditional and digital animation to students.
-            </div>
-
-            <div class="aa-materials-section">
-                <h4>Materials Provided:</h4>
-                <div class="aa-tags-container">
-                    <span class="aa-material-tag">DLP Projector</span>
-                    <span class="aa-material-tag">HDMI Cable</span>
-                    <span class="aa-material-tag">Speaker</span>
-                    <span class="aa-material-tag">Laptop</span>
-                    <span class="aa-material-tag">Whiteboard</span>
-                </div>
-            </div>
-        </div>
-
         <div class="aa-wave-divider">
             <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path d="M0,60C150,90,350,30,500,60C650,90,850,30,1000,60C1150,90,1200,60,1200,60L1200,120L0,120L0,60Z" fill="var(--white)"></path>
             </svg>
         </div>
-      </div>
-      </section>
+    </div>
+    </section>
 
 
       <section id="gallery" class="gallery-section">
@@ -538,6 +601,21 @@
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9354931afc0c44ff',t:'MTc0NTQ4Njk0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 
     <script src="script.js" type="module"></script>
+
+    <script>
+        function scrollCarousel(direction) {
+            const track = document.getElementById('carouselTrack');
+            const firstCard = track.querySelector('.aa-activity-card');
+            
+            if (!firstCard) return;
+            const cardWidth = firstCard.offsetWidth;
+            const gap = 20; 
+          
+            const scrollDistance = cardWidth + gap; 
+            
+            track.scrollLeft += direction * scrollDistance;
+        }
+    </script>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
