@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full List of Approved Activities</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+    /* --- COLOR PALETTE based on basis.PNG / new basisi.PNG --- */
+    :root {
+        --rd-primary-maroon: #800000; /* Dark Red/Maroon for Titles/Main Text */
+        --rd-bg-yellow: #fff8e1; /* Light Yellow/Creamy Background */
+        --rd-text-dark: #333;
+        --rd-card-shadow: rgba(0, 0, 0, 0.1);
+        --rd-white: #ffffff;
+        --rd-tag-bg: #f9f9f9;
+        --rd-icon-bg: #fdf2e0; /* Light background for meta info */
+        --rd-bg-cream: #fff9c4;
+        --rd-gold: #d4a017; /* Gold Accent Color */
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--rd-bg-cream); 
+        margin: 0;
+        color: var(--rd-text-dark);
+        /* Dotted Pattern matching basis.PNG */
+        background-image: radial-gradient(#ffe887 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    
+    /* --- Main Container: Mimics the white paper scroll look --- */
+    .aal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 50px 0;
+    }
+
+    
+    
+    .aal-white-scroll {
+        background-color: var(--rd-white);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        min-height: 80vh;
+    }
+
+    /* --- List Section Header (Inside the white scroll) --- */
+    .aal-list-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .aal-list-header h2 {
+        color: var(--rd-gold);
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .aal-list-header h2::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--rd-primary-maroon) 50%, var(--rd-gold) 50%);
+        margin: 8px auto 0 auto;
+        border-radius: 2px;
+    }
+
+    .aal-list-header p {
+        color: #666;
+        font-size: 1rem;
+        margin: 5px 0 0 0;
+    }
+
+    /* --- Main Content Grid Styling --- */
+    .aal-grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); 
+        gap: 30px;
+        padding-top: 20px;
+    }
+
+    /* === Card Styling (Clean and minimal, with Gold Left Border) === */
+    .aa-activity-card {
+        background: var(--rd-white);
+        border-radius: 10px;
+        border: 1px solid #eee;
+        
+        /* GOLD ACCENT LEFT BORDER */
+        border-left: 8px solid var(--rd-gold); 
+        
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+        transition: transform 0.2s; 
+        padding-bottom: 25px; /* Ibalik ang padding-bottom */
+        overflow: hidden;
+    }
+
+    .aa-activity-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .aa-image-container img { 
+        width: 100%; 
+        height: auto; 
+        display: block; 
+        object-fit: cover; 
+        min-height: 200px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 20px;
+    }
+    
+    .aa-card-content {
+        padding: 0 25px;
+    }
+    
+    .aa-title { 
+        color: var(--rd-primary-maroon); /* Maroon for contrast with gold border */
+        font-size: 1.2rem;
+        font-weight: 600; 
+        margin-bottom: 20px;
+    }
+
+    /* Meta Container: Matches the horizontal/icon-only style in new basisi.PNG */
+    .aa-meta-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px 25px;
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .aa-meta-item { 
+        font-size: 0.9rem; 
+        color: var(--rd-text-dark);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .aa-meta-item i { 
+        color: var(--rd-gold); /* Gold for icons */
+        background-color: var(--rd-icon-bg); /* Subtle colored square background */
+        padding: 6px;
+        border-radius: 5px;
+        font-size: 1rem; 
+        margin-right: 8px; 
+    }
+
+    .aa-description { 
+        font-size: 0.85rem; 
+        line-height: 1.5;
+        margin-bottom: 20px; 
+        color: #666;
+        background-color: var(--rd-tag-bg);
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .aa-materials-section h4 { 
+        color: var(--rd-primary-maroon); /* Maroon for contrast with gold border */
+        font-size: 0.9rem; 
+        margin-bottom: 10px; 
+        font-weight: 600; 
+    }
+
+    /* Tags: Simple, clean, and uses primary text color */
+    .aa-tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+    .aa-material-tag { 
+        background-color: var(--rd-tag-bg); 
+        color: var(--rd-text-dark); 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-size: 0.75rem; 
+        font-weight: 500; 
+        border: 1px solid #ddd;
+    }
+
+    /* REMOVED .aa-gold-accent-strip AS IT IS NOW A LEFT BORDER */
+    
+    @media (max-width: 900px) {
+        .aal-white-scroll {
+            padding: 40px 20px;
+            margin: 20px;
+        }
+        .aal-grid-container {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        .aal-list-header h2 {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <div class="aal-container">
+        <div class="aal-white-scroll">
+
+            <div class="aal-list-header">
+                <h2>APPROVED ACTIVITIES</h2>
+                <p>List of upcoming activities</p>
+            </div>
+        
+            <div class="aal-grid-container">
+                
+                                <div class="aa-activity-card">
+                    <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Event+Photo+Placeholder" alt="Event Photo Placeholder"></div>
+                    <div class="aa-card-content">
+                        <div class="aa-title">Basic Animation Workshop (Card 1)</div>
+                        <div class="aa-meta-container">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span>Date: 2025-11-25</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span>Time: 16:13 - 19:13</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span>Participants: 32</span></div>
+                        </div>
+                        <div class="aa-description">This workshop aims to teach the fundamentals of traditional and digital animation to students, focusing on core principles.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">DLP Projector</span>
+                                <span class="aa-material-tag">Speaker</span>
+                                <span class="aa-material-tag">Laptop</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="aa-activity-card">
+                    <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Digital+Marketing+Seminar" alt="Event Photo Placeholder"></div>
+                    <div class="aa-card-content">
+                        <div class="aa-title">Digital Marketing Seminar (Card 2)</div>
+                        <div class="aa-meta-container">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span>Date: 2025-12-01</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span>Time: 09:00 - 12:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span>Participants: 50</span></div>
+                        </div>
+                        <div class="aa-description">Focusing on SEO, social media strategy, and content creation for modern platforms. Practical applications will be emphasized.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Whiteboard</span>
+                                <span class="aa-material-tag">Markers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                                <div class="aa-activity-card">
+                    <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Basic+Photography+Workshop" alt="Event Photo Placeholder"></div>
+                    <div class="aa-card-content">
+                        <div class="aa-title">Basic Photography Workshop</div>
+                        <div class="aa-meta-container">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span>Date: 2026-01-15</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span>Time: 14:00 - 17:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span>Participants: 25</span></div>
+                        </div>
+                        <div class="aa-description">Learn the fundamentals of aperture, shutter speed, and ISO for stunning photos. Bring your own DSLR or mirrorless camera.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Studio Lights</span>
+                                <span class="aa-material-tag">Tripod</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                                <div class="aa-activity-card">
+                    <div class="aa-image-container"><img src="https://via.placeholder.com/1000x400?text=Data+Science+Fundamentals" alt="Event Photo Placeholder"></div>
+                    <div class="aa-card-content">
+                        <div class="aa-title">Data Science Fundamentals</div>
+                        <div class="aa-meta-container">
+                            <div class="aa-meta-item"><i class="far fa-calendar-alt"></i><span>Date: 2026-02-01</span></div>
+                            <div class="aa-meta-item"><i class="far fa-clock"></i><span>Time: 10:00 - 13:00</span></div>
+                            <div class="aa-meta-item"><i class="fas fa-users"></i><span>Participants: 40</span></div>
+                        </div>
+                        <div class="aa-description">A deep dive into Python, R, and statistical modeling for beginners. Basic programming knowledge required for full participation.</div>
+                        <div class="aa-materials-section">
+                            <h4>Materials Needed:</h4>
+                            <div class="aa-tags-container">
+                                <span class="aa-material-tag">Laptop Access</span>
+                                <span class="aa-material-tag">High-Speed Internet</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
