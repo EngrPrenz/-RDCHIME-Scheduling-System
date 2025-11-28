@@ -28,9 +28,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-/* Video Background Handler */
+// Video Background Handler 
 document.addEventListener("DOMContentLoaded", () => {
-  const video = document.getElementById("church-video");
+  const video = document.getElementById("rdchime-video");
   if (video) {
     video.playbackRate = 0.75;
     document.addEventListener("visibilitychange", () => {
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-/* Navigation */
+// Navigation 
 const menuToggle = document.getElementById("menu-toggle");
 const menuClose = document.getElementById("menu-close");
 const mobileMenu = document.getElementById("mobile-menu");
