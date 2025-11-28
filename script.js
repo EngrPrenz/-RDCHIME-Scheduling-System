@@ -592,7 +592,7 @@ function setupUsernameModal(user) {
       
       setTimeout(() => {
         console.log("Redirecting to Scheduling System homepage...");
-        window.location.href = 'new.html';
+        window.location.href = 'index.html';
       }, 1000);
     } catch (error) {
       console.error("Error setting username:", error);
@@ -1706,10 +1706,35 @@ document.querySelector('.register-form')?.addEventListener('submit', function (e
   document.getElementById('register-modal').style.display = 'none';
 });
 
-
-
-
-
-
+/* Password Visibility Toggle */
+document.addEventListener("DOMContentLoaded", () => {
+  // Get all password toggle buttons
+  const passwordToggleBtns = document.querySelectorAll('.password-toggle-btn');
+  
+  passwordToggleBtns.forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent form submission
+      
+      // Get the target input field
+      const targetId = this.getAttribute('data-target');
+      const passwordInput = document.getElementById(targetId);
+      
+      // Get the eye icons
+      const eyeIcon = this.querySelector('.eye-icon');
+      const eyeOffIcon = this.querySelector('.eye-off-icon');
+      
+      // Toggle password visibility
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.style.display = 'none';
+        eyeOffIcon.style.display = 'block';
+      } else {
+        passwordInput.type = 'password';
+        eyeIcon.style.display = 'block';
+        eyeOffIcon.style.display = 'none';
+      }
+    });
+  });
+});
 
 
