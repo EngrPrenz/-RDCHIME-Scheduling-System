@@ -480,7 +480,7 @@ if (userForm) {
         loginModal.classList.remove("open");
         showSuccessPopup("LOGIN SUCCESSFUL", `Welcome back, ${userData.displayName}!`);
         setTimeout(() => {
-          window.location.href = "user.html"; 
+          window.location.href = "index.html"; 
         }, 1500);
       } else {
         console.log("❌ Role is not User:", userData.Role);
