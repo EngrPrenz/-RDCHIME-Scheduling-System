@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full List of Approved Activities</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="homestyles.css">
+
+<style>
+    /* --- COLOR PALETTE based on basis.PNG / new basisi.PNG --- */
+    :root {
+        --rd-primary-maroon: #800000;
+        --rd-bg-yellow: #fff8e1;
+        --rd-text-dark: #333;
+        --rd-card-shadow: rgba(0, 0, 0, 0.1);
+        --rd-white: #ffffff;
+        --rd-tag-bg: #f9f9f9;
+        --rd-icon-bg: #fdf2e0;
+        --rd-bg-cream: #fff9c4;
+        --rd-gold: #d4a017;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--rd-bg-cream); 
+        margin: 0;
+        padding-top: 80px;
+        color: var(--rd-text-dark);
+        background-image: radial-gradient(#ffe887 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+
+    /* Loading State */
+    .loading-container {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid var(--rd-primary-maroon);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #666;
+    }
+
+    .empty-state p {
+        font-size: 16px;
+        color: #999;
+    }
+
+    /* Pagination Styles - ENHANCED AND MORE VISIBLE */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin: 40px auto;
+        padding: 30px 20px;
+        flex-wrap: wrap;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        max-width: 900px;
+    }
+
+    .pagination-info {
+        color: #666;
+        font-size: 15px;
+        font-weight: 500;
+        margin: 0 15px;
+        padding: 10px 20px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        order: -1;
+    }
+
+    .pagination-btn {
+        padding: 12px 24px;
+        border: 2px solid var(--rd-primary-maroon);
+        background: white;
+        color: var(--rd-primary-maroon);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .pagination-btn:hover:not(:disabled) {
+        background: var(--rd-primary-maroon);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(128, 0, 0, 0.3);
+    }
+
+    .pagination-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+        background: #f5f5f5;
+        border-color: #ddd;
+        color: #999;
+    }
+
+    .pagination-numbers {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .page-number {
+        padding: 12px 18px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        color: #666;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-family: 'Poppins', sans-serif;
+        font-size: 15px;
+        min-width: 45px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .page-number:hover {
+        border-color: var(--rd-primary-maroon);
+        color: var(--rd-primary-maroon);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(128, 0, 0, 0.2);
+    }
+
+    .page-number.active {
+        background: var(--rd-primary-maroon);
+        color: white;
+        border-color: var(--rd-primary-maroon);
+        font-weight: 700;
+        box-shadow: 0 4px 15px rgba(128, 0, 0, 0.4);
+        transform: scale(1.1);
+    }
+
+    .page-ellipsis {
+        padding: 12px 10px;
+        color: #999;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+        .pagination-container {
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px 15px;
+        }
+
+        .pagination-info {
+            margin: 0;
+            order: -1;
+            font-size: 14px;
+        }
+
+        .pagination-numbers {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .page-number, .pagination-btn {
+            padding: 10px 15px;
+            font-size: 14px;
+            min-width: 40px;
+        }
+    }
+</style>
+</head>
+<body>
+    
+<!-- Navigation from schedule.html -->
+<nav id="navbar" class="navbar scrolled">
+    <div class="container">
+        <div class="logo">
+            <h1>
+                <img src="images/RDCHIME Logo.png" alt="RDCHIME Logo" class="logo-img" />
+                <span class="logo-text">RDCHIME Scheduling System</span>
+            </h1>
+        </div>
+        
+        <div class="desktop-nav">
+            <ul class="nav-links">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="schedule.html" class="nav-link">Schedule</a></li>
+                <li><a href="activities.html" class="nav-link">Activities</a></li>
+                <li><a href="index.html#about" class="nav-link">About</a></li>
+            </ul>
+            <button class="btn btn-outline" id="account-btn">Account</button>
+        </div>
+        
+        <div class="mobile-menu-btn">
+            <button id="menu-toggle">
+                <span class="menu-icon">☰</span>
+            </button>
+        </div>
+    </div>
+    
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-close">
+            <button id="menu-close">✕</button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="index.html" class="mobile-nav-link">Home</a></li>
+            <li><a href="schedule.html" class="mobile-nav-link">Schedule</a></li>
+            <li><a href="index.html#about" class="mobile-nav-link">About</a></li>
+        </ul>
+        <button class="btn btn-outline w-full" id="mobile-account-btn">Account</button>
+    </div>
+</nav>
+
+<div class="aal-container">
+    <div class="aal-white-scroll">
+
+        <div class="aal-list-header">
+            <h2>APPROVED ACTIVITIES</h2>
+            <p>List of upcoming activities</p>
+        </div>
+    
+        <div class="aal-grid-container" id="activitiesGrid">
+            <!-- Loading state -->
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading approved activities...</p>
+            </div>
+        </div>
+
+        <!-- Pagination Controls - ALWAYS VISIBLE FOR TESTING -->
+        <div class="pagination-container" id="paginationContainer">
+            <div class="pagination-info" id="paginationInfo">Loading...</div>
+            
+            <button class="pagination-btn" id="prevPage">
+                <i class="fas fa-chevron-left"></i> Previous
+            </button>
+            
+            <div class="pagination-numbers" id="pageNumbers"></div>
+            
+            <button class="pagination-btn" id="nextPage">
+                Next <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { 
+        getFirestore, 
+        collection, 
+        getDocs, 
+        query, 
+        where 
+    } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+        authDomain: "rdchime-scheduling-system.firebaseapp.com",
+        projectId: "rdchime-scheduling-system",
+        storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+        messagingSenderId: "692945279316",
+        appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+        measurementId: "G-LP39RX0R47"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Pagination state
+    let allActivities = [];
+    let currentPage = 1;
+    const itemsPerPage = 6; // Show 6 activities per page
+
+    // Load approved activities
+    async function loadApprovedActivities() {
+        const activitiesGrid = document.getElementById('activitiesGrid');
+        
+        try {
+            // Query only approved activities
+            const q = query(collection(db, 'activities'), where('status', '==', 'approved'));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                activitiesGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="far fa-calendar-times"></i>
+                        <h3>No Approved Activities Yet</h3>
+                        <p>Check back later for upcoming events and activities.</p>
+                    </div>
+                `;
+                document.getElementById('paginationContainer').style.display = 'none';
+                return;
+            }
+
+            // Collect all activities
+            allActivities = [];
+            snapshot.forEach(docSnap => {
+                allActivities.push({
+                    id: docSnap.id,
+                    ...docSnap.data()
+                });
+            });
+            
+            console.log(`Loaded ${allActivities.length} activities`); // Debug log
+            
+            // Sort by date (most recent first)
+            allActivities.sort((a, b) => {
+                const dateA = a.date || '';
+                const dateB = b.date || '';
+                return dateB.localeCompare(dateA);
+            });
+            
+            // Display first page
+            currentPage = 1;
+            displayPage(currentPage);
+            setupPagination();
+            
+        } catch (error) {
+            console.error('Error loading activities:', error);
+            activitiesGrid.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Activities</h3>
+                    <p>${error.message}</p>
+                </div>
+            `;
+            document.getElementById('paginationContainer').style.display = 'none';
+        }
+    }
+
+    // Display activities for current page
+    function displayPage(page) {
+        const activitiesGrid = document.getElementById('activitiesGrid');
+        const startIndex = (page - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageActivities = allActivities.slice(startIndex, endIndex);
+        
+        console.log(`Displaying page ${page}, showing ${pageActivities.length} activities`); // Debug log
+        
+        // Clear grid
+        activitiesGrid.innerHTML = '';
+        
+        // Create cards for current page
+        pageActivities.forEach(activity => {
+            const card = createActivityCard(activity);
+            activitiesGrid.appendChild(card);
+        });
+
+        // Scroll to top of activities
+        const header = document.querySelector('.aal-list-header');
+        if (header) {
+            header.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    // Setup pagination controls
+    function setupPagination() {
+        const totalPages = Math.ceil(allActivities.length / itemsPerPage);
+        const paginationContainer = document.getElementById('paginationContainer');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        const pageNumbers = document.getElementById('pageNumbers');
+        const paginationInfo = document.getElementById('paginationInfo');
+
+        console.log(`Total pages: ${totalPages}`); // Debug log
+
+        // Always show pagination container
+        paginationContainer.style.display = 'flex';
+
+        // If only one page, disable navigation but still show info
+        if (totalPages <= 1) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            pageNumbers.innerHTML = '<button class="page-number active">1</button>';
+            paginationInfo.textContent = `Showing all ${allActivities.length} activities`;
+            return;
+        }
+
+        // Update pagination info
+        function updatePagination() {
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, allActivities.length);
+            paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${allActivities.length} activities`;
+
+            // Enable/disable prev button
+            prevBtn.disabled = currentPage === 1;
+            
+            // Enable/disable next button
+            nextBtn.disabled = currentPage === totalPages;
+
+            // Generate page numbers
+            generatePageNumbers(totalPages);
+        }
+
+        // Generate page number buttons
+        function generatePageNumbers(totalPages) {
+            pageNumbers.innerHTML = '';
+            
+            // Always show first page
+            addPageButton(1);
+            
+            // Show ellipsis and pages around current page
+            if (currentPage > 3) {
+                addEllipsis();
+            }
+            
+            // Show pages around current page
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                addPageButton(i);
+            }
+            
+            // Show ellipsis before last page
+            if (currentPage < totalPages - 2) {
+                addEllipsis();
+            }
+            
+            // Always show last page (if more than 1 page)
+            if (totalPages > 1) {
+                addPageButton(totalPages);
+            }
+        }
+
+        // Add page number button
+        function addPageButton(pageNum) {
+            const btn = document.createElement('button');
+            btn.className = 'page-number';
+            btn.textContent = pageNum;
+            if (pageNum === currentPage) {
+                btn.classList.add('active');
+            }
+            btn.addEventListener('click', () => {
+                currentPage = pageNum;
+                displayPage(currentPage);
+                updatePagination();
+            });
+            pageNumbers.appendChild(btn);
+        }
+
+        // Add ellipsis
+        function addEllipsis() {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'page-ellipsis';
+            ellipsis.textContent = '...';
+            pageNumbers.appendChild(ellipsis);
+        }
+
+        // Remove any existing event listeners by cloning buttons
+        const newPrevBtn = prevBtn.cloneNode(true);
+        const newNextBtn = nextBtn.cloneNode(true);
+        prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
+        nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
+
+        // Previous button click
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayPage(currentPage);
+                updatePagination();
+            }
+        });
+
+        // Next button click
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayPage(currentPage);
+                updatePagination();
+            }
+        });
+
+        // Initial pagination update
+        updatePagination();
+    }
+
+    // Create activity card
+    function createActivityCard(activity) {
+        const card = document.createElement('div');
+        card.className = 'aa-activity-card';
+        
+        // Format date for display
+        const activityDate = new Date(activity.date);
+        const formattedDate = activityDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+        
+        // Placeholder image
+        const placeholderImage = 'https://via.placeholder.com/1000x400/800000/ffffff?text=' + encodeURIComponent(activity.activityName);
+        
+        card.innerHTML = `
+            <div class="aa-image-container">
+                <img src="${placeholderImage}" alt="${activity.activityName}">
+            </div>
+            <div class="aa-card-content">
+                <div class="aa-title">${activity.activityName}</div>
+                <div class="aa-meta-container">
+                    <div class="aa-meta-item">
+                        <i class="far fa-calendar-alt"></i>
+                        <span>Date: ${formattedDate}</span>
+                    </div>
+                    <div class="aa-meta-item">
+                        <i class="far fa-clock"></i>
+                        <span>Time: ${activity.startTime} - ${activity.endTime}</span>
+                    </div>
+                    <div class="aa-meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>Participants: ${activity.participants}</span>
+                    </div>
+                </div>
+                ${activity.description ? `
+                    <div class="aa-description">${activity.description}</div>
+                ` : ''}
+            </div>
+        `;
+        
+        return card;
+    }
+
+    // Load activities when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        loadApprovedActivities();
+    });
+</script>
+
+<script>
+    // Account button handler
+    document.getElementById('account-btn').addEventListener('click', () => {
+        window.location.href = 'account.html';
+    });
+
+    // Mobile account button
+    const mobileAccountBtn = document.getElementById('mobile-account-btn');
+    if (mobileAccountBtn) {
+        mobileAccountBtn.addEventListener('click', () => {
+            window.location.href = 'account.html';
+        });
+    }
+
+    // Mobile menu toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const menuClose = document.getElementById('menu-close');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+    }
+
+    if (menuClose) {
+        menuClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+    }
+</script>
+</body>
+</html>

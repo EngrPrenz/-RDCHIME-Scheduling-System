@@ -3273,3 +3273,177 @@ section.visible {
   margin: 0 auto;
 }
 
+.aal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 50px 0;
+    }
+
+    
+    
+    .aal-white-scroll {
+        background-color: var(--rd-white);
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        min-height: 80vh;
+    }
+
+    /* --- List Section Header (Inside the white scroll) --- */
+    .aal-list-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .aal-list-header h2 {
+        color: var(--rd-gold);
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: 1px;
+    }
+
+    .aal-list-header h2::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--rd-primary-maroon) 50%, var(--rd-gold) 50%);
+        margin: 8px auto 0 auto;
+        border-radius: 2px;
+    }
+
+    .aal-list-header p {
+        color: #666;
+        font-size: 1rem;
+        margin: 5px 0 0 0;
+    }
+
+    /* --- Main Content Grid Styling --- */
+    .aal-grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); 
+        gap: 30px;
+        padding-top: 20px;
+    }
+
+    /* === Card Styling (Clean and minimal, with Gold Left Border) === */
+    .aa-activity-card {
+        background: var(--rd-white);
+        border-radius: 10px;
+        border: 1px solid #eee;
+        
+        /* GOLD ACCENT LEFT BORDER */
+        border-left: 8px solid var(--rd-gold); 
+        
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
+        transition: transform 0.2s; 
+        padding-bottom: 25px; /* Ibalik ang padding-bottom */
+        overflow: hidden;
+    }
+
+    .aa-activity-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .aa-image-container img { 
+        width: 100%; 
+        height: auto; 
+        display: block; 
+        object-fit: cover; 
+        min-height: 200px;
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 20px;
+    }
+    
+    .aa-card-content {
+        padding: 0 25px;
+    }
+    
+    .aa-title { 
+        color: var(--rd-primary-maroon); /* Maroon for contrast with gold border */
+        font-size: 1.2rem;
+        font-weight: 600; 
+        margin-bottom: 20px;
+    }
+
+    /* Meta Container: Matches the horizontal/icon-only style in new basisi.PNG */
+    .aa-meta-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px 25px;
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .aa-meta-item { 
+        font-size: 0.9rem; 
+        color: var(--rd-text-dark);
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .aa-meta-item i { 
+        color: var(--rd-gold); /* Gold for icons */
+        background-color: var(--rd-icon-bg); /* Subtle colored square background */
+        padding: 6px;
+        border-radius: 5px;
+        font-size: 1rem; 
+        margin-right: 8px; 
+    }
+
+    .aa-description { 
+        font-size: 0.85rem; 
+        line-height: 1.5;
+        margin-bottom: 20px; 
+        color: #666;
+        background-color: var(--rd-tag-bg);
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .aa-materials-section h4 { 
+        color: var(--rd-primary-maroon); /* Maroon for contrast with gold border */
+        font-size: 0.9rem; 
+        margin-bottom: 10px; 
+        font-weight: 600; 
+    }
+
+    /* Tags: Simple, clean, and uses primary text color */
+    .aa-tags-container { display: flex; flex-wrap: wrap; gap: 8px; }
+    .aa-material-tag { 
+        background-color: var(--rd-tag-bg); 
+        color: var(--rd-text-dark); 
+        padding: 4px 8px; 
+        border-radius: 4px; 
+        font-size: 0.75rem; 
+        font-weight: 500; 
+        border: 1px solid #ddd;
+    }
+
+    /* REMOVED .aa-gold-accent-strip AS IT IS NOW A LEFT BORDER */
+    
+    @media (max-width: 900px) {
+        .aal-white-scroll {
+            padding: 40px 20px;
+            margin: 20px;
+        }
+        .aal-grid-container {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        .aal-list-header h2 {
+            font-size: 1.8rem;
+        }
+    }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
