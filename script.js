@@ -48,46 +48,6 @@ const auth = getAuth(app);
 // Track if we're in the middle of a login attempt
 let isLoggingIn = false;
 
-// onAuthStateChanged(auth, async (user) => {
-//     // Skip if we're in the middle of a login attempt - let the login handler deal with it
-//     if (isLoggingIn) {
-//         console.log("⏭️ Skipping onAuthStateChanged - login in progress");
-//         return;
-//     }
-
-//     // Only run this on the login/home page (index.html or root)
-//     if (window.location.pathname.includes("index.html") || window.location.pathname === "/" || window.location.pathname.endsWith("/")) {
-//         if (user) {
-//             console.log("🔍 User detected on login page:", user.email);
-            
-//             try {
-//                 const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-//                 if (!userDoc.exists()) {
-//                     console.log("❌ No user document found, signing out...");
-//                     await signOut(auth);
-//                     return;
-//                 }
-
-//                 const userData = userDoc.data();
-//                 console.log("📄 User data:", userData);
-                
-//                 // Only redirect if username is set (don't show modal here)
-//                 if (userData.usernameSet && userData.displayName && userData.displayName !== "New User") {
-//                     console.log(`✅ Username set, redirecting to dashboard...`);
-//                     const redirectUrl = userData.Role === "Admin" ? "admin.html" : "user.html";
-//                     window.location.href = redirectUrl;
-//                 }
-                
-//             } catch (error) {
-//                 console.error("❌ Error checking user status:", error);
-//             }
-//         } else {
-//             console.log("👤 No user signed in");
-//         }
-//     }
-// });
-
 
 /* Video Background Handler */
 document.addEventListener("DOMContentLoaded", () => {
@@ -223,7 +183,7 @@ if (userForm) {
     e.preventDefault();
     console.log("🔵 User login form submitted!");
     
-    // Set flag to prevent onAuthStateChanged from interfering
+
     isLoggingIn = true;
     
     const email = document.getElementById("user-email").value.trim();
@@ -673,6 +633,103 @@ async function handleGoogleLogin(expectedRole) {
     }
   }
 }
+
+onAuthStateChanged(auth, async (user) => {
+    console.log("🔍 Auth state changed:", user ? user.email : "No user");
+    
+    // Update navigation buttons based on auth state
+    updateNavigationUI(user);
+    
+    // If on schedule page and not logged in, redirect to home
+    if (window.location.pathname.includes("schedule.html") && !user) {
+        console.log("⚠️ User not logged in, redirecting to home...");
+        showSuccessPopup("LOGIN REQUIRED", "Please log in to access the schedule page.", true);
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 2000);
+    }
+});
+
+// ========================================
+// UPDATE NAVIGATION UI FUNCTION
+// ========================================
+function updateNavigationUI(user) {
+    const loginBtn = document.getElementById("login-btn");
+    const mobileLoginBtn = document.getElementById("mobile-login-btn");
+    
+    if (user) {
+        // User is logged in - show Account button
+        if (loginBtn) {
+            loginBtn.textContent = "Account";
+            loginBtn.onclick = () => {
+                window.location.href = "account.html";
+            };
+        }
+        
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = "Account";
+            mobileLoginBtn.onclick = () => {
+                window.location.href = "account.html";
+            };
+        }
+    } else {
+        // User is logged out - show Login button
+        if (loginBtn) {
+            loginBtn.textContent = "Login";
+            loginBtn.onclick = () => {
+                const loginModal = document.getElementById("login-modal");
+                if (loginModal) {
+                    loginModal.classList.add("open");
+                }
+            };
+        }
+        
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = "Login";
+            mobileLoginBtn.onclick = () => {
+                const loginModal = document.getElementById("login-modal");
+                const mobileMenu = document.getElementById("mobile-menu");
+                if (loginModal) {
+                    loginModal.classList.add("open");
+                }
+                if (mobileMenu) {
+                    mobileMenu.classList.remove("open");
+                }
+            };
+        }
+    }
+}
+
+// ========================================
+// SCHEDULE LINK CLICK HANDLER
+// ========================================
+document.addEventListener("DOMContentLoaded", () => {
+    // Handle schedule link clicks
+    const scheduleLinks = document.querySelectorAll('a[href="schedule.html"], a[href="#schedule"]');
+    
+    scheduleLinks.forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            
+            const currentUser = auth.currentUser;
+            
+            if (!currentUser) {
+                // User not logged in - show login modal
+                showSuccessPopup("LOGIN REQUIRED", "Please log in to access the schedule page.", true);
+                
+                setTimeout(() => {
+                    const loginModal = document.getElementById("login-modal");
+                    if (loginModal) {
+                        loginModal.classList.add("open");
+                    }
+                }, 1500);
+            } else {
+                // User is logged in - redirect to schedule page
+                window.location.href = "schedule.html";
+            }
+        });
+    });
+});
 
 
 /* Logout Handling */
