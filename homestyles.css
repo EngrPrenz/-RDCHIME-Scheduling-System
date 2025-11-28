@@ -3111,6 +3111,71 @@ section.visible {
 }
 
 
+/* Password Input Wrapper */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
 
+.password-input-wrapper input {
+  width: 100%;
+  padding-right: 45px; /* Make room for the eye icon */
+}
 
+/* Password Toggle Button */
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  transition: color 0.3s ease;
+  z-index: 10;
+}
+
+.password-toggle-btn:hover {
+  color: var(--church-500);
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+}
+
+.password-toggle-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+}
+
+/* Eye icon animations */
+.eye-icon,
+.eye-off-icon {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.password-toggle-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.login-form .btn-primary {
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.login-form .btn-outline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
 
