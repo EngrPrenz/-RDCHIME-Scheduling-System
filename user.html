@@ -389,6 +389,85 @@
                 font-size: 14px;
             }
         }
+
+        /* Style for Image Drop Zone Placeholder */
+        #drop-zone {
+            width: 300px;
+            height: 200px;
+            border: 2px dashed #ccc; /* Dashed border for the "placeholder" look */
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: sans-serif;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            user-select: none;
+        }
+
+        #drop-zone:hover,
+        .drag-over {
+            border-color: #007bff !important; /* Highlight on hover/drag-over */
+        }
+
+        #drop-zone p {
+            margin: 5px 0;
+            color: #777;
+        }
+
+        #file-input {
+            display: none; /* Hide the default file input */
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Styles for Image Drop Zone Preview Area */
+        #preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 300px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -467,6 +546,25 @@
                         <label>Materials Needed</label>
                         <div class="materials-grid" id="materialsGrid"></div>
                     </div>
+
+                    <div class="form-group">
+                        <label>Upload Images</label>
+
+                        <div id="drop-zone">
+                            <p>Drag files to upload</p>
+                            <p>or click to select files</p>
+                            <p>(Only images accepted)</p>
+                            <input type="file" id="file-input" accept="image/*" multiple>
+                       
+                        </div>
+
+                        <div id="error-message" class="error"></div>
+
+                        <div id="preview-container">
+                        </div>
+
+                    </div>
+                    
 
                     <div class="button-group">
                         <button type="submit" class="btn-submit">📤 Schedule Activity</button>
@@ -802,6 +900,130 @@
             `;
             
             return card;
+        }
+
+        // Global State and Constants
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const errorMessage = document.getElementById('error-message');
+        const previewContainer = document.getElementById('preview-container');
+
+        const MAX_FILE_COUNT = 5;
+        // Array to hold the File objects that have been selected/dropped
+        let uploadedFiles = []; 
+
+
+        // --- 1. Event Handlers (Click/Drag/Drop - Mostly Unchanged) ---
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Standard drag-and-drop prevention and highlighting logic...
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        function highlight() { dropZone.classList.add('drag-over'); }
+        function unhighlight() { dropZone.classList.remove('drag-over'); }
+
+        function handleDrop(e) {
+            let dt = e.dataTransfer;
+            handleFiles(dt.files);
+        }
+
+
+        // --- 2. Main File Processing Logic ---
+
+        function handleFiles(files) {
+            errorMessage.textContent = ''; // Clear previous errors
+            
+            const incomingFiles = [...files];
+            const totalFilesAfterAddition = uploadedFiles.length + incomingFiles.length;
+
+            // --- QUANTITY CHECK (Against the total number of files) ---
+            if (totalFilesAfterAddition > MAX_FILE_COUNT) {
+                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded.`;
+                fileInput.value = ''; // Clear input
+                return;
+            }
+
+            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
+            
+            // --- TYPE CHECK ---
+            if (validImageFiles.length !== incomingFiles.length) {
+                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
+                fileInput.value = '';
+                return;
+            }
+            
+            // Process and display valid images
+            validImageFiles.forEach(file => {
+                // Add the new file to our global list
+                uploadedFiles.push(file); 
+                
+                // Call the function to create and append the preview
+                previewFile(file);
+            });
+            
+            // Clear input after successful processing
+            fileInput.value = '';
+        }
+
+
+        // --- 3. Preview and Deletion Functions ---
+
+        function previewFile(file) {
+            // 1. Create a FileReader to read the file content
+            const reader = new FileReader();
+            reader.readAsDataURL(file); // Reads the file content as a base64 encoded string
+
+            // 2. Once the file is loaded
+            reader.onloadend = () => {
+                // 3. Create the necessary HTML elements
+                const previewItem = document.createElement('div');
+                previewItem.classList.add('preview-item');
+                previewItem.dataset.filename = file.name; // Use filename for deletion reference
+
+                const img = document.createElement('img');
+                img.src = reader.result; // The base64 URL
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.classList.add('delete-btn');
+                deleteBtn.textContent = 'x';
+                
+                // 4. Attach deletion listener
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent form submission if applicable
+                    deleteFile(file.name, previewItem);
+                });
+
+                // 5. Assemble and append to the container
+                previewItem.appendChild(img);
+                previewItem.appendChild(deleteBtn);
+                previewContainer.appendChild(previewItem);
+            }
+        }
+
+        function deleteFile(fileName, previewElement) {
+            // 1. Remove the file from the global array
+            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
+            
+            // 2. Remove the preview element from the DOM
+            previewElement.remove();
+            
+            console.log(`File ${fileName} removed. Current count: ${uploadedFiles.length}`);
+            errorMessage.textContent = ''; // Clear any quantity error
         }
     </script>
 </body>
