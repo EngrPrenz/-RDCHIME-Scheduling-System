@@ -1585,7 +1585,7 @@ function initMaterials() {
             <input type="checkbox" id="${id}" value="${material}">
             <div class="material-checkbox"></div>
             <span class="material-label">${material}</span>
-            <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="100" style="display: none;">
+            <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="1000" style="display: none;">
         `;
         
         const checkbox = div.querySelector('input[type="checkbox"]');
@@ -1612,9 +1612,9 @@ function initMaterials() {
             }
         });
         
-        // <CHANGE> Keep quantity between 1 and 100
+        // <CHANGE> Keep quantity between 1 and 1000
         qtyInput.addEventListener('change', function() {
-            this.value = Math.max(1, Math.min(100, parseInt(this.value) || 1));
+            this.value = Math.max(1, Math.min(1000, parseInt(this.value) || 1));
         });
         
         qtyInput.addEventListener('click', (e) => {
