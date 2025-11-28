@@ -2,6 +2,7 @@
 
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { updateProfile, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { 
     getFirestore, 
     collection, 
@@ -43,6 +44,49 @@ const db = getFirestore(app);
 
 // Add this line right after const db = getFirestore(app);
 const auth = getAuth(app);
+
+// Track if we're in the middle of a login attempt
+let isLoggingIn = false;
+
+// onAuthStateChanged(auth, async (user) => {
+//     // Skip if we're in the middle of a login attempt - let the login handler deal with it
+//     if (isLoggingIn) {
+//         console.log("⏭️ Skipping onAuthStateChanged - login in progress");
+//         return;
+//     }
+
+//     // Only run this on the login/home page (index.html or root)
+//     if (window.location.pathname.includes("index.html") || window.location.pathname === "/" || window.location.pathname.endsWith("/")) {
+//         if (user) {
+//             console.log("🔍 User detected on login page:", user.email);
+            
+//             try {
+//                 const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+//                 if (!userDoc.exists()) {
+//                     console.log("❌ No user document found, signing out...");
+//                     await signOut(auth);
+//                     return;
+//                 }
+
+//                 const userData = userDoc.data();
+//                 console.log("📄 User data:", userData);
+                
+//                 // Only redirect if username is set (don't show modal here)
+//                 if (userData.usernameSet && userData.displayName && userData.displayName !== "New User") {
+//                     console.log(`✅ Username set, redirecting to dashboard...`);
+//                     const redirectUrl = userData.Role === "Admin" ? "admin.html" : "user.html";
+//                     window.location.href = redirectUrl;
+//                 }
+                
+//             } catch (error) {
+//                 console.error("❌ Error checking user status:", error);
+//             }
+//         } else {
+//             console.log("👤 No user signed in");
+//         }
+//     }
+// });
 
 
 /* Video Background Handler */
@@ -170,39 +214,466 @@ if (adminForm && adminError) {
 }
 
 /* User Login Handling (Placeholder) */
+/* User Login Handling with Username Setup */
 const userForm = document.querySelector("#user-tab form");
+console.log("User form found:", userForm);
+
 if (userForm) {
   userForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    console.log("🔵 User login form submitted!");
+    
+    // Set flag to prevent onAuthStateChanged from interfering
+    isLoggingIn = true;
+    
     const email = document.getElementById("user-email").value.trim();
     const password = document.getElementById("user-password").value.trim();
+    
+    console.log("📧 Email:", email);
 
     try {
+      console.log("⏳ Attempting to sign in...");
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Verify User role
+      console.log("✅ User logged in:", user.email);
+      console.log("📨 Email verified (before reload):", user.emailVerified);
+
+      // Reload to get latest verification status
+      await user.reload();
+      console.log("📨 Email verified (after reload):", user.emailVerified);
+
+      // Check if email is verified
+      if (!user.emailVerified) {
+        console.log("❌ Email not verified, signing out");
+        isLoggingIn = false;
+        await signOut(auth);
+        showSuccessPopup("EMAIL NOT VERIFIED", "Please verify your email before logging in. Check your inbox for the verification link.", true);
+        return;
+      }
+
+      console.log("⏳ Fetching user document from Firestore...");
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists() && userDoc.data().Role === "User") {
-        loginModal.classList.remove("open");
-        showSuccessPopup("LOGIN SUCCESSFUL", "Welcome back, User!");
-        onAuthStateChanged(auth, (authUser) => {
-          if (authUser && authUser.uid === user.uid) {
-            setTimeout(() => {
-              window.location.href = "user.html"; 
-            }, 500);
+      
+      if (!userDoc.exists()) {
+        console.log("❌ User document not found in Firestore");
+        isLoggingIn = false;
+        await signOut(auth);
+        showSuccessPopup("ERROR", "User profile not found. Please contact support.", true);
+        return;
+      }
+
+      const userData = userDoc.data();
+      console.log("📄 User data from Firestore:", userData);
+      console.log("👤 displayName:", userData.displayName);
+      console.log("✔️ usernameSet:", userData.usernameSet);
+      console.log("👥 Role:", userData.Role);
+
+      // Check if user has set username
+      console.log("\n=== 🔍 USERNAME CHECK START ===");
+      console.log("Condition 1 - !userData.usernameSet:", !userData.usernameSet);
+      console.log("Condition 2 - !userData.displayName:", !userData.displayName);
+      console.log("Condition 3 - displayName === 'New User':", userData.displayName === "New User");
+      
+      const shouldShowUsernameModal = !userData.usernameSet || !userData.displayName || userData.displayName === "New User";
+      console.log("🎯 Should show username modal?", shouldShowUsernameModal);
+      
+      if (shouldShowUsernameModal) {
+        console.log("\n=== 🎯 SHOWING USERNAME MODAL ===");
+        
+        // Check if loginModal exists
+        console.log("🔍 Checking loginModal variable:", typeof loginModal);
+        const loginModalElement = document.getElementById('login-modal');
+        console.log("🔍 Login modal element from DOM:", loginModalElement);
+        
+        if (loginModalElement) {
+          console.log("📊 Login Modal Current State:");
+          console.log("   - display:", window.getComputedStyle(loginModalElement).display);
+          console.log("   - classList:", Array.from(loginModalElement.classList));
+        }
+        
+        // Close login modal
+        console.log("🚪 Closing login modal...");
+        if (loginModal) {
+          loginModal.classList.remove("open");
+          loginModalElement.style.display = "none";
+          loginModalElement.style.display = "none";
+          loginModalElement.style.opacity = "0";
+          loginModalElement.style.visibility = "hidden";
+          console.log("✅ Removed 'open' class from login modal");
+        } else {
+          console.warn("⚠️ loginModal variable is undefined");
+        }
+        
+        document.body.style.overflow = "";
+        console.log("✅ Body overflow reset");
+        
+        isLoggingIn = false;
+        console.log("✅ isLoggingIn flag reset to false");
+        
+        // Check for username modal BEFORE timeout
+        console.log("\n🔍 PRE-TIMEOUT CHECK:");
+        const preModal = document.getElementById('username-setup-modal');
+        console.log("   - Modal exists in DOM:", preModal ? "YES" : "NO");
+        
+        if (preModal) {
+          console.log("   - Modal tag name:", preModal.tagName);
+          console.log("   - Modal parent:", preModal.parentElement);
+          console.log("   - Modal display (before):", window.getComputedStyle(preModal).display);
+          console.log("   - Modal visibility (before):", window.getComputedStyle(preModal).visibility);
+          console.log("   - Modal opacity (before):", window.getComputedStyle(preModal).opacity);
+          console.log("   - Modal classList (before):", Array.from(preModal.classList));
+        } else {
+          console.error("❌ CRITICAL: Username modal NOT FOUND in DOM!");
+          console.log("📋 All elements with 'modal' in ID:");
+          const allModals = document.querySelectorAll('[id*="modal"]');
+          allModals.forEach(el => console.log("   -", el.id));
+        }
+        
+        console.log("⏰ Setting timeout for 100ms...");
+        
+        setTimeout(() => {
+          console.log("\n=== ⏰ TIMEOUT EXECUTED (100ms passed) ===");
+          console.log("🕐 Current timestamp:", new Date().toISOString());
+          
+          const modal = document.getElementById('username-setup-modal');
+          console.log("🔍 Modal element lookup result:", modal ? "FOUND" : "NOT FOUND");
+          
+          if (modal) {
+            console.log("✅ Modal found! Proceeding with display...");
+            
+            // FIX: Force ALL parent elements to be visible
+            console.log("\n🔧 FIXING PARENT VISIBILITY:");
+            let parent = modal.parentElement;
+            let level = 1;
+            while (parent && level <= 10) {
+              const parentStyle = window.getComputedStyle(parent);
+              console.log(`   Level ${level} (${parent.tagName}#${parent.id || 'no-id'}.${Array.from(parent.classList).join('.')}):`);
+              console.log("      - display BEFORE:", parentStyle.display);
+              console.log("      - visibility BEFORE:", parentStyle.visibility);
+              
+              if (parentStyle.display === 'none') {
+                console.log("      ❌ FOUND HIDDEN PARENT (display:none) - FIXING IT!");
+                parent.style.display = 'block';
+                console.log("      ✅ Set parent display to 'block'");
+              }
+              
+              if (parentStyle.visibility === 'hidden') {
+                console.log("      ❌ FOUND HIDDEN PARENT (visibility:hidden) - FIXING IT!");
+                parent.style.visibility = 'visible';
+                console.log("      ✅ Set parent visibility to 'visible'");
+              }
+              
+              const afterStyle = window.getComputedStyle(parent);
+              console.log("      - display AFTER:", afterStyle.display);
+              console.log("      - visibility AFTER:", afterStyle.visibility);
+              
+              parent = parent.parentElement;
+              level++;
+            }
+            console.log("✅ All parent elements checked and fixed\n");
+            
+            console.log("🔧 Applying visibility changes to modal...");
+            
+            // Body overflow
+            document.body.style.overflow = "hidden";
+            console.log("   ✅ Body overflow set to hidden");
+            
+            // Force modal visibility with comprehensive inline styles
+            modal.style.display = 'flex';
+            modal.style.visibility = 'visible';
+            modal.style.opacity = '1';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.zIndex = '9999';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.classList.add('open');
+            console.log("   ✅ Modal inline styles applied");
+            
+            // Verify modal styles
+            const modalStyle = window.getComputedStyle(modal);
+            console.log("\n📊 Modal Final Computed Styles:");
+            console.log("   - display:", modalStyle.display);
+            console.log("   - visibility:", modalStyle.visibility);
+            console.log("   - opacity:", modalStyle.opacity);
+            console.log("   - position:", modalStyle.position);
+            console.log("   - z-index:", modalStyle.zIndex);
+            console.log("   - width:", modalStyle.width);
+            console.log("   - height:", modalStyle.height);
+            
+            // Force modal content visibility
+            const modalContent = modal.querySelector('.modal-content');
+           
+            
+            if (modalContent) {
+              console.log("   - Setting content styles...");
+              modalContent.style.display = 'block';
+              modalContent.style.visibility = 'visible';
+              modalContent.style.opacity = '1';
+              modalContent.style.backgroundColor = 'white';
+              modalContent.style.padding = '2rem';
+              modalContent.style.borderRadius = '8px';
+              modalContent.style.maxWidth = '500px';
+              modalContent.style.width = '90%';
+              modalContent.style.position = 'relative';
+              modalContent.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+            
+            } else {
+              console.error("   ❌ Modal content (.modal-content) not found!");
+            }
+            
+            // Verify final visibility
+            const rect = modal.getBoundingClientRect();
+           
+            
+            if (rect.width > 0 && rect.height > 0) {
+              console.log("   ✅ Modal has dimensions and should be visible!");
+            } else {
+              console.error("   ❌ Modal has zero dimensions!");
+            }
+            
+            console.log("\n🔧 Calling setupUsernameModal function...");
+            setupUsernameModal(user);
+            console.log("✅ setupUsernameModal called");
+            
+            console.log("\n🎉 Modal should NOW be visible on screen!");
+            console.log("=== ✅ USERNAME MODAL DISPLAY COMPLETE ===\n");
+            
+          } else {
+            console.error("\n❌ CRITICAL ERROR: Username modal not found in DOM!");
+            console.log("🔍 Debugging DOM structure:");
+            console.log("   - document.body exists:", !!document.body);
+            console.log("   - document.body.children count:", document.body.children.length);
+            
+            console.log("\n📋 All elements with 'username' in ID:");
+            const usernameElements = document.querySelectorAll('[id*="username"]');
+            console.log("   - Found", usernameElements.length, "elements");
+            usernameElements.forEach(el => {
+              console.log("      -", el.id, "(" + el.tagName + ")");
+            });
+            
+            console.log("\n📋 All modal elements:");
+            const allModals = document.querySelectorAll('.modal, [class*="modal"]');
+            console.log("   - Found", allModals.length, "modal elements");
+            allModals.forEach(el => {
+              console.log("      - ID:", el.id || "no-id", "Classes:", Array.from(el.classList));
+            });
+            
+            alert("Username setup modal not found. Please contact support.");
           }
-        }, { once: true });
+        }, 100);
+        
+        return;
+      }
+
+      console.log("\n✅ Username already set, checking role...");
+      
+      // Verify User role
+      if (userData.Role === "User") {
+        console.log("✅ Role is User, redirecting...");
+        isLoggingIn = false;
+        loginModal.classList.remove("open");
+        showSuccessPopup("LOGIN SUCCESSFUL", `Welcome back, ${userData.displayName}!`);
+        setTimeout(() => {
+          window.location.href = "user.html"; 
+        }, 1500);
       } else {
+        console.log("❌ Role is not User:", userData.Role);
+        isLoggingIn = false;
         await signOut(auth);
         showSuccessPopup("ACCESS DENIED", "This account is not a User.", true);
       }
     } catch (error) {
+      console.error("❌ Login error:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
+      console.error("Full error:", error);
+      isLoggingIn = false;
       showSuccessPopup("ERROR", "Invalid email or password.", true);
-      console.error("User login error:", error);
     }
   });
 }
+/* Setup Username Modal */
+function setupUsernameModal(user) {
+  console.log("🔧 Setting up username modal for user:", user.email);
+  
+  const usernameInput = document.getElementById('username-setup-input');
+  const submitBtn = document.getElementById('username-setup-submit');
+  const errorDiv = document.getElementById('username-setup-error');
+
+  if (!usernameInput || !submitBtn || !errorDiv) {
+    console.error("❌ Modal elements not found!");
+    return;
+  }
+
+  // Clear previous values
+  usernameInput.value = '';
+  errorDiv.style.display = 'none';
+  errorDiv.textContent = '';
+
+  // Focus on input
+  setTimeout(() => usernameInput.focus(), 200);
+
+  // Remove old event listeners by cloning
+  const newSubmitBtn = submitBtn.cloneNode(true);
+  submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+
+  const newUsernameInput = usernameInput.cloneNode(true);
+  usernameInput.parentNode.replaceChild(newUsernameInput, usernameInput);
+
+  // Get fresh references
+  const freshInput = document.getElementById('username-setup-input');
+  const freshSubmitBtn = document.getElementById('username-setup-submit');
+  const freshErrorDiv = document.getElementById('username-setup-error');
+
+  // Handle Enter key
+  freshInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      freshSubmitBtn.click();
+    }
+  });
+
+  // Handle submission
+  freshSubmitBtn.addEventListener('click', async () => {
+    console.log("🔵 Submit button clicked");
+    const username = freshInput.value.trim();
+    console.log("👤 Username entered:", username);
+    
+    if (!username) {
+      freshErrorDiv.textContent = "Username cannot be empty.";
+      freshErrorDiv.style.display = 'block';
+      return;
+    }
+
+    if (username.length < 3) {
+      freshErrorDiv.textContent = "Username must be at least 3 characters.";
+      freshErrorDiv.style.display = 'block';
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      freshErrorDiv.textContent = "Username can only contain letters, numbers, underscores, and hyphens.";
+      freshErrorDiv.style.display = 'block';
+      return;
+    }
+
+    freshSubmitBtn.disabled = true;
+    freshSubmitBtn.textContent = "Saving...";
+    freshErrorDiv.style.display = 'none';
+
+    try {
+      console.log("📝 Updating Firestore...");
+      await updateDoc(doc(db, 'users', user.uid), {
+        displayName: username,
+        usernameSet: true,
+        emailVerified: true
+      });
+      
+      console.log("📝 Updating Auth profile...");
+      await updateProfile(user, {
+        displayName: username
+      });
+      
+      console.log("✅ Username saved successfully!");
+      
+      const modal = document.getElementById('username-setup-modal');
+      modal.classList.remove('open');
+      modal.style.display = 'none';
+      
+      
+      // Sign out and redirect to login
+      await signOut(auth);
+      
+      setTimeout(() => {
+        console.log("Redirecting to Scheduling System homepage...");
+        window.location.href = 'new.html';
+      }, 1000);
+    } catch (error) {
+      console.error("Error setting username:", error);
+      freshErrorDiv.textContent = "Error setting username. Please try again.";
+      freshErrorDiv.style.display = 'block';
+      freshSubmitBtn.disabled = false;
+      freshSubmitBtn.textContent = "Set Username";
+    }
+  });
+}
+
+/* User Google Login Handling */
+// Handle Admin Google Login
+const adminGoogleLoginBtn = document.getElementById('admin-google-login-btn');
+if (adminGoogleLoginBtn) {
+  adminGoogleLoginBtn.addEventListener('click', async () => {
+    console.log("🔵 Admin Google login button clicked");
+    await handleGoogleLogin('Admin');
+  });
+}
+
+// Handle User Google Login
+const userGoogleLoginBtn = document.getElementById('user-google-login-btn');
+if (userGoogleLoginBtn) {
+  userGoogleLoginBtn.addEventListener('click', async () => {
+    console.log("🔵 User Google login button clicked");
+    await handleGoogleLogin('User');
+  });
+}
+
+// Shared Google Login Handler
+async function handleGoogleLogin(expectedRole) {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    console.log("⏳ Opening Google sign-in popup...");
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    console.log("✅ Google sign-in successful:", user.email);
+
+    // Get user document from Firestore
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    
+    if (!userDoc.exists()) {
+      console.log("❌ User account not found. Please sign up first.");
+      await signOut(auth);
+      showSuccessPopup("ACCOUNT NOT FOUND", "Please sign up first before logging in with Google.", true);
+      return;
+    }
+
+    const userData = userDoc.data();
+    console.log("📄 User data:", userData);
+
+    // Verify User role matches expected
+    if (userData.Role === expectedRole) {
+      console.log(`✅ Role is ${expectedRole}, redirecting...`);
+      loginModal.classList.remove("open");
+      showSuccessPopup("LOGIN SUCCESSFUL", `Welcome back, ${userData.displayName}!`);
+      
+      const redirectUrl = expectedRole === "Admin" ? "admin.html" : "user.html";
+      setTimeout(() => {
+        window.location.href = redirectUrl; 
+      }, 1500);
+    } else {
+      console.log(`❌ Role mismatch. Expected: ${expectedRole}, Got: ${userData.Role}`);
+      await signOut(auth);
+      showSuccessPopup("ACCESS DENIED", `This account is not registered as ${expectedRole}.`, true);
+    }
+  } catch (error) {
+    console.error("❌ Google login error:", error);
+    if (error.code === 'auth/popup-closed-by-user') {
+      showSuccessPopup("CANCELLED", "Google sign-in was cancelled.", true);
+    } else if (error.code === 'auth/popup-blocked') {
+      showSuccessPopup("POPUP BLOCKED", "Please allow pop-ups for this site.", true);
+    } else {
+      showSuccessPopup("ERROR", "Failed to sign in with Google.", true);
+    }
+  }
+}
+
 
 /* Logout Handling */
 const logoutLinks = document.querySelectorAll('.logout-link');
