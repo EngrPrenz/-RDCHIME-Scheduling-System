@@ -1,554 +1,548 @@
+<!-- hompage.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Schedule - RDCHIME</title>
+    <title>RDCHIME Scheduling System</title>
+    <meta name="description" content=""/>
+    <meta name="author" content="RDCHIME Scheduling System" />
+
+    <meta property="og:title" content="RDCHIME Scheduling System" />
+    <meta property="og:description" content="" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homestyles.css">
-    <style>
-        :root {
-            --church-50: #fef3b8;
-            --church-100: #f8e8a0;
-            --church-700: #4d350d;
-            --gold: #c29d2d;
-            --gold-dark: #a8851f;
-            --gray-100: #f8fafc;
-            --gray-600: #64748b;
-        }
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  </head>
 
-        .schedule-container {
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--church-100) 0%, var(--gray-100) 100%);
-            padding-top: 100px;
-            padding-bottom: 50px;
-        }
-        
-        .schedule-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        
-        .schedule-header h1 {
-            font-size: 2.5rem;
-            color: var(--church-700);
-            margin-bottom: 0.5rem;
-        }
-        
-        .schedule-header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-        }
+  <body>
+    <nav id="navbar" class="navbar">
+  <div class="container">
+    <div class="logo">
+      <h1>
+        <img src="images/RDCHIME Logo.png" alt="RDCHIME Scheduling System Logo" class="logo-img" />
+        <span class="logo-text">RDCHIME Scheduling System</span>
+      </h1>
+    </div>
+    
+    <div class="desktop-nav">
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link">Home</a></li>
+        <li><a href="schedule.html" class="nav-link">Schedule</a></li>
+        <li><a href="activities.html" class="nav-link">Activities</a></li>
+        <li><a href="#about" class="nav-link">About</a></li>
+      </ul>
+      <button class="btn btn-outline" id="login-btn">Login</button>
+    </div>
+    
+    <div class="mobile-menu-btn">
+      <button id="menu-toggle">
+        <span class="menu-icon">☰</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-close">
+      <button id="menu-close">✕</button>
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#home" class="mobile-nav-link">Home</a></li>
+      <li><a href="schedule.html" class="mobile-nav-link">Schedule</a></li>
+      <li><a href="#about" class="mobile-nav-link">About</a></li>
+    </ul>
+    <button class="btn btn-outline w-full" id="mobile-login-btn">Login</button>
+  </div>
+</nav>
 
-        /* Success Message Styles */
-        .success-message {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #10b981;
-            color: white;
-            padding: 16px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 1000;
-            transform: translateX(120%);
-            transition: transform 0.3s ease;
-            max-width: 400px;
-        }
-
-        .success-message.show {
-            transform: translateX(0);
-        }
-
-        .success-message svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            flex-shrink: 0;
-        }
-
-        .success-content {
-            flex: 1;
-        }
-
-        .success-message h4 {
-            margin: 0 0 4px 0;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .success-message p {
-            margin: 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .close-success {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-success:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .close-success svg {
-            width: 16px;
-            height: 16px;
-        }
-        
-        .schedule-form-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--church-700);
-            font-size: 0.95rem;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            background: white;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(194, 157, 45, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-        }
-
-        .materials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin-top: 0.75rem;
-        }
-
-        .material-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--church-50);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid var(--gold);
-            position: relative;
-        }
-
-        .material-item:hover {
-            background: #f8e8a0;
-            border-color: var(--church-700);
-        }
-
-        .material-item.selected {
-            background: var(--gold);
-            border-color: var(--church-700);
-        }
-
-        .material-item.selected .material-label {
-            color: white;
-            font-weight: 600;
-        }
-
-        .material-item input[type="checkbox"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            z-index: 2;
-        }
-
-        .material-label {
-            margin-left: 0.5rem;
-            cursor: pointer;
-            flex: 1;
-            color: var(--church-700);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .material-checkbox {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--gold);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            flex-shrink: 0;
-        }
-
-        .material-item input[type="checkbox"]:checked + .material-checkbox {
-            background: var(--church-700);
-            border-color: var(--church-700);
-        }
-
-        .material-item input[type="checkbox"]:checked + .material-checkbox::after {
-            content: '✓';
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        /* Added material quantity input styles */
-        .material-quantity-input {
-            width: 60px;
-            padding: 4px 6px;
-            border: 1px solid var(--gold);
-            border-radius: 4px;
-            font-size: 13px;
-            text-align: center;
-            margin-left: 8px;
-            display: none;
-            z-index: 1;
-            position: relative;
-        }
-
-        .material-item.selected .material-quantity-input {
-            display: block !important;
-            background: white;
-            color: var(--church-700);
-        }
-
-        .material-quantity-input:focus {
-            outline: none;
-            border-color: var(--church-700);
-            background-color: #fffbf0;
-        }
-
-        .material-quantity-input::-webkit-outer-spin-button,
-        .material-quantity-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        .material-quantity-input[type=number] {
-            -moz-appearance: textfield;
-        }
-
-        /* Added image drop zone styles */
-        #drop-zone {
-            width: 100%;
-            min-height: 200px;
-            border: 2px dashed #d1d5db;
-            border-radius: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s ease, background-color 0.3s ease;
-            user-select: none;
-            background: #f9fafb;
-        }
-
-        #drop-zone:hover,
-        #drop-zone.drag-over {
-            border-color: var(--gold);
-            background-color: #fffbf0;
-        }
-
-        #drop-zone p {
-            margin: 5px 0;
-            color: var(--gray-600);
-            font-size: 0.9rem;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .error {
-            color: #ef4444;
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
-        #preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .preview-item {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border: 1px solid #d1d5db;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .delete-btn {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            line-height: 1;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .delete-btn:hover {
-            background: rgba(0, 0, 0, 0.8);
-        }
-
-        .btn-submit {
-            background: var(--gold);
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            padding: 0.875rem 2rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .btn-submit:hover {
-            background: var(--gold-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(194, 157, 45, 0.3);
-        }
-
-        .btn-submit:disabled {
-            background: #d1d5db;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .required {
-            color: #ef4444;
-        }
-
-        @media (max-width: 768px) {
-            .schedule-container {
-                padding-top: 80px;
-            }
-
-            .schedule-header h1 {
-                font-size: 2rem;
-            }
-
-            .schedule-form-card {
-                padding: 1.5rem;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .materials-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .success-message {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Success Message -->
-    <div class="success-message" id="successMessage">
-        <svg viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
-        <div class="success-content">
-            <h4 id="successTitle">Activity Submitted Successfully!</h4>
-            <p id="successDescription">Your activity has been submitted for verification and is now pending approval.</p>
+    <main>
+      <section id="home" class="hero">
+        <div class="video-background">
+          <video autoplay muted loop id="rdchime-video">
+            <source src="pexels-2022395.mp4" type="video/mp4">
+          </video>
+          <div class="overlay"></div>
         </div>
-        <button class="close-success" onclick="hideSuccessMessage()">
-            <svg viewBox="0 0 24 24">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        <div class="container video-content">
+          <h1 class="hero-title">Welcome to <span class="highlight"><br>RDCHIME Scheduling System</span></h1>
+          <p class="hero-subtitle" style="text-align: justify;">RDChime Scheduling System is a platform designed to help organize and manage activities within the Regional Design and Creativity Hub for Innovation of MSMEs in Education. It supports smooth scheduling of workshops, trainings, meetings, and creative sessions. The system aims to promote collaboration, enhance productivity, and provide an efficient way for users to stay informed and connected within the innovation hub.</p>
+          
+          
+          <div class="service-highlights">
+            <h2>RDCHIME Highlights</h2>
+            <div class="highlights-grid">
+              <div class="highlight-card">
+                <span class="highlight-date">Animation Trainings</span>
+                <h3>Enhance Your Skills</h3>
+                <p>Learn modern animation techniques and improve your creativity.</p>
+              </div>
+
+              <div class="highlight-card">
+                <span class="highlight-date">Workshops</span>
+                <h3>Hands-On Learning</h3>
+                <p>Join interactive workshops designed to develop practical skills.</p>
+              </div>
+
+              <div class="highlight-card">
+                <span class="highlight-date">Creative Sessions</span>
+                <h3>Innovate and Collaborate</h3>
+                <p>Engage in activities that spark new ideas and boost creativity.</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ApprovedActs Section-->
+      <section class="aa">
+      <div class="aa-main-section-wrapper">
+        
+        <div class="aa-content-box">
+
+            <div class="aa-section-header">
+                <h2>Activities</h2>
+                <p>List of upcoming activities</p>
+            </div>
+
+            <div class="aa-carousel-container">
+                
+                <button class="aa-carousel-nav aa-nav-left" onclick="scrollCarousel(-1)"><i class="fas fa-chevron-left"></i></button>
+                
+                <div class="aa-carousel-track" id="carouselTrack">
+                    
+
+                </div> <button class="aa-carousel-nav aa-nav-right" onclick="scrollCarousel(1)"><i class="fas fa-chevron-right"></i></button>
+
+            </div> 
+              <div class="aa-see-more-container">
+                  <a href="activities.html" class="aa-see-more-btn" target="_blank">See more..</a>
+              </div>
+        
+        </div>
+        <div class="aa-wave-divider">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,60C150,90,350,30,500,60C650,90,850,30,1000,60C1150,90,1200,60,1200,60L1200,120L0,120L0,60Z" fill="var(--white)"></path>
             </svg>
-        </button>
-    </div>
-
-    <!-- Navigation -->
-    <nav id="navbar" class="navbar scrolled">
-        <div class="container">
-            <div class="logo">
-                <h1>
-                    <img src="images/RDCHIME Logo.png" alt="RDCHIME Logo" class="logo-img" />
-                    <span class="logo-text">RDCHIME Scheduling System</span>
-                </h1>
-            </div>
-            
-            <div class="desktop-nav">
-                <ul class="nav-links">
-                    <li><a href="index.html" class="nav-link">Home</a></li>
-                    <li><a href="schedule.html" class="nav-link">Schedule</a></li>
-                    <li><a href="activities.html" class="nav-link">Activities</a></li>
-                    <li><a href="index.html#about" class="nav-link">About</a></li>
-                </ul>
-                <button class="btn btn-outline" id="account-btn">Account</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Schedule Container -->
-    <div class="schedule-container" id="scheduleContent" style="display: none;">
-        <div class="container">
-            <div class="schedule-header">
-                <h1>Schedule Activity</h1>
-                <p>Create and submit a new activity for RDCHIME laboratory</p>
-            </div>
-            
-            <div class="schedule-form-card">
-                <form id="activityForm">
-                    <div class="form-group">
-                        <label>Activity Name <span class="required">*</span></label>
-                        <input type="text" id="activityName" required placeholder="Enter activity name">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Date <span class="required">*</span></label>
-                            <input type="date" id="date" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Number of Participants <span class="required">*</span></label>
-                            <input type="number" id="participants" min="1" required placeholder="e.g., 25">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Start Time <span class="required">*</span></label>
-                            <input type="time" id="startTime" required>
-                        </div>
-                        <div class="form-group">
-                            <label>End Time <span class="required">*</span></label>
-                            <input type="time" id="endTime" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Number of Hours</label>
-                        <input type="number" id="hours" step="0.5" readonly style="background: #f8fafc;" placeholder="Auto-calculated">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Organizer Name <span class="required">*</span></label>
-                        <input type="text" id="organizer" required placeholder="Enter organizer name">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Materials Needed (Select and set quantity 1-1000)</label>
-                        <div class="materials-grid" id="materialsGrid"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
-                    </div>
-
-                    <!-- Added image upload section -->
-                    <div class="form-group">
-                        <label>Upload Images (Up to 5 images)</label>
-
-                        <div id="drop-zone">
-                            <p>Drag files to upload</p>
-                            <p>or click to select files</p>
-                            <p>(Only images accepted)</p>
-                            <input type="file" id="file-input" accept="image/*" multiple>
-                        </div>
-
-                        <div id="error-message" class="error"></div>
-
-                        <div id="preview-container"></div>
-                    </div>
-
-                    <button type="submit" class="btn-submit" id="submitBtn">Submit for Verification</button>
-                </form>
-            </div>
         </div>
     </div>
+    </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+
+      <section id="gallery" class="gallery-section">
         <div class="container">
-            <div class="copyright">
-                <p>&copy; 2025 RDCHIME Scheduling System. All rights reserved.</p>
+          <div class="section-header">
+            <h2 class="gallery-title-colored">
+               <span style="color:#f5d034;">RDCHIME <span style="color:#f43f5e;">G</span><span style="color:#f59e0b;">a</span><span style="color:#10b981;">l</span><span style="color:#3b82f6;">l</span><span style="color:#6366f1;">e</span><span style="color:#ec4899;">r</span><span style="color:#8b5cf6;">y</span>
+            </h2>
+            <p style="font-size: medium;">A glimpse of Regional Design and Creativity Hub for Innovation of MSMEs in Education. For Animation and Innovation-related Workshops, Trainings, and Research projects.</p>
+          </div>
+          
+          <div class="gallery-grid">
+            <div class="gallery-card item-1" data-images='[
+              "images/3.jpg",
+              "images/22.jpg",
+              "images/2.jpg",
+              "images/33.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/3.jpg" alt="Our Beautiful Church" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Creative Animation Training Session</h3>
+              </div>
             </div>
+            <div class="gallery-card item-2" data-images='[
+              "images/5.png",
+              "images/6.jpg",
+              "images/7.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/5.png" alt="Sunday School" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Regional Science, Technology, and Innovation Week</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-3" data-images='[
+              "images/8.jpg",
+              "images/1.jpg",
+              "images/2.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/8.jpg" alt="Baptism Service" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Team Workshop on Creative Techniques</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-4" data-images='[
+              "images/10.jpg",
+              "images/11.jpg",
+              "images/12.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/10.jpg" alt="Prayer Meeting" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Innovation Hub (IHUB)</h3>
+              </div>
+            </div>
+            <div class="gallery-card item-5" data-images='[
+              "images/13.jpg",
+              "images/14.jpg",
+              "images/15.jpg"
+            ]'>
+              <div class="image-slider">
+                <img src="images/13.jpg" alt="Fellowship Dinner" class="active" />
+              </div>
+              <div class="overlay">
+                <h3>Interactive Animation Learning Activity</h3>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+
+        <!-- <div class="wave-separators gray-wave">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+            <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+          </svg>
+        </div> -->
+
+      <!-- Add the wave separator here -->
+      <div class="wave-separator pink-wave">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+          <path d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+        </svg>
+      </div>
+
+    <!-- Enhanced About Section (Preserving Original Alignment) -->
+    <section id="about" class="about">
+      <div class="container">
+        <div class="section-header">
+          <h2>About RDCHIME</h2>
+          <p>Learn about Regional Design and Creativity Hub on Innovation MSMEs and Education.</p>
+        </div>
+        
+        <div class="about-grid">
+          <div class="about-card">
+            <div class="about-image">
+              <img src="images/about.png" alt="Our Mission">
+              <div class="card-badge">RDCHIME</div>
+            </div>
+            <div class="about-content">
+              <h3>RDCHIME</h3>
+              <p style="text-align: justify;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Regional Design and Creativity Hub for Innovation, MSMEs and Education (RDCHIME) is a collaborative project between the University of Rizal System and DOST-CALABARZON which aims to</p>
+              <p>(1) enhance the capability of industries; <br> (2) train faculty, students, and industry partners in the development of innovative design and creative skills in CALABARZON; <br> (3) provide educational benefits for the students.</p>
+              <h4> <span class="highlight" style="font-size: 20px;">Head of the RDCHIME</span></h4>
+              <br><img src="images/Head-RDCHIME.png" alt="Fellowship Dinner" class="active" style="padding-left: 60px; height: 400px;" />
+            </div>
+          </div>
+          
+          <div class="about-card">
+            <div class="about-content">
+              <h3>About RDCHIME</h3>
+              <ul class="values-list">
+                <li>
+                  <div class="value-number">1</div>
+                  <div>
+                    <h4>Our Goal:</h4>
+                    <p style="text-align: justify;">Train Faculties, Students, and Industry Partners in the Development of Innovative and Animation Skills in CALABARZON.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">2</div>
+                  <div>
+                    <h4>Objective:</h4>
+                    <p style="text-align: justify;">Enhance the capability if industries in the province of Rizal and at the same time provide education benefits for the students.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">3</div>
+                  <div>
+                    <h4>Our Services:</h4>
+                    <p style="text-align: justify;">RDCHIME is offering workshops for the following:</p>
+                    <p><br><span class="highlight">Animation Tutorials</span><br> •Traditional <br> •Digital</p>
+                    <p><span class="highlight">Innovation-related Training</span> <br> •Computer-Aided Design (Solidworks) <br> •3D Printer</p>
+                    <p><span class="highlight">Others:</span><br> •Research Project Outputs (Module)</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="value-number">4</div>
+                  <div>
+                    <h4>Who can avail our services?</h4>
+                    <p>The services offered by the RDCHIME are planned to be open to</p>
+                    <p><br> •Faculty Researchers <br> •Student Researchers <br> •LGUs <br> •MSMEs in the CALABARZON Region</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-cards">
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <h3>Operating Hours</h3>
+            <p><span class="highlight">Monday to Thursday</span></p>
+            <p>7:00 AM TO 5:00 PM</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </div>
+            <h3>Location</h3>
+            <p><span class="highlight">RDCHIME Laboratory</span></p>
+            <p style="font-size: 12px;">1st Floor, DOST Rizal PSTC Bulding, University of Rizal System Antipolo Campus, Marigman Rd. Brgy. San Roque, Antipolo City</p>
+          </div>
+          
+          <div class="info-card">
+            <div class="info-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            </div>
+            <h3>Contact Us</h3>
+            <p style="font-size: 16px;"><span class="highlight">Telephone:</span> (02) 8539-9950 loc.111</p>
+            <p> <span class="highlight">Email: </span>rdchime@urs.edu.ph</p>
+          </div>
+        </div>
+      </div>
+    </section>
+      
+    </main>
+    <div id="username-setup-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7); z-index: 10000; justify-content: center; align-items: center;">
+  <div class="modal-content" style="background: white; padding: 2rem; border-radius: 0.5rem; max-width: 400px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+    <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; font-weight: 600;">Set Your Username</h2>
+    <p style="margin-bottom: 1.5rem;">Your email is verified! Please choose a username to continue.</p>
+    
+    <div class="form-group">
+      <label for="username-setup-input" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Username</label>
+      <input type="text" id="username-setup-input" placeholder="Enter username" required style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.375rem; font-size: 1rem; font-family: 'Poppins', sans-serif;">
+      <div id="username-setup-error" style="color: #dc2626; font-size: 0.875rem; margin-top: 0.5rem; display: none;"></div>
+    </div>
+    
+    <button type="button" class="btn btn-primary" id="username-setup-submit" style="width: 100%; margin-top: 1rem;">Set Username</button>
+    <p style="font-size: 0.875rem; color: #666; margin-top: 1rem; text-align: center;">Username must be at least 3 characters long</p>
+  </div>
+</div>
+
+    <footer class="footer" >
+      <div class="container" style="align-items: center;">
+        <div class="footer-grid" >
+          <div class="footer-col" >
+            <h3>RDCHIME</h3>
+            <div class="social-links">
+              <a href="https://www.facebook.com/RDCHIME" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+                </svg>
+              </a>
+              <a href="http://www.urs.edu.ph/research/regional-design-and-creativity-hub-for-innovation-in-msmes-and-education-or-rdchime/#" class="social-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.75 8c0-1.1.23-2.15.64-3.1h2.24c-.14.98-.22 2.04-.23 3.1H1.75zm.9 4.1A6.96 6.96 0 0 1 1.75 8h2.65c.01 1.06.09 2.12.23 3.1H2.65zm3.59 3.02c-.47-.86-.8-2.06-.96-3.02h2.65v3.02H6.24zM6.04 8c.01-1.06.1-2.12.25-3.1h2.46c.15.98.24 2.04.25 3.1H6.04zm.2-4.1c.16-.96.49-2.16.96-3.02h1.76c.47.86.8 2.06.96 3.02H6.24zm4.01 7.1c-.15.96-.49 2.16-.96 3.02H7.53V10h2.72zm.3-3c-.01-1.06-.1-2.12-.25-3.1h2.46c.41.95.64 2 .64 3.1h-2.85zm-.25 1h2.85a6.96 6.96 0 0 1-1.51 4.1h-2.24c.14-.98.22-2.04.23-3.1z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-col">
+            <h4>Quick Links</h4>
+            <ul>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#about">About</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h4>Operating Hours</h4>
+            <ul>
+              <li><span class="highlight">Monday to Thursday</span></li>
+              <li><span class="highlight">7:00 AM TO 5:00 PM</span></li>
+            </ul>
+          </div>
+          
+
+          <div class="footer-col">
+            <h4>Contact Us</h4>
+            <ul>
+              <li><a href="tel:(02) 8539-9950">✆: (02) 8539-9950 loc.111</a></li>
+              <li><a href="mailto:rdchime@urs.edu.ph">✉: rdchime@urs.edu.ph</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <p>&copy; 2025 RDCHIME Scheduling System. All rights reserved.</p>
+        </div>
+      </div>
     </footer>
 
-    <!-- Firebase and Scripts -->
+<div class="modal" id="login-modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <h2>Welcome Back!</h2>
+    <p>Login to access the administrative features</p>
+    
+    <div class="tabs">
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="admin">Admin</button>
+        <button class="tab-btn" data-tab="user">User</button>
+      </div>
+      
+      <div class="tab-content active" id="admin-tab">
+        <form class="login-form" id="admin-login-form">
+          <div class="form-group">
+            <label for="admin-email">Email</label>
+            <input type="email" id="admin-email" placeholder="admin@rdchime.com" required>
+          </div>
+          <div class="form-group">
+            <label for="admin-password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="admin-password" required>
+              <button type="button" class="password-toggle-btn" data-target="admin-password">
+                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="admin-error" class="error-message" style="color: red; text-align: center; margin-bottom: 1rem; display: none;"></div>
+          <button type="submit" class="btn btn-primary">Login as Administrator</button>
+
+          <div style="text-align: center; margin: 1.5rem 0; position: relative;">
+            <span style="background: white; padding: 0 1rem; position: relative; z-index: 1; color: #666; font-size: 14px;">OR</span>
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #ddd; z-index: 0;"></div>
+          </div>
+          
+          <button type="button" class="btn btn-outline" id="admin-google-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.64 9.20454C17.64 8.56636 17.5827 7.95272 17.4764 7.36363H9V10.845H13.8436C13.635 11.97 13.0009 12.9231 12.0477 13.5613V15.8195H14.9564C16.6582 14.2527 17.64 11.9454 17.64 9.20454Z" fill="#4285F4"/>
+              <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5613C11.2418 14.1013 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8372 3.96409 10.71H0.957275V13.0418C2.43818 15.9831 5.48182 18 9 18Z" fill="#34A853"/>
+              <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
+              <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          <div class="text-center">
+            <p style="font-size: 15px; margin: 0;">
+              Don't have an account?
+              <a href="signup.html" class="forgot-password"> Sign Up Here!</a>
+            </p>
+            <a href="forgot.html" class="forgot-password" style="margin: 0; display: inline-block;">Forgot password?</a>
+          </div>
+        </form>
+      </div>
+      
+      <div class="tab-content" id="user-tab">
+        <form class="login-form" id="user-login-form">
+          <div class="form-group">
+            <label for="user-email">Email</label>
+            <input type="email" id="user-email" placeholder="user@rdchime.com" required>
+          </div>
+          <div class="form-group">
+            <label for="user-password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="user-password" required>
+              <button type="button" class="password-toggle-btn" data-target="user-password">
+                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
+                  <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                  <line x1="1" y1="1" x2="23" y2="23"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div id="user-error" class="error-message" style="color: red; text-align: center; margin-bottom: 1rem; display: none;"></div>
+          <button type="submit" class="btn btn-primary">Login as User</button>
+          
+          <div style="text-align: center; margin: 1.5rem 0; position: relative;">
+            <span style="background: white; padding: 0 1rem; position: relative; z-index: 1; color: #666; font-size: 14px;">OR</span>
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #ddd; z-index: 0;"></div>
+          </div>
+          
+          <button type="button" class="btn btn-outline" id="user-google-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.64 9.20454C17.64 8.56636 17.5827 7.95272 17.4764 7.36363H9V10.845H13.8436C13.635 11.97 13.0009 12.9231 12.0477 13.5613V15.8195H14.9564C16.6582 14.2527 17.64 11.9454 17.64 9.20454Z" fill="#4285F4"/>
+              <path d="M9 18C11.43 18 13.4673 17.1941 14.9564 15.8195L12.0477 13.5613C11.2418 14.1013 10.2109 14.4204 9 14.4204C6.65591 14.4204 4.67182 12.8372 3.96409 10.71H0.957275V13.0418C2.43818 15.9831 5.48182 18 9 18Z" fill="#34A853"/>
+              <path d="M3.96409 10.71C3.78409 10.17 3.68182 9.59318 3.68182 9C3.68182 8.40682 3.78409 7.83 3.96409 7.29V4.95818H0.957275C0.347727 6.17318 0 7.54773 0 9C0 10.4523 0.347727 11.8268 0.957275 13.0418L3.96409 10.71Z" fill="#FBBC05"/>
+              <path d="M9 3.57955C10.3214 3.57955 11.5077 4.03364 12.4405 4.92545L15.0218 2.34409C13.4632 0.891818 11.4259 0 9 0C5.48182 0 2.43818 2.01682 0.957275 4.95818L3.96409 7.29C4.67182 5.16273 6.65591 3.57955 9 3.57955Z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </button>
+          
+          <div class="text-center" style="margin-top: 1rem;">
+            <p style="font-size: 15px; margin: 0;">
+              Don't have an account?
+              <a href="signup.html" class="forgot-password"> Sign Up Here!</a>
+            </p>
+            <a href="forgot.html" class="forgot-password" style="margin: 0; display: inline-block;">Forgot password?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+  
+</div>
+
+    <!-- Username Setup Modal -->
+
+
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script src="script.js"></script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9354931afc0c44ff',t:'MTc0NTQ4Njk0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+
+    <script src="script.js" type="module"></script>
+
+    <script>
+        function scrollCarousel(direction) {
+            const track = document.getElementById('carouselTrack');
+            const firstCard = track.querySelector('.aa-activity-card');
+            
+            if (!firstCard) return;
+            const cardWidth = firstCard.offsetWidth;
+            const gap = 20; 
+          
+            const scrollDistance = cardWidth + gap; 
+            
+            track.scrollLeft += direction * scrollDistance;
+        }
+    </script>
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { 
             getFirestore, 
             collection, 
             addDoc, 
-            serverTimestamp
+            getDocs, 
+            updateDoc, 
+            doc, 
+            query, 
+            where, 
+            orderBy, 
+            serverTimestamp 
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
+        // Firebase configuration - REPLACE WITH YOUR OWN
         const firebaseConfig = {
             apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
             authDomain: "rdchime-scheduling-system.firebaseapp.com",
@@ -559,330 +553,25 @@
             measurementId: "G-LP39RX0R47"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const db = getFirestore(app); 
 
-        const MATERIALS = [
-            'DLP Projector',
-            'HDMI Cable',
-            'Speaker',
-            'Microphone',
-            'Light Box',
-            'Animation Tablet',
-            'Laptop',
-            'Whiteboard',
-            'Markers',
-            'Chairs',
-            'Tables'
-        ];
+        // Add this to your login page JavaScript
+        // Check if user is already signed in when page loads
+// ========================================
+// CHECK AUTH STATE ON LOGIN PAGE
+// ========================================
+// In your script.js file:
 
-        let currentUser = null;
+const auth = getAuth(app);
 
-        // Success message functions
-        function showSuccessMessage(title, description) {
-            const successMessage = document.getElementById('successMessage');
-            const successTitle = document.getElementById('successTitle');
-            const successDescription = document.getElementById('successDescription');
-            
-            successTitle.textContent = title;
-            successDescription.textContent = description;
-            successMessage.classList.add('show');
-            
-            setTimeout(() => {
-                hideSuccessMessage();
-            }, 5000);
-        }
+// ========================================
+// CHECK AUTH STATE ON LOGIN PAGE - PUT THIS HERE
+// ========================================
 
-        window.hideSuccessMessage = function() {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.classList.remove('show');
-        };
-
-        function initMaterials() {
-            const materialsGrid = document.getElementById('materialsGrid');
-            if (!materialsGrid) return;
-            
-            materialsGrid.innerHTML = '';
-            MATERIALS.forEach(material => {
-                const div = document.createElement('div');
-                div.className = 'material-item';
-                const id = `mat_${material.replace(/\s/g, '_')}`;
-                const qtyId = `qty_${material.replace(/\s/g, '_')}`;
-                div.innerHTML = `
-                    <input type="checkbox" id="${id}" value="${material}">
-                    <div class="material-checkbox"></div>
-                    <span class="material-label">${material}</span>
-                    <input type="number" id="${qtyId}" class="material-quantity-input" value="1" min="1" max="1000">
-                `;
-                
-                const checkbox = div.querySelector('input[type="checkbox"]');
-                const qtyInput = div.querySelector('.material-quantity-input');
-                
-                div.addEventListener('click', (e) => {
-                    if (e.target !== checkbox && e.target !== qtyInput) {
-                        checkbox.checked = !checkbox.checked;
-                        const event = new Event('change', { bubbles: true });
-                        checkbox.dispatchEvent(event);
-                    }
-                });
-                
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        div.classList.add('selected');
-                        qtyInput.style.display = 'block';
-                        qtyInput.focus();
-                    } else {
-                        div.classList.remove('selected');
-                        qtyInput.style.display = 'none';
-                    }
-                });
-                
-                qtyInput.addEventListener('input', function() {
-                    let value = this.value;
-                    
-                    if (value === '') return;
-                    
-                    value = parseInt(value);
-                    
-                    if (isNaN(value)) {
-                        this.value = 1;
-                        return;
-                    }
-                    
-                    if (value < 1) value = 1;
-                    if (value > 1000) value = 1000;
-                    
-                    this.value = value;
-                });
-
-                qtyInput.addEventListener('blur', function() {
-                    if (this.value === '' || parseInt(this.value) < 1) {
-                        this.value = 1;
-                    }
-                });
-
-                qtyInput.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-                
-                materialsGrid.appendChild(div);
-            });
-        }
         
-        // Calculate hours automatically
-        function setupTimeCalculation() {
-            const startTime = document.getElementById('startTime');
-            const endTime = document.getElementById('endTime');
-            if (startTime && endTime) {
-                startTime.addEventListener('change', calculateHours);
-                endTime.addEventListener('change', calculateHours);
-            }
-        }
 
-        function calculateHours() {
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-            
-            if (startTime && endTime) {
-                const start = new Date(`2000-01-01T${startTime}`);
-                const end = new Date(`2000-01-01T${endTime}`);
-                const hours = (end - start) / (1000 * 60 * 60);
-                document.getElementById('hours').value = hours > 0 ? hours.toFixed(1) : 0;
-            }
-        }
-
-        // Form submission
-        function setupFormSubmission() {
-            const form = document.getElementById('activityForm');
-            if (!form) return;
-            
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                if (!currentUser) {
-                    alert('You must be logged in to submit an activity.');
-                    return;
-                }
-
-                const submitBtn = document.getElementById('submitBtn');
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Submitting...';
-                
-                const selectedMaterials = Array.from(document.querySelectorAll('.material-item input:checked'))
-                    .map(cb => {
-                        const material = cb.value;
-                        const qtyId = `qty_${material.replace(/\s/g, '_')}`;
-                        const qtyInput = document.getElementById(qtyId);
-                        const quantity = parseInt(qtyInput.value) || 1;
-                        return {
-                            material: material,
-                            quantity: quantity
-                        };
-                    });
-
-                const activityData = {
-                    activityName: document.getElementById('activityName').value,
-                    date: document.getElementById('date').value,
-                    startTime: document.getElementById('startTime').value,
-                    endTime: document.getElementById('endTime').value,
-                    hours: parseFloat(document.getElementById('hours').value),
-                    participants: parseInt(document.getElementById('participants').value),
-                    organizer: document.getElementById('organizer').value,
-                    materials: selectedMaterials,
-                    description: document.getElementById('description').value,
-                    status: 'pending',
-                    createdBy: currentUser.uid,
-                    createdByEmail: currentUser.email,
-                    createdAt: serverTimestamp()
-                };
-
-                try {
-                    await addDoc(collection(db, 'activities'), activityData);
-                    
-                    showSuccessMessage('Success!', 'Your activity has been submitted for approval.');
-                    
-                    form.reset();
-                    document.querySelectorAll('.material-item').forEach(item => {
-                        item.classList.remove('selected');
-                        const qtyInput = item.querySelector('.material-quantity-input');
-                        if (qtyInput) qtyInput.style.display = 'none';
-                    });
-                    uploadedFiles = [];
-                    previewContainer.innerHTML = '';
-                    
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit for Verification';
-                } catch (error) {
-                    console.error('Error submitting activity:', error);
-                    alert('Error submitting activity. Please try again.');
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'Submit for Verification';
-                }
-            });
-        }
-
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const errorMessage = document.getElementById('error-message');
-        const previewContainer = document.getElementById('preview-container');
-
-        const MAX_FILE_COUNT = 5;
-        let uploadedFiles = [];
-
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
-
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
-        });
-        dropZone.addEventListener('drop', handleDrop, false);
-
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        function highlight() { dropZone.classList.add('drag-over'); }
-        function unhighlight() { dropZone.classList.remove('drag-over'); }
-
-        function handleDrop(e) {
-            let dt = e.dataTransfer;
-            handleFiles(dt.files);
-        }
-
-        function handleFiles(files) {
-            errorMessage.textContent = '';
-            
-            const incomingFiles = [...files];
-            const totalFilesAfterAddition = uploadedFiles.length + incomingFiles.length;
-
-            if (totalFilesAfterAddition > MAX_FILE_COUNT) {
-                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded.`;
-                fileInput.value = '';
-                return;
-            }
-
-            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
-            
-            if (validImageFiles.length !== incomingFiles.length) {
-                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
-                fileInput.value = '';
-                return;
-            }
-            
-            validImageFiles.forEach(file => {
-                uploadedFiles.push(file);
-                previewFile(file);
-            });
-            
-            fileInput.value = '';
-        }
-
-        function previewFile(file) {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onloadend = () => {
-                const previewItem = document.createElement('div');
-                previewItem.classList.add('preview-item');
-                previewItem.dataset.filename = file.name;
-
-                const img = document.createElement('img');
-                img.src = reader.result;
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.classList.add('delete-btn');
-                deleteBtn.textContent = 'x';
-                
-                deleteBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    deleteFile(file.name, previewItem);
-                });
-
-                previewItem.appendChild(img);
-                previewItem.appendChild(deleteBtn);
-                previewContainer.appendChild(previewItem);
-            }
-        }
-
-        function deleteFile(fileName, previewElement) {
-            uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-            previewElement.remove();
-            errorMessage.textContent = '';
-        }
-
-        // Authentication check
-        onAuthStateChanged(auth, (user) => {
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
-            
-            const scheduleContent = document.getElementById('scheduleContent');
-            
-            if (user) {
-                currentUser = user;
-                scheduleContent.style.display = 'block';
-                initMaterials();
-                setupTimeCalculation();
-                setupFormSubmission();
-            } else {
-                scheduleContent.innerHTML = '<div style="text-align: center; padding: 100px; color: #999;"><p>Please log in to schedule activities.</p></div>';
-            }
-        });
-
-        document.getElementById('account-btn').addEventListener('click', () => {
-            if (currentUser) {
-                window.location.href = 'account.html';
-            } else {
-                alert('Please log in first.');
-                window.location.href = 'index.html';
-            }
-        });
     </script>
-</body>
+  </body>
 </html>
