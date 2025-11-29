@@ -18,6 +18,290 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="homestyles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Added styles for image gallery, materials with quantity, and fullscreen modal -->
+    <style>
+      /* Image Gallery Styles */
+      .aa-image-gallery {
+        position: relative;
+        height: 200px;
+        background: #f0f0f0;
+        overflow: hidden;
+      }
+
+      .aa-image-gallery img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+
+      .aa-gallery-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.9);
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: #333;
+        transition: all 0.2s ease;
+        opacity: 0;
+        z-index: 5;
+      }
+
+      .aa-image-gallery:hover .aa-gallery-nav {
+        opacity: 1;
+      }
+
+      .aa-gallery-nav:hover {
+        background: #f5d034;
+        color: #333;
+      }
+
+      .aa-gallery-nav.prev {
+        left: 8px;
+      }
+
+      .aa-gallery-nav.next {
+        right: 8px;
+      }
+
+      .aa-image-indicator {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.6);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+      }
+
+      /* Materials with Quantity Styles */
+      .aa-materials-section {
+        padding: 12px 15px;
+        border-top: 1px solid #eee;
+      }
+
+      .aa-materials-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+      }
+
+      .aa-materials-header i {
+        color: #f5d034;
+      }
+
+      .aa-materials-count {
+        background: #f5d034;
+        color: #333;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        margin-left: auto;
+        font-weight: 600;
+      }
+
+      .aa-materials-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .aa-material-tag {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: #fff8e1;
+        color: #333;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border: 1px solid #f5d034;
+      }
+
+      .aa-material-qty {
+        background: #f5d034;
+        color: #333;
+        padding: 1px 5px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Fullscreen Modal Styles */
+      .fullscreen-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.95);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .fullscreen-modal.active {
+        display: flex;
+      }
+
+      .fullscreen-content {
+        position: relative;
+        max-width: 90vw;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .fullscreen-image {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 8px;
+      }
+
+      .fullscreen-info {
+        color: white;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .fullscreen-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .fullscreen-counter {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .fullscreen-close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: background 0.3s ease;
+        z-index: 10001;
+      }
+
+      .fullscreen-close:hover {
+        background: rgba(255,255,255,0.2);
+      }
+
+      .fullscreen-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.1);
+        border: none;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.5rem;
+        transition: background 0.3s ease;
+      }
+
+      .fullscreen-nav:hover {
+        background: rgba(255,255,255,0.2);
+      }
+
+      .fullscreen-nav.prev-image {
+        left: 20px;
+      }
+
+      .fullscreen-nav.next-image {
+        right: 20px;
+      }
+
+      .fullscreen-activity-nav {
+        position: absolute;
+        bottom: 20px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .fullscreen-activity-btn {
+        background: #f5d034;
+        border: none;
+        color: #333;
+        padding: 12px 24px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .fullscreen-activity-btn:hover {
+        background: #e6c12e;
+        transform: scale(1.05);
+      }
+
+      .fullscreen-activity-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      @media (max-width: 768px) {
+        .fullscreen-nav {
+          width: 40px;
+          height: 40px;
+          font-size: 1rem;
+        }
+
+        .fullscreen-nav.prev-image {
+          left: 10px;
+        }
+
+        .fullscreen-nav.next-image {
+          right: 10px;
+        }
+
+        .fullscreen-activity-nav {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .fullscreen-activity-btn {
+          padding: 10px 20px;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
   </head>
 
   <body>
@@ -504,7 +788,33 @@
 
     <!-- Username Setup Modal -->
 
-
+    <!-- Added Fullscreen Modal for activity images -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <button class="fullscreen-close" onclick="closeFullscreen()">
+            <i class="fas fa-times"></i>
+        </button>
+        <button class="fullscreen-nav prev-image" onclick="changeFullscreenImage(-1)">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="fullscreen-content">
+            <img src="RDCHIME Logo.png" alt="" class="fullscreen-image" id="fullscreenImage">
+            <div class="fullscreen-info">
+                <div class="fullscreen-title" id="fullscreenTitle"></div>
+                <div class="fullscreen-counter" id="fullscreenCounter"></div>
+            </div>
+        </div>
+        <button class="fullscreen-nav next-image" onclick="changeFullscreenImage(1)">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <div class="fullscreen-activity-nav">
+            <button class="fullscreen-activity-btn" onclick="changeFullscreenActivity(-1)" id="prevActivityBtn">
+                <i class="fas fa-arrow-left"></i> Previous Activity
+            </button>
+            <button class="fullscreen-activity-btn" onclick="changeFullscreenActivity(1)" id="nextActivityBtn">
+                Next Activity <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
     <script src="script.js"></script>
@@ -525,10 +835,122 @@
             
             track.scrollLeft += direction * scrollDistance;
         }
+
+        let activitiesData = [];
+        let currentActivityIndex = 0;
+        let currentImageIndex = 0;
+
+        // Open fullscreen modal
+        function openFullscreen(activityIndex, imageIndex) {
+            currentActivityIndex = activityIndex;
+            currentImageIndex = imageIndex;
+            const activity = activitiesData[activityIndex];
+            if (!activity) return;
+
+            const images = activity.imageUrls || activity.images || [activity.imageUrl || activity.image || 'RDCHIME Logo.png'];
+            const modal = document.getElementById('fullscreenModal');
+            const img = document.getElementById('fullscreenImage');
+            const title = document.getElementById('fullscreenTitle');
+            const counter = document.getElementById('fullscreenCounter');
+
+            img.src = images[imageIndex] || 'RDCHIME Logo.png';
+            title.textContent = activity.activityName || activity.title || 'Activity';
+            counter.textContent = `Image ${imageIndex + 1} of ${images.length} | Activity ${activityIndex + 1} of ${activitiesData.length}`;
+
+            // Update nav button states
+            document.getElementById('prevActivityBtn').disabled = activityIndex === 0;
+            document.getElementById('nextActivityBtn').disabled = activityIndex === activitiesData.length - 1;
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close fullscreen modal
+        function closeFullscreen() {
+            document.getElementById('fullscreenModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Change image in fullscreen
+        function changeFullscreenImage(direction) {
+            const activity = activitiesData[currentActivityIndex];
+            if (!activity) return;
+
+            const images = activity.imageUrls || activity.images || [activity.imageUrl || activity.image || 'RDCHIME Logo.png'];
+            currentImageIndex += direction;
+
+            if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+            if (currentImageIndex >= images.length) currentImageIndex = 0;
+
+            const img = document.getElementById('fullscreenImage');
+            const counter = document.getElementById('fullscreenCounter');
+
+            img.src = images[currentImageIndex] || 'RDCHIME Logo.png';
+            counter.textContent = `Image ${currentImageIndex + 1} of ${images.length} | Activity ${currentActivityIndex + 1} of ${activitiesData.length}`;
+        }
+
+        // Change activity in fullscreen
+        function changeFullscreenActivity(direction) {
+            const newIndex = currentActivityIndex + direction;
+            if (newIndex < 0 || newIndex >= activitiesData.length) return;
+
+            openFullscreen(newIndex, 0);
+        }
+
+        // Change image in card (before fullscreen)
+        function changeCardImage(activityIndex, direction, event) {
+            event.stopPropagation();
+            const activity = activitiesData[activityIndex];
+            if (!activity) return;
+
+            const images = activity.imageUrls || activity.images || [activity.imageUrl || activity.image || 'RDCHIME Logo.png'];
+            const gallery = document.querySelector(`[data-activity-index="${activityIndex}"]`);
+            if (!gallery) return;
+
+            let currentImg = parseInt(gallery.dataset.currentImage) || 0;
+            currentImg += direction;
+
+            if (currentImg < 0) currentImg = images.length - 1;
+            if (currentImg >= images.length) currentImg = 0;
+
+            gallery.dataset.currentImage = currentImg;
+            const imgElement = document.getElementById(`gallery-img-${activityIndex}`);
+            const indicator = document.getElementById(`indicator-${activityIndex}`);
+
+            if (imgElement) imgElement.src = images[currentImg] || 'RDCHIME Logo.png';
+            if (indicator) indicator.textContent = `${currentImg + 1} / ${images.length}`;
+        }
+
+        // Keyboard navigation for fullscreen
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('fullscreenModal');
+            if (!modal.classList.contains('active')) return;
+
+            switch(e.key) {
+                case 'Escape':
+                    closeFullscreen();
+                    break;
+                case 'ArrowLeft':
+                    changeFullscreenImage(-1);
+                    break;
+                case 'ArrowRight':
+                    changeFullscreenImage(1);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    changeFullscreenActivity(-1);
+                    break;
+                case 'ArrowDown':
+                    e.preventDefault();
+                    changeFullscreenActivity(1);
+                    break;
+            }
+        });
     </script>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { 
             getFirestore, 
             collection, 
@@ -555,23 +977,195 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app); 
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        // Add this to your login page JavaScript
-        // Check if user is already signed in when page loads
-// ========================================
-// CHECK AUTH STATE ON LOGIN PAGE
-// ========================================
-// In your script.js file:
+        async function loadApprovedActivities() {
+            const carouselTrack = document.getElementById('carouselTrack');
+            
+            if (!carouselTrack) {
+                console.error('Carousel track not found');
+                return;
+            }
 
-const auth = getAuth(app);
+            try {
+                // Show loading state
+                carouselTrack.innerHTML = `
+                    <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="width: 50px; height: 50px; border: 4px solid #f5d034; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+                            <p style="color: #666;">Loading approved activities...</p>
+                        </div>
+                    </div>
+                `;
 
-// ========================================
-// CHECK AUTH STATE ON LOGIN PAGE - PUT THIS HERE
-// ========================================
+                // Query Firestore for approved activities
+                const activitiesRef = collection(db, "activities");
+                const q = query(
+                    activitiesRef,
+                    where("status", "==", "approved")
+                );
 
-        
+                const querySnapshot = await getDocs(q);
+                
+                // Clear loading state
+                carouselTrack.innerHTML = '';
 
+                if (querySnapshot.empty) {
+                    carouselTrack.innerHTML = `
+                        <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; padding: 40px;">
+                                <p style="color: #666; font-size: 1.1rem;">No approved activities found.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Convert to array and sort by date manually
+                const activities = [];
+                querySnapshot.forEach((doc) => {
+                    activities.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort by date (ascending order)
+                activities.sort((a, b) => {
+                    const dateA = new Date(a.date);
+                    const dateB = new Date(b.date);
+                    return dateA - dateB;
+                });
+
+                // Store globally for fullscreen navigation
+                window.activitiesData = activities;
+                activitiesData = activities;
+
+                // Build cards from sorted data
+                activities.forEach((activity, index) => {
+                    const card = createActivityCard(activity, index);
+                    carouselTrack.appendChild(card);
+                });
+
+                console.log(`Loaded ${activities.length} approved activities`);
+
+            } catch (error) {
+                console.error("Error loading approved activities:", error);
+                carouselTrack.innerHTML = `
+                    <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; padding: 40px;">
+                            <p style="color: #e74c3c; font-size: 1.1rem;">Error loading activities</p>
+                            <p style="color: #666; font-size: 0.9rem;">${error.message}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createActivityCard(activity, index) {
+            const card = document.createElement('div');
+            card.className = 'aa-activity-card';
+            
+            // Use activityName field
+            const title = activity.activityName || 'Untitled Activity';
+            
+            // Format date (YYYY-MM-DD format from Firestore)
+            const activityDate = activity.date || 'TBA';
+            
+            // Format time using startTime and endTime
+            const startTime = activity.startTime || '';
+            const endTime = activity.endTime || '';
+            const timeDisplay = (startTime && endTime) ? `${startTime} - ${endTime}` : (startTime || 'TBA');
+            
+            // Get participants count
+            const participants = activity.participants || 0;
+            
+            // Get images array (support multiple images)
+            const images = activity.imageUrls || activity.images || [activity.imageUrl || activity.image || 'RDCHIME Logo.png'];
+            const imageUrl = images[0] || 'RDCHIME Logo.png';
+            const totalImages = images.length;
+            
+            // Get materials array with quantity
+            let materialsHTML = '';
+            let totalMaterialItems = 0;
+            if (activity.materials && Array.isArray(activity.materials) && activity.materials.length > 0) {
+                // Check if materials have quantity property
+                if (typeof activity.materials[0] === 'object' && activity.materials[0].name) {
+                    // Materials with quantity: [{name: "Paper", quantity: 10}, ...]
+                    totalMaterialItems = activity.materials.reduce((sum, m) => sum + (m.quantity || 1), 0);
+                    materialsHTML = activity.materials.slice(0, 4).map(material => 
+                        `<span class="aa-material-tag">${material.name}${material.quantity > 1 ? `<span class="aa-material-qty">x${material.quantity}</span>` : ''}</span>`
+                    ).join('');
+                    if (activity.materials.length > 4) {
+                        materialsHTML += `<span class="aa-material-tag">+${activity.materials.length - 4} more</span>`;
+                    }
+                } else {
+                    // Simple string materials: ["Paper", "Scissors", ...]
+                    totalMaterialItems = activity.materials.length;
+                    materialsHTML = activity.materials.slice(0, 4).map(material => 
+                        `<span class="aa-material-tag">${material}</span>`
+                    ).join('');
+                    if (activity.materials.length > 4) {
+                        materialsHTML += `<span class="aa-material-tag">+${activity.materials.length - 4} more</span>`;
+                    }
+                }
+            } else {
+                materialsHTML = '<span class="aa-material-tag">No materials specified</span>';
+            }
+            
+            // Get description
+            const description = activity.description || 'No description available.';
+            
+            // Build the card HTML with image gallery and materials section
+            card.innerHTML = `
+                <div class="aa-image-gallery" data-activity-index="${index}" data-current-image="0">
+                    <img src="${imageUrl}" alt="${title}" id="gallery-img-${index}" onclick="openFullscreen(${index}, parseInt(this.parentElement.dataset.currentImage) || 0)" onerror="this.src='RDCHIME Logo.png'">
+                    ${totalImages > 1 ? `
+                        <button class="aa-gallery-nav prev" onclick="changeCardImage(${index}, -1, event)">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="aa-gallery-nav next" onclick="changeCardImage(${index}, 1, event)">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        <div class="aa-image-indicator" id="indicator-${index}">1 / ${totalImages}</div>
+                    ` : ''}
+                </div>
+                <div class="aa-title">${title}</div>
+                <div class="aa-meta-grid">
+                    <div class="aa-meta-item">
+                        <i class="far fa-calendar-alt"></i>
+                        <span><strong>Date:</strong> ${activityDate}</span>
+                    </div>
+                    <div class="aa-meta-item">
+                        <i class="far fa-clock"></i>
+                        <span><strong>Time:</strong> ${timeDisplay}</span>
+                    </div>
+                    <div class="aa-meta-item">
+                        <i class="fas fa-users"></i>
+                        <span><strong>Participants:</strong> ${participants}</span>
+                    </div>
+                </div>
+                <div class="aa-description-box">
+                    ${description}
+                </div>
+                <div class="aa-materials-section">
+                    <div class="aa-materials-header">
+                        <i class="fas fa-box-open"></i>
+                        Materials
+                        <span class="aa-materials-count">${totalMaterialItems} item${totalMaterialItems !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="aa-materials-list">
+                        ${materialsHTML}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Call this function when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load approved activities
+            loadApprovedActivities();
+        });
     </script>
   </body>
 </html>
