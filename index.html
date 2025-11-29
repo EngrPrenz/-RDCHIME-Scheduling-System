@@ -949,223 +949,249 @@
     </script>
 
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            updateDoc, 
-            doc, 
-            query, 
-            where, 
-            orderBy, 
-            serverTimestamp 
-        } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    /* -------------------------------------------------------
+      FIREBASE INITIALIZATION
+    -------------------------------------------------------- */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { 
+        getFirestore, 
+        collection, 
+        getDocs, 
+        query, 
+        where 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase configuration - REPLACE WITH YOUR OWN
-        const firebaseConfig = {
-            apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
-            authDomain: "rdchime-scheduling-system.firebaseapp.com",
-            projectId: "rdchime-scheduling-system",
-            storageBucket: "rdchime-scheduling-system.firebasestorage.app",
-            messagingSenderId: "692945279316",
-            appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
-            measurementId: "G-LP39RX0R47"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
+        authDomain: "rdchime-scheduling-system.firebaseapp.com",
+        projectId: "rdchime-scheduling-system",
+        storageBucket: "rdchime-scheduling-system.firebasestorage.app",
+        messagingSenderId: "692945279316",
+        appId: "1:692945279316:web:2dd298e7030c0b038b10c1",
+        measurementId: "G-LP39RX0R47"
+    };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-        async function loadApprovedActivities() {
-            const carouselTrack = document.getElementById('carouselTrack');
-            
-            if (!carouselTrack) {
-                console.error('Carousel track not found');
-                return;
+
+    /* -------------------------------------------------------
+      UNIVERSAL MATERIAL PARSER
+      Accepts ANY Firestore structure:
+      - { material, quantity }
+      - { name, qty }
+      - { item, count }
+      - strings: "Laptop"
+      - weird objects → auto-detect
+    -------------------------------------------------------- */
+    function parseMaterials(materialsArray) {
+        if (!Array.isArray(materialsArray) || materialsArray.length === 0)
+            return { items: [], total: 0 };
+
+        let parsed = [];
+        let totalQty = 0;
+
+        for (let mat of materialsArray) {
+            if (typeof mat === "string") {
+                parsed.push({ name: mat, qty: 1 });
+                totalQty += 1;
             }
 
-            try {
-                // Show loading state
-                carouselTrack.innerHTML = `
-                    <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; padding: 40px;">
-                            <div style="width: 50px; height: 50px; border: 4px solid #f5d034; border-top-color: transparent; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
-                            <p style="color: #666;">Loading approved activities...</p>
-                        </div>
-                    </div>
-                `;
+            else if (typeof mat === "object" && mat !== null) {
+                // Try common keys
+                let name = mat.material || mat.name || mat.item || mat.title;
+                let qty = mat.quantity || mat.qty || mat.count || 1;
 
-                // Query Firestore for approved activities
-                const activitiesRef = collection(db, "activities");
-                const q = query(
-                    activitiesRef,
-                    where("status", "==", "approved")
-                );
-
-                const querySnapshot = await getDocs(q);
-                
-                // Clear loading state
-                carouselTrack.innerHTML = '';
-
-                if (querySnapshot.empty) {
-                    carouselTrack.innerHTML = `
-                        <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
-                            <div style="text-align: center; padding: 40px;">
-                                <p style="color: #666; font-size: 1.1rem;">No approved activities found.</p>
-                            </div>
-                        </div>
-                    `;
-                    return;
+                // If nothing found — auto-detect first text
+                if (!name) {
+                    name = Object.values(mat).find(v => typeof v === "string") || "Material";
                 }
 
-                // Convert to array and sort by date manually
-                const activities = [];
-                querySnapshot.forEach((doc) => {
-                    activities.push({ id: doc.id, ...doc.data() });
-                });
+                if (!qty || isNaN(qty)) qty = 1;
 
-                // Sort by date (ascending order)
-                activities.sort((a, b) => {
-                    const dateA = new Date(a.date);
-                    const dateB = new Date(b.date);
-                    return dateA - dateB;
-                });
-
-                // Store globally for fullscreen navigation
-                window.activitiesData = activities;
-                activitiesData = activities;
-
-                // Build cards from sorted data
-                activities.forEach((activity, index) => {
-                    const card = createActivityCard(activity, index);
-                    carouselTrack.appendChild(card);
-                });
-
-                console.log(`Loaded ${activities.length} approved activities`);
-
-            } catch (error) {
-                console.error("Error loading approved activities:", error);
-                carouselTrack.innerHTML = `
-                    <div class="aa-activity-card" style="min-width: 540px; display: flex; align-items: center; justify-content: center;">
-                        <div style="text-align: center; padding: 40px;">
-                            <p style="color: #e74c3c; font-size: 1.1rem;">Error loading activities</p>
-                            <p style="color: #666; font-size: 0.9rem;">${error.message}</p>
-                        </div>
-                    </div>
-                `;
+                parsed.push({ name, qty });
+                totalQty += qty;
             }
         }
 
-        function createActivityCard(activity, index) {
-            const card = document.createElement('div');
-            card.className = 'aa-activity-card';
-            
-            // Use activityName field
-            const title = activity.activityName || 'Untitled Activity';
-            
-            // Format date (YYYY-MM-DD format from Firestore)
-            const activityDate = activity.date || 'TBA';
-            
-            // Format time using startTime and endTime
-            const startTime = activity.startTime || '';
-            const endTime = activity.endTime || '';
-            const timeDisplay = (startTime && endTime) ? `${startTime} - ${endTime}` : (startTime || 'TBA');
-            
-            // Get participants count
-            const participants = activity.participants || 0;
-            
-            // Get images array (support multiple images)
-            const images = activity.imageUrls || activity.images || [activity.imageUrl || activity.image || 'RDCHIME Logo.png'];
-            const imageUrl = images[0] || 'RDCHIME Logo.png';
-            const totalImages = images.length;
-            
-            // Get materials array with quantity
-            let materialsHTML = '';
-            let totalMaterialItems = 0;
-            if (activity.materials && Array.isArray(activity.materials) && activity.materials.length > 0) {
-                // Check if materials have quantity property
-                if (typeof activity.materials[0] === 'object' && activity.materials[0].name) {
-                    // Materials with quantity: [{name: "Paper", quantity: 10}, ...]
-                    totalMaterialItems = activity.materials.reduce((sum, m) => sum + (m.quantity || 1), 0);
-                    materialsHTML = activity.materials.slice(0, 4).map(material => 
-                        `<span class="aa-material-tag">${material.name}${material.quantity > 1 ? `<span class="aa-material-qty">x${material.quantity}</span>` : ''}</span>`
-                    ).join('');
-                    if (activity.materials.length > 4) {
-                        materialsHTML += `<span class="aa-material-tag">+${activity.materials.length - 4} more</span>`;
-                    }
-                } else {
-                    // Simple string materials: ["Paper", "Scissors", ...]
-                    totalMaterialItems = activity.materials.length;
-                    materialsHTML = activity.materials.slice(0, 4).map(material => 
-                        `<span class="aa-material-tag">${material}</span>`
-                    ).join('');
-                    if (activity.materials.length > 4) {
-                        materialsHTML += `<span class="aa-material-tag">+${activity.materials.length - 4} more</span>`;
-                    }
-                }
-            } else {
-                materialsHTML = '<span class="aa-material-tag">No materials specified</span>';
-            }
-            
-            // Get description
-            const description = activity.description || 'No description available.';
-            
-            // Build the card HTML with image gallery and materials section
-            card.innerHTML = `
-                <div class="aa-image-gallery" data-activity-index="${index}" data-current-image="0">
-                    <img src="${imageUrl}" alt="${title}" id="gallery-img-${index}" onclick="openFullscreen(${index}, parseInt(this.parentElement.dataset.currentImage) || 0)" onerror="this.src='RDCHIME Logo.png'">
-                    ${totalImages > 1 ? `
-                        <button class="aa-gallery-nav prev" onclick="changeCardImage(${index}, -1, event)">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="aa-gallery-nav next" onclick="changeCardImage(${index}, 1, event)">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        <div class="aa-image-indicator" id="indicator-${index}">1 / ${totalImages}</div>
-                    ` : ''}
-                </div>
-                <div class="aa-title">${title}</div>
-                <div class="aa-meta-grid">
-                    <div class="aa-meta-item">
-                        <i class="far fa-calendar-alt"></i>
-                        <span><strong>Date:</strong> ${activityDate}</span>
-                    </div>
-                    <div class="aa-meta-item">
-                        <i class="far fa-clock"></i>
-                        <span><strong>Time:</strong> ${timeDisplay}</span>
-                    </div>
-                    <div class="aa-meta-item">
-                        <i class="fas fa-users"></i>
-                        <span><strong>Participants:</strong> ${participants}</span>
-                    </div>
-                </div>
-                <div class="aa-description-box">
-                    ${description}
-                </div>
-                <div class="aa-materials-section">
-                    <div class="aa-materials-header">
-                        <i class="fas fa-box-open"></i>
-                        Materials
-                        <span class="aa-materials-count">${totalMaterialItems} item${totalMaterialItems !== 1 ? 's' : ''}</span>
-                    </div>
-                    <div class="aa-materials-list">
-                        ${materialsHTML}
-                    </div>
-                </div>
-            `;
-            
-            return card;
-        }
+        return { items: parsed, total: totalQty };
+    }
 
-        // Call this function when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Load approved activities
-            loadApprovedActivities();
-        });
+
+    /* -------------------------------------------------------
+      UNIVERSAL IMAGE PARSER
+    -------------------------------------------------------- */
+    function parseImages(activity) {
+        return (
+            activity.imageUrls ||
+            activity.images ||
+            (activity.imageUrl ? [activity.imageUrl] : null) ||
+            (activity.image ? [activity.image] : null) ||
+            ["RDCHIME Logo.png"]
+        );
+    }
+
+
+    /* -------------------------------------------------------
+      CREATE ACTIVITY CARD
+    -------------------------------------------------------- */
+    function createActivityCard(activity, index) {
+        const title = activity.activityName || "Untitled Activity";
+        const images = parseImages(activity);
+        const parsedMaterials = parseMaterials(activity.materials);
+        const materialsHTML = parsedMaterials.items
+            .slice(0, 4)
+            .map(m => `
+                <span class="aa-material-tag">
+                    ${m.name}
+                    <span class="aa-material-qty">x${m.qty}</span>
+                </span>
+            `).join("");
+
+        const extra = parsedMaterials.items.length > 4
+            ? `<span class="aa-material-tag">+${parsedMaterials.items.length - 4} more</span>`
+            : "";
+
+        const card = document.createElement("div");
+        card.className = "aa-activity-card";
+
+        card.innerHTML = `
+            <div class="aa-image-gallery" data-activity-index="${index}" data-current-image="0">
+                <img src="${images[0]}" 
+                    id="gallery-img-${index}" 
+                    onclick="openFullscreen(${index}, 0)" 
+                    onerror="this.src='RDCHIME Logo.png'">
+                ${images.length > 1 ? `
+                    <button class="aa-gallery-nav prev" onclick="changeCardImage(${index}, -1, event)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="aa-gallery-nav next" onclick="changeCardImage(${index}, 1, event)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="aa-image-indicator" id="indicator-${index}">
+                        1 / ${images.length}
+                    </div>
+                ` : ""}
+            </div>
+
+            <div class="aa-title">${title}</div>
+
+            <div class="aa-meta-grid">
+                <div class="aa-meta-item">
+                    <i class="far fa-calendar-alt"></i>
+                    <span><strong>Date:</strong> ${activity.date || "TBA"}</span>
+                </div>
+                <div class="aa-meta-item">
+                    <i class="far fa-clock"></i>
+                    <span><strong>Time:</strong> ${activity.startTime || ""} - ${activity.endTime || ""}</span>
+                </div>
+                <div class="aa-meta-item">
+                    <i class="fas fa-users"></i>
+                    <span><strong>Participants:</strong> ${activity.participants || 0}</span>
+                </div>
+            </div>
+
+            <div class="aa-description-box">
+                ${activity.description || "No description available."}
+            </div>
+
+            <div class="aa-materials-section">
+                <div class="aa-materials-header">
+                    <i class="fas fa-box-open"></i>
+                    Materials
+                    <span class="aa-materials-count">${parsedMaterials.total} items</span>
+                </div>
+                <div class="aa-materials-list">
+                    ${materialsHTML}
+                    ${extra}
+                </div>
+            </div>
+        `;
+
+        return card;
+    }
+
+
+    /* -------------------------------------------------------
+      LOAD APPROVED ACTIVITIES
+    -------------------------------------------------------- */
+    async function loadApprovedActivities() {
+        const track = document.getElementById("carouselTrack");
+        track.innerHTML = "<p>Loading...</p>";
+
+        try {
+            const qRef = query(
+                collection(db, "activities"),
+                where("status", "==", "approved")
+            );
+
+            const snap = await getDocs(qRef);
+
+            let activities = [];
+            snap.forEach(d => activities.push({ id: d.id, ...d.data() }));
+
+            // Sort by date ascending
+            activities.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            window.activitiesData = activities;
+            track.innerHTML = "";
+
+            activities.forEach((act, i) => {
+                track.appendChild(createActivityCard(act, i));
+            });
+
+        } catch (err) {
+            console.error(err);
+            track.innerHTML = "<p>Error loading activities.</p>";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", loadApprovedActivities);
     </script>
+
+<script>
+// --- Fullscreen Fix (Option B) ---
+(function(){
+const modal=document.getElementById('fullscreenModal');if(!modal)return;
+const prevImgBtn=modal.querySelector('.fullscreen-nav.prev-image');
+const nextImgBtn=modal.querySelector('.fullscreen-nav.next-image');
+const prevActBtn=document.getElementById('prevActivityBtn');
+const nextActBtn=document.getElementById('nextActivityBtn');
+const closeBtn=modal.querySelector('.fullscreen-close');
+const modalImg=document.getElementById('fullscreenImage');
+const modalTitle=document.getElementById('fullscreenTitle');
+const modalCounter=document.getElementById('fullscreenCounter');
+
+
+window._fs_state=window._fs_state||{images:['RDCHIME Logo.png'],imgIndex:0,actIndex:null};
+function imgsFromAct(a){if(!a)return['RDCHIME Logo.png'];if(a.imageUrls?.length)return a.imageUrls;if(a.images?.length)return a.images;if(a.imageUrl)return[a.imageUrl];if(a.image)return[a.image];return['RDCHIME Logo.png'];}
+
+
+function updateFS(){const s=window._fs_state;modalImg.src=s.images[s.imgIndex];modalTitle.textContent=(s.actIndex!=null?window.activitiesData?.[s.actIndex]?.activityName:'Image')||'Image';modalCounter.textContent=`Image ${s.imgIndex+1} of ${s.images.length}`+(s.actIndex!=null?` | Activity ${s.actIndex+1} of ${window.activitiesData.length}`:'');if(prevActBtn)prevActBtn.disabled=!(s.actIndex>0);if(nextActBtn)nextActBtn.disabled=!(s.actIndex!=null&&s.actIndex<window.activitiesData.length-1);}
+
+
+window.openFullscreen=function(ai,ii){const act=window.activitiesData?.[ai];window._fs_state.actIndex=typeof ai==='number'?ai:null;window._fs_state.images=imgsFromAct(act);window._fs_state.imgIndex=ii||0;updateFS();modal.classList.add('active');document.body.style.overflow='hidden';};
+window.closeFullscreen=function(){modal.classList.remove('active');document.body.style.overflow='';};
+
+
+function changeImg(d){const s=window._fs_state;s.imgIndex=(s.imgIndex+d+s.images.length)%s.images.length;updateFS();}
+function changeAct(d){const s=window._fs_state;if(s.actIndex==null)return;const ni=s.actIndex+d;if(ni<0||ni>=window.activitiesData.length)return;window.openFullscreen(ni,0);}
+
+
+[prevImgBtn,nextImgBtn,prevActBtn,nextActBtn,closeBtn].forEach(btn=>{if(!btn)return;btn.onclick=null;btn.addEventListener('click',e=>{e.stopPropagation();if(btn===prevImgBtn)changeImg(-1);else if(btn===nextImgBtn)changeImg(1);else if(btn===prevActBtn)changeAct(-1);else if(btn===nextActBtn)changeAct(1);else if(btn===closeBtn)window.closeFullscreen();});});
+
+
+// Option B: disable closing fullscreen by background click
+modal.onclick=null;
+
+
+document.addEventListener('keydown',e=>{if(!modal.classList.contains('active'))return;if(e.key==='Escape')return window.closeFullscreen();if(e.key==='ArrowLeft')return changeImg(-1);if(e.key==='ArrowRight')return changeImg(1);if(e.key==='ArrowUp'){e.preventDefault();return changeAct(-1);}if(e.key==='ArrowDown'){e.preventDefault();return changeAct(1);} });
+})();
+</script>
+
+
+
   </body>
 </html>
