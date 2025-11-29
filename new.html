@@ -1072,6 +1072,92 @@
             color: #4d350d;
         }
 
+        /* Added image gallery styles */
+        .activity-images {
+            margin: 15px 0;
+        }
+
+        .activity-images-title {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #4d350d;
+        }
+
+        .activity-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .gallery-thumbnail {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+
+        .gallery-thumbnail:hover {
+            border-color: #c29d2d;
+            transform: scale(1.05);
+        }
+
+        .gallery-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: #c29d2d;
+        }
+
         .materials-list {
             display: flex;
             flex-wrap: wrap;
@@ -1219,6 +1305,14 @@
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
             </svg>
         </button>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            <img class="modal-image" id="modalImage" src="/placeholder.svg" alt="Full size image">
+        </div>
     </div>
 
     <div class="container">
@@ -1447,15 +1541,16 @@
 
                         <!-- Added section for image upload -->
                         <div class="form-group">
-                            <label>Activity Images (Optional, max 5)</label>
+                            <label>Activity Images (Optional, max 5, only JPG/PNG)</label>
                             <div id="drop-zone">
                                 <p>Drag and drop images here</p>
                                 <p>or click to select files</p>
                             </div>
-                            <input type="file" id="file-input" accept="image/*" multiple>
-                            <div id="preview-container"></div>
+                            <input type="file" id="file-input" accept=".jpg,.jpeg,.png" multiple>
                             <div id="error-message" class="error"></div>
                         </div>
+
+                        <div id="preview-container"></div>
 
                         <div class="form-group">
                             <label>Description</label>
@@ -1498,9 +1593,6 @@
             serverTimestamp
         } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
         
-        // Placeholder for Firebase Storage import if needed later
-        // import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
-
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBiQCMXldHH1ff5Yn7lMP0PUIk3LRkFHcg",
@@ -1514,9 +1606,8 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app); // Initialize Auth
+        const auth = getAuth(app);
         const db = getFirestore(app);
-        // const storage = getStorage(app); // Initialize Storage if needed
 
         const MATERIALS = [
             'DLP Projector',
@@ -1537,7 +1628,7 @@
         let activitiesWithDates = [];
 
         // Success message functions
-        window.hideSuccessMessage = function() { // Make globally accessible
+        window.hideSuccessMessage = function() {
             const successMessage = document.getElementById('successMessage');
             if (successMessage) successMessage.classList.remove('show');
         };
@@ -1551,11 +1642,22 @@
             successDescription.textContent = description;
             successMessage.classList.add('show');
             
-            // Auto hide after 5 seconds
             setTimeout(() => {
                 window.hideSuccessMessage();
             }, 5000);
         }
+
+        window.openImageModal = function(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            modal.classList.add('active');
+        };
+
+        window.closeImageModal = function() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+        };
 
         // Calendar functions
         function updateCalendar() {
@@ -1564,22 +1666,18 @@
             
             if (!calendarGrid) return;
             
-            // Set month title
             const monthNames = ["January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"
             ];
             calendarMonth.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
             
-            // Clear calendar
             calendarGrid.innerHTML = '';
             
-            // Get first day of month and number of days
             const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
             const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
             const daysInMonth = lastDay.getDate();
             const startingDay = firstDay.getDay();
             
-            // Previous month days
             const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
             for (let i = startingDay - 1; i >= 0; i--) {
                 const dayElement = document.createElement('div');
@@ -1588,21 +1686,18 @@
                 calendarGrid.appendChild(dayElement);
             }
             
-            // Current month days
             const today = new Date();
             for (let i = 1; i <= daysInMonth; i++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
                 dayElement.textContent = i;
                 
-                // Check if today
                 if (currentDate.getFullYear() === today.getFullYear() && 
                     currentDate.getMonth() === today.getMonth() && 
                     i === today.getDate()) {
                     dayElement.classList.add('today');
                 }
                 
-                // Check if has activity
                 const dateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
                 if (activitiesWithDates.includes(dateString)) {
                     dayElement.classList.add('has-activity');
@@ -1611,8 +1706,7 @@
                 calendarGrid.appendChild(dayElement);
             }
             
-            // Next month days
-            const totalCells = 42; // 6 weeks
+            const totalCells = 42;
             const remainingCells = totalCells - (startingDay + daysInMonth);
             for (let i = 1; i <= remainingCells; i++) {
                 const dayElement = document.createElement('div');
@@ -1644,7 +1738,6 @@
         }
 
         // Initialize materials grid
-        // Updated to include quantity input
         function initMaterials() {
             const materialsGrid = document.getElementById('materialsGrid');
             if (!materialsGrid) return;
@@ -1723,6 +1816,18 @@
             }
         }
 
+        async function filesToBase64(files) {
+            const promises = Array.from(files).map(file => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                });
+            });
+            return Promise.all(promises);
+        }
+
         // Form submission
         function setupFormSubmission() {
             const form = document.getElementById('activityForm');
@@ -1735,10 +1840,14 @@
                     .map(cb => {
                         const materialName = cb.value;
                         const quantity = document.getElementById(`qty_${materialName.replace(/\s/g, '_')}`).value;
-                        return { name: materialName, quantity: parseInt(quantity) };
+                        return { material: materialName, quantity: parseInt(quantity) };
                     });
 
-                // Handle image uploads
+                let images = [];
+                if (uploadedFiles.length > 0) {
+                    images = await filesToBase64(uploadedFiles);
+                }
+
                 const activityData = {
                     activityName: document.getElementById('activityName').value,
                     date: document.getElementById('date').value,
@@ -1748,33 +1857,23 @@
                     participants: parseInt(document.getElementById('participants').value),
                     organizer: document.getElementById('organizer').value,
                     materials: selectedMaterials,
+                    images: images,
                     description: document.getElementById('description').value,
                     status: 'pending',
                     createdAt: serverTimestamp()
                 };
 
                 try {
-                    const docRef = await addDoc(collection(db, 'activities'), activityData);
-                    const newActivityId = docRef.id;
-
-                    // Upload images if any
-                    if (uploadedFiles.length > 0) {
-                        // await uploadActivityImages(newActivityId, uploadedFiles); // Implement this function later if needed
-                        console.log('Images uploaded or queued for upload.');
-                    }
+                    await addDoc(collection(db, 'activities'), activityData);
                     
-                    // Show success message
                     showSuccessMessage('Activity Submitted Successfully!', 'Your activity has been submitted for verification and is now pending approval.');
                     
-                    // Reset form and uploaded files
                     form.reset();
                     uploadedFiles = [];
                     document.getElementById('preview-container').innerHTML = '';
                     document.getElementById('error-message').textContent = '';
-                    // Re-initialize materials to reset quantities
                     initMaterials(); 
                     
-                    // Refresh data
                     loadActivities();
                     loadDashboardStats();
                 } catch (error) {
@@ -1787,7 +1886,6 @@
         // Load dashboard statistics
         async function loadDashboardStats() {
             try {
-                // Get all activities
                 const activitiesSnapshot = await getDocs(collection(db, 'activities'));
                 const activities = [];
                 activitiesSnapshot.forEach(doc => {
@@ -1797,13 +1895,11 @@
                     });
                 });
                 
-                // Update activities dates for calendar
                 updateActivitiesDates(activities);
                 
                 const totalActivities = activitiesSnapshot.size;
                 document.getElementById('totalActivities').textContent = totalActivities;
 
-                // Get upcoming activities (not past dates)
                 const now = new Date();
                 const today = now.toISOString().split('T')[0];
                 const upcomingActivities = activities.filter(activity => {
@@ -1811,13 +1907,11 @@
                 }).length;
                 document.getElementById('upcomingActivities').textContent = upcomingActivities;
 
-                // Get pending approvals
                 const pendingQuery = query(collection(db, 'activities'), where('status', '==', 'pending'));
                 const pendingSnapshot = await getDocs(pendingQuery);
                 const pendingApprovals = pendingSnapshot.size;
                 document.getElementById('pendingApprovals').textContent = pendingApprovals;
                 
-                // Update notification badge
                 const pendingBadge = document.getElementById('pendingBadge');
                 if (pendingBadge) {
                     if (pendingApprovals > 0) {
@@ -1832,13 +1926,12 @@
             }
         }
 
-        // Load next activity - FIXED VERSION
+        // Load next activity
         async function loadNextActivity() {
             const nextActivityContent = document.getElementById('nextActivityContent');
             if (!nextActivityContent) return;
             
             try {
-                // Get all approved activities first
                 const q = query(collection(db, 'activities'), where('status', '==', 'approved'));
                 const snapshot = await getDocs(q);
                 
@@ -1861,7 +1954,6 @@
                     });
                 });
                 
-                // Filter for upcoming activities and sort by date
                 const now = new Date();
                 const today = now.toISOString().split('T')[0];
                 
@@ -1879,7 +1971,6 @@
                     return;
                 }
                 
-                // Sort by date to find the closest one
                 upcomingActivities.sort((a, b) => {
                     const dateA = a.data.date || '9999-12-31';
                     const dateB = b.data.date || '9999-12-31';
@@ -1888,7 +1979,6 @@
                 
                 const nextActivity = upcomingActivities[0];
                 
-                // Format the date for display
                 const activityDate = new Date(nextActivity.data.date);
                 const formattedDate = activityDate.toLocaleDateString('en-US', {
                     weekday: 'short',
@@ -1926,7 +2016,6 @@
             await loadDashboardStats();
             await loadNextActivity();
             
-            // Update calendar after loading activities
             updateCalendar();
         }
 
@@ -1954,7 +2043,6 @@
                     });
                 });
                 
-                // Sort by date manually
                 activities.sort((a, b) => {
                     const dateA = a.data.date || '';
                     const dateB = b.data.date || '';
@@ -1995,7 +2083,6 @@
                     });
                 });
                 
-                // Sort by date manually
                 activities.sort((a, b) => {
                     const dateA = a.data.date || '';
                     const dateB = b.data.date || '';
@@ -2016,10 +2103,44 @@
             const card = document.createElement('div');
             card.className = `activity-item ${activity.status}`;
             
-            // Modified materials display to include quantities
-            const materialsHTML = activity.materials && activity.materials.length > 0
-                ? activity.materials.map(m => `<span class="material-tag">${m.quantity}x ${m.name}</span>`).join('')
-                : '<span style="color: #94a3b8;">No materials needed</span>';
+            let materialsHTML = '';
+            if (activity.materials && activity.materials.length > 0) {
+                const materialsTags = activity.materials.map(m => 
+                    `<span class="material-tag">${m.quantity}x ${m.material}</span>`
+                ).join('');
+                materialsHTML = `
+                    <div style="margin: 15px 0;">
+                        <strong>Materials:</strong>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                            ${materialsTags}
+                        </div>
+                    </div>
+                `;
+            } else {
+                materialsHTML = `
+                    <div style="margin: 15px 0;">
+                        <strong>Materials:</strong>
+                        <span style="color: #94a3b8;">No materials needed</span>
+                    </div>
+                `;
+            }
+
+            let imagesHTML = '';
+            if (activity.images && Array.isArray(activity.images) && activity.images.length > 0) {
+                const imageThumbnails = activity.images.map((img, idx) => 
+                    `<div class="gallery-thumbnail" onclick="openImageModal('${img.replace(/'/g, "\\'")}')">
+                        <img src="${img}" alt="Activity image ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>`
+                ).join('');
+                imagesHTML = `
+                    <div style="margin: 15px 0;">
+                        <span style="font-weight: 600; display: block; margin-bottom: 8px;">Images:</span>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            ${imageThumbnails}
+                        </div>
+                    </div>
+                `;
+            }
 
             const actionsHTML = showActions ? `
                 <div class="action-buttons">
@@ -2041,10 +2162,8 @@
                     <div class="detail-item">👤 <strong>Organizer:</strong> ${activity.organizer}</div>
                 </div>
                 ${activity.description ? `<p style="margin: 15px 0; color: #64748b;"><strong>Description:</strong> ${activity.description}</p>` : ''}
-                <div>
-                    <strong style="display: block; margin-bottom: 10px;">Materials:</strong>
-                    <div class="materials-list">${materialsHTML}</div>
-                </div>
+                ${materialsHTML}
+                ${imagesHTML}
                 ${actionsHTML}
             `;
             
@@ -2055,14 +2174,12 @@
             try {
                 await updateDoc(doc(db, 'activities', id), { status });
                 
-                // Show appropriate success message
                 if (status === 'approved') {
                     showSuccessMessage('Activity Approved!', 'The activity has been successfully approved and is now visible in the approved activities list.');
                 } else {
                     showSuccessMessage('Activity Rejected!', 'The activity has been rejected and removed from the pending list.');
                 }
                 
-                // Refresh data
                 loadActivities();
             } catch (error) {
                 alert('Error updating status: ' + error.message);
@@ -2117,10 +2234,14 @@
                 return;
             }
 
-            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
+            const validImageFiles = incomingFiles.filter(file => {
+                const validTypes = ['image/jpeg', 'image/png'];
+                return validTypes.includes(file.type);
+            });
             
             if (validImageFiles.length !== incomingFiles.length) {
-                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
+                const invalidCount = incomingFiles.length - validImageFiles.length;
+                errorMessage.textContent = `Error: Only JPG and PNG files are accepted. ${invalidCount} file(s) were rejected (GIFs and videos not allowed).`;
                 fileInput.value = '';
                 return;
             }
@@ -2172,36 +2293,30 @@
             setupTimeCalculation();
             setupFormSubmission();
             setupCalendarNavigation();
-            loadActivities(); // This will now update the calendar after loading activities
+            loadActivities();
             
-            // Basic auth check - redirect if not logged in (example)
             onAuthStateChanged(auth, (user) => {
                 if (!user) {
-                    // User is not logged in, redirect to login page
-                    window.location.href = 'index.html'; // Assuming index.html is your login page
+                    window.location.href = 'index.html';
                 }
             });
         });
 
-        // Expose loadActivities globally for section switching
         window.loadActivities = loadActivities;
     </script>
 
     <script>
         function switchSection(sectionName) {
-            // Update sidebar menu
             document.querySelectorAll('.sidebar-menu a').forEach(link => {
                 link.classList.remove('active');
             });
             event.currentTarget.classList.add('active');
 
-            // Update section content
             document.querySelectorAll('.section').forEach(section => {
                 section.classList.remove('active');
             });
             document.getElementById(sectionName).classList.add('active');
 
-            // Load appropriate data for the section
             if (sectionName === 'pending' || sectionName === 'approved') {
                 window.loadActivities();
             }

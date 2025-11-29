@@ -305,6 +305,7 @@
             color: #ef4444;
             margin-top: 10px;
             font-size: 0.9rem;
+            white-space: pre-wrap;
         }
 
         #preview-container {
@@ -412,7 +413,6 @@
     </style>
 </head>
 <body>
-    <!-- Success Message -->
     <div class="success-message" id="successMessage">
         <svg viewBox="0 0 24 24">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
@@ -428,7 +428,6 @@
         </button>
     </div>
 
-    <!-- Navigation -->
     <nav id="navbar" class="navbar scrolled">
         <div class="container">
             <div class="logo">
@@ -450,7 +449,6 @@
         </div>
     </nav>
 
-    <!-- Schedule Container -->
     <div class="schedule-container" id="scheduleContent" style="display: none;">
         <div class="container">
             <div class="schedule-header">
@@ -507,15 +505,14 @@
                         <textarea id="description" rows="4" placeholder="Provide details about the activity..."></textarea>
                     </div>
 
-                    <!-- Added image upload section -->
                     <div class="form-group">
                         <label>Upload Images (Up to 5 images)</label>
 
                         <div id="drop-zone">
                             <p>Drag files to upload</p>
                             <p>or click to select files</p>
-                            <p>(Only images accepted)</p>
-                            <input type="file" id="file-input" accept="image/*" multiple>
+                            <p>(Only JPG, PNG, WEBP, BMP, TIFF — no GIFs or videos)</p>
+                            <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.webp,.bmp,.tiff" multiple>
                         </div>
 
                         <div id="error-message" class="error"></div>
@@ -529,7 +526,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="copyright">
@@ -538,7 +534,6 @@
         </div>
     </footer>
 
-    <!-- Firebase and Scripts -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -692,6 +687,28 @@
             }
         }
 
+        // 🖼️ START OF FIX: Add function to convert files to Base64 Data URLs with prefix
+        /**
+         * Converts a list of File objects into an array of Base64 Data URLs.
+         * This format is directly usable as the src for <img> tags.
+         * @param {File[]} files - The list of File objects to convert.
+         * @returns {Promise<string[]>} A promise that resolves to an array of Data URL strings.
+         */
+        function filesToBase64(files) {
+            return Promise.all(
+                Array.from(files).map(file => {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        // readAsDataURL includes the required 'data:image/<type>;base64,' prefix
+                        reader.readAsDataURL(file); 
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                    });
+                })
+            );
+        }
+        // 🖼️ END OF FIX
+
         // Form submission
         function setupFormSubmission() {
             const form = document.getElementById('activityForm');
@@ -721,6 +738,21 @@
                         };
                     });
 
+                // 🚀 START OF FIX: Convert images and prepare data
+                let images = [];
+                if (uploadedFiles.length > 0) {
+                    try {
+                        images = await filesToBase64(uploadedFiles);
+                    } catch (error) {
+                        console.error('Error converting files to Base64:', error);
+                        alert('Error preparing images. Please try again.');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Submit for Verification';
+                        return;
+                    }
+                }
+                // 🚀 END OF FIX
+
                 const activityData = {
                     activityName: document.getElementById('activityName').value,
                     date: document.getElementById('date').value,
@@ -731,6 +763,8 @@
                     organizer: document.getElementById('organizer').value,
                     materials: selectedMaterials,
                     description: document.getElementById('description').value,
+                    // 🎯 FIX: Include the converted images in the data to be saved to Firebase
+                    images: images, 
                     status: 'pending',
                     createdBy: currentUser.uid,
                     createdByEmail: currentUser.email,
@@ -748,6 +782,8 @@
                         const qtyInput = item.querySelector('.material-quantity-input');
                         if (qtyInput) qtyInput.style.display = 'none';
                     });
+                    
+                    // 🎯 FIX: Clear image state after successful submission
                     uploadedFiles = [];
                     previewContainer.innerHTML = '';
                     
@@ -762,6 +798,7 @@
             });
         }
 
+        // Drop zone + file handling with whitelist
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const errorMessage = document.getElementById('error-message');
@@ -770,9 +807,21 @@
         const MAX_FILE_COUNT = 5;
         let uploadedFiles = [];
 
+        // Allowed static image MIME types (no gifs, no videos)
+        const ALLOWED_IMAGE_TYPES = [
+            'image/jpeg',
+            'image/jpg',
+            'image/png',
+            'image/webp',
+            'image/bmp',
+            'image/tiff'
+        ];
+
+        // click to open file dialog
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
+        // drag & drop handlers
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             dropZone.addEventListener(eventName, preventDefaults, false);
         });
@@ -796,31 +845,84 @@
             handleFiles(dt.files);
         }
 
-        function handleFiles(files) {
+        function handleFiles(fileList) {
             errorMessage.textContent = '';
-            
-            const incomingFiles = [...files];
-            const totalFilesAfterAddition = uploadedFiles.length + incomingFiles.length;
 
-            if (totalFilesAfterAddition > MAX_FILE_COUNT) {
-                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded.`;
+            const incomingFiles = Array.from(fileList || []);
+            // 12 MB size limit
+            const MAX_FILE_SIZE = 12 * 1024 * 1024; // 12 MB
+
+            const oversizeFiles = incomingFiles.filter(f => f.size > MAX_FILE_SIZE);
+            if (oversizeFiles.length > 0) {
+                errorMessage.textContent = `Error: One or more files exceed the 12MB limit.`;
                 fileInput.value = '';
                 return;
             }
 
-            const validImageFiles = incomingFiles.filter(file => file.type.startsWith('image/'));
-            
-            if (validImageFiles.length !== incomingFiles.length) {
-                errorMessage.textContent = `Error: Only image files are accepted. ${incomingFiles.length - validImageFiles.length} file(s) were ignored.`;
+            if (incomingFiles.length === 0) return;
+
+            // classify incoming files into allowed and rejected
+            const allowed = [];
+            const rejected = [];
+
+            incomingFiles.forEach(file => {
+                const type = (file.type || '').toLowerCase();
+
+                // reject videos explicitly
+                if (type.startsWith('video/')) {
+                    rejected.push({ file, reason: 'Video files are not allowed.' });
+                    return;
+                }
+
+                // reject gifs explicitly
+                if (type === 'image/gif') {
+                    rejected.push({ file, reason: 'GIFs are not allowed.' });
+                    return;
+                }
+
+                // accept only if MIME type present in whitelist
+                if (ALLOWED_IMAGE_TYPES.includes(type)) {
+                    allowed.push(file);
+                } else {
+                    // some browsers may not report MIME types reliably; also check extension as fallback
+                    const lowerName = (file.name || '').toLowerCase();
+                    if (/\.(jpe?g|png|webp|bmp|tiff?)$/.test(lowerName)) {
+                        allowed.push(file);
+                    } else {
+                        rejected.push({ file, reason: 'Unsupported file type. Allowed: JPG, PNG, WEBP, BMP, TIFF.' });
+                    }
+                }
+            });
+
+            // if nothing allowed, show message with reasons
+            if (allowed.length === 0 && rejected.length > 0) {
+                const lines = rejected.map(r => `${r.file.name}: ${r.reason}`);
+                errorMessage.textContent = `No files were accepted:\n` + lines.join('\n');
                 fileInput.value = '';
                 return;
             }
-            
-            validImageFiles.forEach(file => {
+
+            // enforce max file count (count only allowed files)
+            const totalAfter = uploadedFiles.length + allowed.length;
+            if (totalAfter > MAX_FILE_COUNT) {
+                errorMessage.textContent = `Error: You can only upload a total of ${MAX_FILE_COUNT} files. You already have ${uploadedFiles.length} uploaded. Please remove some files first.`;
+                fileInput.value = '';
+                return;
+            }
+
+            // if some files were rejected, show which ones were ignored but still add allowed ones
+            if (rejected.length > 0) {
+                const lines = rejected.map(r => `${r.file.name}: ${r.reason}`);
+                errorMessage.textContent = `Some files were ignored:\n` + lines.join('\n');
+            }
+
+            // add allowed files
+            allowed.forEach(file => {
                 uploadedFiles.push(file);
                 previewFile(file);
             });
-            
+
+            // reset file input to allow same-file re-selection if user wants
             fileInput.value = '';
         }
 
@@ -834,11 +936,14 @@
                 previewItem.dataset.filename = file.name;
 
                 const img = document.createElement('img');
+                img.alt = file.name || 'preview';
                 img.src = reader.result;
 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.classList.add('delete-btn');
-                deleteBtn.textContent = 'x';
+                deleteBtn.type = 'button';
+                deleteBtn.title = 'Remove';
+                deleteBtn.textContent = '×';
                 
                 deleteBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -848,12 +953,18 @@
                 previewItem.appendChild(img);
                 previewItem.appendChild(deleteBtn);
                 previewContainer.appendChild(previewItem);
-            }
+            };
+
+            reader.onerror = () => {
+                // if file cannot be read, remove from uploadedFiles and notify
+                uploadedFiles = uploadedFiles.filter(f => f.name !== file.name);
+                errorMessage.textContent = `Could not preview file: ${file.name}`;
+            };
         }
 
         function deleteFile(fileName, previewElement) {
             uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
-            previewElement.remove();
+            if (previewElement && previewElement.remove) previewElement.remove();
             errorMessage.textContent = '';
         }
 
