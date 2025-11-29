@@ -476,7 +476,7 @@
             <!-- Footer Link -->
             <div class="auth-footer">
                 Already have an account? 
-                <a href="index.html">Log In Here</a>
+                <a href="home.html">Log In Here</a>
             </div>
         </div>
     </div>
@@ -598,7 +598,7 @@
         // OK Button Handler
         statusOkBtn.addEventListener('click', () => {
             hideStatusModal();
-            window.location.href = 'index.html';
+            window.location.href = 'home.html';
         });
 
         // Show Username Modal
@@ -662,7 +662,7 @@
                 const user = userCredential.user;
 
                 const actionCodeSettings = {
-                    url: 'http://127.0.0.1:5500/index.html',
+                    url: 'rdchime-scheduling-system.web.app/home.html',
                     handleCodeInApp: false
                 };
                 

@@ -184,7 +184,7 @@
             <button type="submit" class="btn-submit" id="submit-btn">Send Reset Link</button>
 
             <!-- Back to Login -->
-            <a href="index.html" class="btn-back">Back to Login</a>
+            <a href="home.html" class="btn-back">Back to Login</a>
         </form>
     </div>
 
@@ -240,7 +240,7 @@
             try {
                 // Configure action code settings for password reset
                 const actionCodeSettings = {
-                    url: 'http://127.0.0.1:5500/index.html', // URL to redirect after reset
+                    url: 'rdchime-scheduling-system.web.app/home.html', // URL to redirect after reset
                     handleCodeInApp: false
                 };
 
@@ -257,7 +257,7 @@
 
                 // Redirect to login after 5 seconds
                 setTimeout(() => {
-                    window.location.href = 'index.html';
+                    window.location.href = 'home.html';
                 }, 5000);
 
             } catch (error) {
